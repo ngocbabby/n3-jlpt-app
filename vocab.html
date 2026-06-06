@@ -695,6 +695,7 @@ function toggleMaster(id,btn){
     if(Math.abs(dx)>8){moved=true;el.style.transform='translateX('+(dx*.4)+'px)';el.style.opacity=1-Math.min(Math.abs(dx)/300,.3);}
   },{passive:true});
   el.addEventListener('touchend',e=>{
+    e.preventDefault();
     const dx=e.changedTouches[0].clientX-startX;
     el.style.transform='';el.style.opacity='';
     if(!moved||Math.abs(dx)<10){flipVFC();}
