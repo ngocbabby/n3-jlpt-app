@@ -1,0 +1,3283 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>N3 文法</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;700&family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;700&family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap');
+
+  :root {
+    --bg: #f4f6fb;
+    --surface: #ffffff;
+    --surface2: #f0f2f8;
+    --accent1: #e05252;
+    --accent2: #c89a00;
+    --accent3: #2e9e4f;
+    --accent4: #2563eb;
+    --accent5: #7c3aed;
+    --accent6: #d97706;
+    --text: #1a1d2e;
+    --text-dim: #5a5f7a;
+    --border: rgba(0,0,0,0.09);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'M PLUS Rounded 1c', 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #ffffff 0%, #eef2ff 50%, #ffffff 100%);
+    border-bottom: 1px solid #dde3f5;
+    padding: 28px 24px 20px;
+    text-align: center;
+    /* border handled inline */
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  header h1 {
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 800;
+    background: linear-gradient(90deg, #e05252, #c89a00, #2e9e4f, #2563eb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.04em;
+  }
+  header p { color: var(--text-dim); font-size: 0.8rem; margin-top: 4px; }
+
+  /* ── SEARCH ── */
+  .search-bar {
+    padding: 14px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 42px;
+    z-index: 99;
+  }
+  .search-bar input {
+    flex: 1;
+    min-width: 180px;
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 9px 14px;
+    color: var(--text);
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-bar input:focus { border-color: var(--accent4); }
+  .search-bar input::placeholder { color: var(--text-dim); }
+
+  .filter-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: var(--accent4);
+    color: #fff;
+    border-color: var(--accent4);
+  }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: flex;
+    gap: 16px;
+    padding: 12px 20px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    flex-wrap: wrap;
+  }
+  .stats-bar span { display: flex; align-items: center; gap: 5px; }
+  .stats-bar .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* ── LESSON GRID ── */
+  .lessons-grid {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 18px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* ── LESSON CARD ── */
+  .lesson-card {
+    background: var(--surface);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .lesson-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(37,99,235,0.10);
+  }
+  .lesson-header {
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .lesson-num {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .lesson-title { font-weight: 700; font-size: 0.95rem; line-height: 1.3; }
+  .lesson-subtitle { font-size: 0.72rem; color: var(--text-dim); margin-top: 2px; }
+
+  .lesson-toggle {
+    margin-left: auto;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  .lesson-card.open .lesson-toggle { transform: rotate(180deg); }
+
+  .lesson-body {
+    display: none;
+    padding: 0 18px 18px;
+    gap: 12px;
+    flex-direction: column;
+  }
+  .lesson-card.open .lesson-body { display: flex; }
+
+  /* ── GRAMMAR NODE (card inside card) ── */
+  .grammar-node {
+    background: var(--surface2);
+    border-radius: 12px;
+    padding: 14px;
+    border-left: 3px solid;
+    position: relative;
+    overflow: hidden;
+  }
+  .grammar-node::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    opacity: 0.04;
+    background: currentColor;
+    transform: translate(20px, -20px);
+  }
+
+  .grammar-pattern {
+    font-size: 1.0rem;
+    font-weight: 700;
+    font-family: 'Noto Serif JP', serif;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+  .meaning-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: rgba(255,255,255,0.08);
+  }
+  .grammar-meaning {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+  .grammar-structure {
+    font-size: 0.72rem;
+    background: #f0f4ff;
+    border: 1px solid #d6e0ff;
+    padding: 5px 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-family: 'Noto Sans JP', monospace;
+    color: #2563eb;
+    line-height: 1.5;
+  }
+
+  .examples-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .example {
+    font-size: 0.8rem;
+    line-height: 1.8;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .example:last-child { border-bottom: none; }
+  .example .jp {
+    font-family: 'Noto Serif JP', serif;
+    color: var(--text);
+    line-height: 2;
+  }
+  .example .vn {
+    color: #4b5480;
+    font-size: 0.73rem;
+    line-height: 1.4;
+  }
+
+  /* furigana */
+  ruby { ruby-align: center; }
+  rt {
+    font-size: 0.55em;
+    color: #2563eb;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 400;
+  }
+
+  /* memory tip */
+  .memory-tip {
+    background: #fffbea;
+    border: 1px solid #f0d060;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.73rem;
+    margin-top: 8px;
+    line-height: 1.5;
+    color: #7a5800;
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+  }
+  .memory-tip::before { content: '💡'; flex-shrink: 0; }
+
+  /* compare */
+  .compare-note {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.73rem;
+    margin-top: 8px;
+    line-height: 1.5;
+    color: #1e40af;
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+  }
+  .compare-note::before { content: '⚖️'; flex-shrink: 0; }
+
+  /* progress */
+  .progress-wrap { padding: 0 20px 10px; max-width: 1400px; margin: 0 auto; }
+  .progress-bar-bg {
+    height: 4px; background: var(--surface2); border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4d96ff, #c77dff);
+    border-radius: 4px;
+    width: 0;
+    transition: width 0.8s ease;
+  }
+
+  /* mastered toggle */
+  .mastered-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.68rem;
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid #c5cae0;
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    margin-top: 8px;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .mastered-btn.done {
+    background: #f0fdf4;
+    border-color: #2e9e4f;
+    color: #166534;
+  }
+
+  /* hidden */
+  .hidden { display: none !important; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: #c5cae0; border-radius: 3px; }
+
+
+/* ── 3 TABS ── */
+.tab-bar{display:flex;background:#fff;border-bottom:2px solid #dde3f5;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.tab-btn{flex:1;padding:12px 4px;border:none;background:none;font-family:inherit;font-size:.78rem;font-weight:700;color:#888;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;}
+.tab-btn.active{color:#2563eb;border-bottom-color:#2563eb;background:#f0f6ff;}
+
+/* ── ÔN LUYỆN (Drill) ── */
+.drill-wrap{max-width:520px;margin:0 auto;padding:16px;}
+.drill-hero{background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:16px;padding:20px;color:#fff;text-align:center;margin-bottom:14px;}
+.drill-hero h2{font-size:1.1rem;font-weight:800;margin-bottom:4px;}
+.drill-hero p{font-size:.75rem;opacity:.85;}
+.mode-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.mode-btn{background:#fff;border:2px solid #dde3f5;border-radius:12px;padding:14px;cursor:pointer;text-align:center;font-family:inherit;transition:all .18s;}
+.mode-btn:hover,.mode-btn.active{border-color:#2563eb;background:#f0f6ff;}
+.mode-btn .icon{font-size:1.5rem;margin-bottom:4px;}
+.mode-btn .label{font-size:.8rem;font-weight:700;color:#1a1d2e;}
+.mode-btn .sub{font-size:.65rem;color:#888;margin-top:2px;}
+
+/* Drill question */
+.drill-q-wrap{background:#fff;border-radius:14px;border:2px solid #dde3f5;padding:18px;margin-bottom:12px;box-shadow:0 2px 12px rgba(37,99,235,.06);}
+.drill-pattern{font-size:1.2rem;font-weight:800;color:#2563eb;font-family:'Noto Serif JP',serif;text-align:center;margin-bottom:4px;}
+.drill-progress{font-size:.68rem;color:#888;text-align:center;margin-bottom:12px;}
+.drill-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.drill-opt{padding:11px 8px;border-radius:10px;border:2px solid #e5e7eb;background:#fff;font-family:'Noto Sans JP',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;color:#1a1d2e;}
+.drill-opt:hover{border-color:#2563eb;background:#f0f6ff;}
+.drill-opt.correct{background:#f0fdf4;border-color:#16a34a;color:#16a34a;}
+.drill-opt.wrong{background:#fef2f2;border-color:#dc2626;color:#dc2626;}
+.drill-fb{margin:10px 0 0;padding:10px 12px;border-radius:8px;font-size:.8rem;font-weight:600;line-height:1.6;display:none;}
+.drill-fb.ok{background:#f0fdf4;color:#16a34a;}
+.drill-fb.ng{background:#fef2f2;color:#dc2626;}
+.drill-next{display:none;width:100%;margin-top:10px;padding:12px;border-radius:10px;border:none;background:#2563eb;color:#fff;font-family:inherit;font-size:.85rem;font-weight:800;cursor:pointer;}
+.drill-result{text-align:center;padding:30px 20px;}
+.drill-result .score{font-size:2.2rem;font-weight:900;color:#2563eb;}
+.drill-result .sub{font-size:.85rem;color:#888;margin-bottom:20px;}
+
+/* Flashcard */
+.fc-wrap{max-width:520px;margin:0 auto;padding:16px;}
+.fc-progress{font-size:.68rem;color:#888;text-align:center;margin-bottom:10px;}
+.fc-scene{perspective:1200px;margin-bottom:12px;cursor:pointer;}
+.fc-drag{transition:transform .3s;}
+.fc-inner{position:relative;width:100%;height:220px;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+.fc-scene.flipped .fc-inner{transform:rotateY(180deg);}
+.fc-face{position:absolute;top:0;left:0;width:100%;height:220px;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+.fc-front{background:linear-gradient(135deg,#eff6ff,#dbeafe);border:2px solid #bfdbfe;}
+.fc-back{background:linear-gradient(135deg,#f0fdf4,#dcfce7);transform:rotateY(180deg);border:2px solid #bbf7d0;}
+.fc-pattern{font-size:1.2rem;font-weight:800;color:#1e40af;font-family:'Noto Serif JP',serif;margin-bottom:8px;}
+.fc-hint{font-size:.72rem;color:#64748b;margin-top:8px;}
+.fc-meaning{font-size:.92rem;font-weight:700;color:#166534;margin-bottom:8px;}
+.fc-structure{font-size:.7rem;color:#15803d;background:#f0fdf4;padding:4px 8px;border-radius:6px;margin:4px 0;}
+.fc-tip{font-size:.68rem;color:#1e40af;margin-top:6px;font-style:italic;}
+.fc-controls{display:flex;gap:8px;margin-top:4px;}
+.fc-btn{flex:1;padding:10px;border-radius:8px;border:2px solid #dde3f5;background:#fff;font-family:inherit;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .15s;}
+.fc-btn.ok{border-color:#16a34a;color:#16a34a;}
+.fc-btn.ok:hover{background:#f0fdf4;}
+.fc-btn.skip{border-color:#888;color:#888;}
+.fc-btn.skip:hover{background:#f5f5f5;}
+
+/* Lesson select for drill */
+.lesson-select-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:14px;}
+.ls-btn{padding:10px 8px;border-radius:10px;border:2px solid #dde3f5;background:#fff;font-family:inherit;font-size:.72rem;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;}
+.ls-btn:hover,.ls-btn.sel{border-color:#2563eb;background:#eff6ff;}
+
+/* ── LUYỆN ĐỀ (Exam) ── */
+.exam-wrap{max-width:520px;margin:0 auto;}
+.exam-list-hd{padding:12px 14px 4px;font-size:.75rem;font-weight:800;color:#888;}
+.exam-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 14px;}
+.exam-btn{background:#fff;border:2px solid #dde3f5;border-radius:12px;padding:14px 12px;cursor:pointer;font-family:inherit;text-align:center;transition:all .15s;}
+.exam-btn:hover{border-color:#2563eb;background:#eff6ff;}
+.exam-yr{font-size:.85rem;font-weight:800;color:#1a1d2e;}
+.exam-cnt{font-size:.62rem;color:#888;margin-top:3px;}
+.exam-sc{font-size:.62rem;font-weight:700;margin-top:4px;}
+.year-sep{grid-column:1/-1;padding:6px 2px 2px;font-size:.62rem;font-weight:800;color:#888;letter-spacing:.08em;}
+
+/* Exam taking */
+.eq-hd{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid #eee;position:sticky;top:42px;background:#fff;z-index:99;}
+.eq-back{background:none;border:none;font-size:1rem;cursor:pointer;color:#888;padding:2px 8px;border-radius:6px;}
+.eq-back:hover{background:#f5f5f5;}
+.eq-title{font-size:.88rem;font-weight:800;flex:1;}
+.eq-prog{font-size:.68rem;color:#888;font-family:monospace;}
+.eq-body{padding:10px 14px 6px;max-width:520px;margin:0 auto;}
+.eq-num{display:inline-block;background:#eff6ff;color:#2563eb;border:1.5px solid #bfdbfe;border-radius:6px;font-size:.65rem;font-weight:800;padding:3px 10px;margin-bottom:8px;}
+.eq-sent{font-family:'Noto Serif JP',sans-serif;font-size:.9rem;line-height:1.9;color:#1a1d2e;margin-bottom:10px;background:#f8faff;border-radius:10px;padding:12px 14px;border:1.5px solid #dde3f5;}
+.eq-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.eq-opt{padding:12px 9px;border-radius:10px;border:2px solid #e5e7eb;background:#fff;font-family:'Noto Serif JP','Noto Sans JP',sans-serif;font-size:.84rem;font-weight:700;cursor:pointer;text-align:center;transition:all .13s;color:#1a1d2e;}
+.eq-opt:hover{border-color:#2563eb;background:#eff6ff;}
+.eq-opt.chosen{background:#eff6ff;border-color:#2563eb;color:#1e40af;font-weight:800;}
+.eq-opt.ok{background:#f0fdf4;border-color:#16a34a;color:#16a34a;}
+.eq-opt.ng{background:#fef2f2;border-color:#dc2626;color:#dc2626;}
+.eq-opt.rv{background:#f0fdf4;border-color:#16a34a;color:#16a34a;}
+.eq-opt:disabled{cursor:default;}
+.eq-fb{margin:8px 0 0;padding:10px 12px;border-radius:8px;font-size:.78rem;font-weight:600;line-height:1.7;display:none;}
+.eq-fb.ok{background:#f0fdf4;color:#16a34a;}
+.eq-fb.ng{background:#fef2f2;color:#dc2626;}
+.eq-nxt{display:none;width:100%;margin-top:8px;padding:12px;border-radius:8px;border:none;background:#2563eb;color:#fff;font-family:inherit;font-size:.82rem;font-weight:800;cursor:pointer;}
+.eq-submit{width:auto;margin-top:0;padding:12px 16px;border-radius:8px;border:2px solid #e5e7eb;background:#fff;color:#888;font-family:inherit;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+.eq-submit:hover{background:#f5f5f5;}
+
+/* Exam result */
+.eq-res{padding:24px 16px;text-align:center;max-width:520px;margin:0 auto;}
+.eq-emoji{font-size:2.8rem;margin-bottom:8px;}
+.eq-score{font-size:1.9rem;font-weight:900;color:#2563eb;margin-bottom:3px;font-family:monospace;}
+.eq-pct{font-size:.82rem;color:#888;margin-bottom:16px;}
+.eq-stats{display:flex;gap:8px;justify-content:center;margin-bottom:16px;}
+.eq-stat{background:#f5f5f5;border-radius:8px;padding:9px 14px;min-width:60px;text-align:center;}
+.eq-rbtns{display:flex;gap:8px;justify-content:center;margin-bottom:16px;}
+.eq-rbtn{padding:11px 20px;border-radius:8px;font-family:inherit;font-size:.8rem;font-weight:800;cursor:pointer;border:2px solid #1a1d2e;}
+.eq-rbtn.primary{background:#2563eb;color:#fff;border-color:#2563eb;}
+.eq-rbtn.secondary{background:#fff;color:#1a1d2e;}
+.eq-review{padding:0 14px 24px;max-width:520px;margin:0 auto;}
+.eq-review-hd{font-size:.62rem;font-weight:800;color:#888;letter-spacing:.08em;padding:8px 0 6px;}
+.rv-item{background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:8px;}
+.rv-item.ok{border:1.5px solid #16a34a;}
+.rv-item.ng{border:1.5px solid #dc2626;}
+.rv-meta{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.rv-tag{font-size:.6rem;background:#eff6ff;color:#2563eb;padding:2px 7px;border-radius:20px;font-weight:800;}
+.rv-status{font-size:.72rem;font-weight:800;}
+.rv-q{font-size:.82rem;line-height:1.8;margin-bottom:6px;font-family:'Noto Serif JP',sans-serif;}
+.rv-wrong{font-size:.72rem;background:#fef2f2;color:#dc2626;padding:4px 8px;border-radius:6px;margin-bottom:4px;}
+.rv-correct{font-size:.72rem;background:#f0fdf4;color:#16a34a;padding:4px 8px;border-radius:6px;margin-bottom:4px;}
+.rv-exp{font-size:.7rem;color:#555;padding:4px 8px;background:#fffbeb;border-radius:6px;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#fff;border-radius:16px;padding:24px 20px;max-width:300px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.18);}
+.modal-title{font-size:1rem;font-weight:800;margin-bottom:8px;color:#1a1d2e;}
+.modal-sub{font-size:.82rem;color:#666;margin-bottom:18px;line-height:1.5;}
+.modal-btns{display:flex;gap:8px;}
+.modal-btn{flex:1;padding:11px;border-radius:8px;font-family:inherit;font-size:.82rem;font-weight:800;cursor:pointer;border:2px solid #e5e7eb;}
+.modal-btn.yes{background:#2563eb;color:#fff;border-color:#2563eb;}
+.modal-btn.no{background:#fff;color:#1a1d2e;}
+/* ── EXAM FILTER ── */
+.exam-filter{display:flex;gap:6px;padding:8px 14px 4px;flex-wrap:wrap;}
+.ef-btn{padding:5px 14px;border-radius:20px;border:2px solid #dde3f5;background:#fff;font-family:inherit;font-size:.75rem;font-weight:800;cursor:pointer;color:#888;transition:all .15s;}
+.ef-btn.active{background:#2563eb;color:#fff;border-color:#2563eb;}
+/* ── M2 SENTENCE ARRANGEMENT ── */
+.m2-sent-wrap{background:#f8faff;border-radius:10px;padding:12px 14px;border:1.5px solid #dde3f5;margin-bottom:8px;}
+.m2-pre-post{font-family:'Noto Serif JP',serif;font-size:.88rem;line-height:1.9;color:#1a1d2e;}
+.m2-blanks-row{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0;}
+.m2-blank{display:inline-flex;align-items:center;justify-content:center;padding:4px 12px;border-radius:6px;background:#e8edf8;font-size:.78rem;font-weight:800;min-width:44px;}
+.m2-blank.star{background:#2563eb;color:#fff;}
+.m2-hint{font-size:.65rem;color:#94a3b8;margin-top:4px;}
+/* ── M3 PASSAGE ── */
+.m3-passage-wrap{background:#fff;border-radius:12px;margin:0 14px 8px;padding:14px 16px;border:2px solid #dde3f5;box-shadow:0 2px 8px rgba(37,99,235,.06);}
+.m3-ptitle-badge{font-size:.67rem;font-weight:800;color:#2563eb;background:#eff6ff;padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:8px;}
+.m3-ptext{font-family:'Noto Serif JP',serif;font-size:.84rem;line-height:2.1;color:#1a1d2e;}
+.m3-bl{display:inline-block;background:#eff6ff;color:#2563eb;font-weight:800;border-bottom:2px solid #2563eb;padding:0 5px;border-radius:3px;min-width:28px;text-align:center;}
+.m3-bl.cur{background:#2563eb;color:#fff;}
+
+/* ── BOTTOM NAV ── */
+.bnav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);z-index:300;box-shadow:0 -2px 10px rgba(0,0,0,.06);}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:9px 4px 11px;cursor:pointer;font-size:.6rem;font-weight:700;color:var(--text-dim);border:none;background:none;font-family:inherit;gap:3px;position:relative;transition:all .2s;}
+.bnav-item.active{color:var(--accent4);}
+.bnav-item.active::after{content:'';position:absolute;top:0;left:20%;right:20%;height:3px;background:var(--accent4);border-radius:0 0 3px 3px;}
+.bnav-icon{font-size:1.2rem;line-height:1;}
+body{padding-bottom:68px;}
+</style>
+</head>
+<body>
+
+<!-- ═══ TAB BAR ═══ -->
+<div class="tab-bar" id="tabBar">
+  <button class="tab-btn active" onclick="switchTab('mindmap',this)">📚 Mindmap</button>
+  <button class="tab-btn" onclick="switchTab('drill',this)">⚡ Ôn Luyện</button>
+  <button class="tab-btn" onclick="switchTab('exam',this)">📝 Luyện Đề</button>
+  <button class="tab-btn" onclick="location.href='meo.html'" style="color:#7c3aed;flex:0;padding:11px 14px;">💡 Mẹo</button>
+</div>
+
+<!-- ═══ TAB 1: MINDMAP ═══ -->
+<div id="tab-mindmap">
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="🔍 Tìm mẫu câu... (VD: らしい、たら、わけ)">
+  <div class="filter-btns">
+    <button class="filter-btn active" data-cat="all">すべて</button>
+    <button class="filter-btn" data-cat="suiryou">推量</button>
+    <button class="filter-btn" data-cat="jikan">時間</button>
+    <button class="filter-btn" data-cat="joken">仮定</button>
+    <button class="filter-btn" data-cat="hikaku">比較</button>
+    <button class="filter-btn" data-cat="denbun">伝聞</button>
+    <button class="filter-btn" data-cat="keigo">敬語</button>
+  </div>
+</div>
+<div class="progress-wrap" style="padding:8px 20px 0">
+  <div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--text-dim);padding:4px 0">
+    <span id="progressText">0 / 0 đã thuộc</span>
+    <span id="percentText">0%</span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+</div>
+<div class="lessons-grid" id="lessonsGrid" style="padding-bottom:80px"></div>
+</div>
+
+<!-- ═══ TAB 2: ÔN LUYỆN ═══ -->
+<div id="tab-drill" style="display:none">
+
+  <!-- Drill home -->
+  <div id="drill-home">
+    <div class="drill-wrap">
+      <div class="drill-hero">
+        <h2>⚡ Ôn Luyện Ngữ Pháp</h2>
+        <p>65 mẫu câu · Drill + Flashcard</p>
+      </div>
+      <div class="mode-btns">
+        <button class="mode-btn" onclick="startDrillMode()">
+          <div class="icon">🎯</div>
+          <div class="label">Drill</div>
+          <div class="sub">Chọn nghĩa đúng</div>
+        </button>
+        <button class="mode-btn" onclick="startFlashcardMode()">
+          <div class="icon">🃏</div>
+          <div class="label">Flashcard</div>
+          <div class="sub">Lật thẻ học</div>
+        </button>
+      </div>
+      <div style="font-size:.72rem;font-weight:800;color:#888;letter-spacing:.06em;margin-bottom:8px;">CHỌN BÀI HỌC</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+        <button class="ls-btn sel" id="ls-all" onclick="toggleLesson('all',this)">Tất cả</button>
+        <div id="ls-grid" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drill question -->
+  <div id="drill-q" style="display:none">
+    <div class="drill-wrap">
+      <button onclick="showDrillHome()" style="background:none;border:none;color:#888;font-size:.8rem;cursor:pointer;padding:4px 0 8px;font-family:inherit;">← Về menu</button>
+      <div class="drill-q-wrap">
+        <div class="drill-pattern" id="dq-pattern"></div>
+        <div class="drill-progress" id="dq-prog">1/20</div>
+        <div class="drill-opts" id="dq-opts"></div>
+        <div class="drill-fb" id="dq-fb"></div>
+      </div>
+      <button class="drill-next" id="dq-next" onclick="drillNext()">次へ →</button>
+    </div>
+  </div>
+
+  <!-- Drill result -->
+  <div id="drill-res" style="display:none">
+    <div class="drill-wrap drill-result">
+      <div class="score" id="dr-score">0/0</div>
+      <div class="sub" id="dr-sub">0% chính xác</div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:20px;">
+        <button class="eq-rbtn primary" onclick="startDrillMode()">Làm lại</button>
+        <button class="eq-rbtn secondary" onclick="showDrillHome()">Về menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Flashcard -->
+  <div id="flashcard-view" style="display:none">
+    <div class="fc-wrap">
+      <div class="fc-progress" id="fc-prog">1/65</div>
+      <div class="fc-scene" id="fc-scene" onclick="flipCard()">
+        <div class="fc-drag">
+          <div class="fc-inner" id="fc-inner">
+            <div class="fc-face fc-front">
+              <div class="fc-pattern" id="fc-pattern"></div>
+              <div class="fc-hint" id="fc-struct"></div>
+              <div style="font-size:.65rem;color:#94a3b8;margin-top:12px;">👆 Nhấn để xem nghĩa</div>
+            </div>
+            <div class="fc-face fc-back">
+              <div class="fc-meaning" id="fc-meaning"></div>
+              <div class="fc-structure" id="fc-struct-back"></div>
+              <div class="fc-tip" id="fc-tip"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fc-controls">
+        <button class="fc-btn skip" onclick="fcSkip()">⏭ Tiếp</button>
+        <button class="fc-btn ok" onclick="fcMastered()">✅ Đã thuộc</button>
+        <button class="fc-btn" onclick="showDrillHome()" style="max-width:50px">✕</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ TAB 3: LUYỆN ĐỀ ═══ -->
+<div id="tab-exam" style="display:none">
+
+  <!-- List đề -->
+  <div id="exam-list">
+    <div class="exam-list-hd">CHỌN ĐỀ THI</div>
+    <div class="exam-filter">
+      <button class="ef-btn active" onclick="setExamFilter('m1',this)">📝 問題1</button>
+      <button class="ef-btn" onclick="setExamFilter('m2',this)">✏️ 問題2</button>
+      <button class="ef-btn" onclick="setExamFilter('m3',this)">📖 問題3</button>
+    </div>
+    <div class="exam-grid" id="exam-grid"></div>
+  </div>
+
+  <!-- Làm bài -->
+  <div id="exam-take" style="display:none">
+    <div class="eq-hd">
+      <button class="eq-back" onclick="examBackToList()">←</button>
+      <div class="eq-title" id="eq-title">Đề 12/2024</div>
+      <div class="eq-prog" id="eq-prog">1/13</div>
+    </div>
+    <!-- M3 passage panel (hidden by default) -->
+    <div id="m3-passage-panel" style="display:none;padding-top:6px">
+      <div class="m3-passage-wrap">
+        <div class="m3-ptitle-badge" id="m3-ptitle">文章</div>
+        <div class="m3-ptext" id="m3-ptext"></div>
+      </div>
+    </div>
+    <div class="eq-body">
+      <div class="eq-num" id="eq-num">問題1 · Câu 1</div>
+      <div class="eq-sent" id="eq-sent"></div>
+      <div class="eq-opts" id="eq-opts"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="eq-nxt" id="eq-nxt" onclick="examNext()" style="flex:1;display:none">次へ →</button>
+        <button class="eq-submit" id="eq-submit" onclick="examConfirmSubmit()">📋 Nộp bài</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kết quả -->
+  <div id="exam-res" style="display:none">
+    <div class="eq-res">
+      <div class="eq-emoji" id="eq-emoji">🏆</div>
+      <div class="eq-score" id="eq-score">0/13</div>
+      <div class="eq-pct" id="eq-pct">0% chính xác</div>
+      <div class="eq-stats">
+        <div class="eq-stat"><div style="font-size:1.1rem;font-weight:800;color:#16a34a" id="eq-ok">0</div><div style="font-size:.6rem;color:#888">Đúng</div></div>
+        <div class="eq-stat"><div style="font-size:1.1rem;font-weight:800;color:#dc2626" id="eq-ng">0</div><div style="font-size:.6rem;color:#888">Sai</div></div>
+        <div class="eq-stat"><div style="font-size:1.1rem;font-weight:800;color:#2563eb" id="eq-pct2">0%</div><div style="font-size:.6rem;color:#888">Điểm</div></div>
+      </div>
+      <div class="eq-rbtns">
+        <button class="eq-rbtn primary" onclick="examRedo()">Làm lại</button>
+        <button class="eq-rbtn secondary" onclick="examBackToList()">Đề khác</button>
+      </div>
+    </div>
+    <div class="eq-review" id="eq-review-wrap">
+      <div class="eq-review-hd">📋 XEM LẠI TỪNG CÂU</div>
+      <div id="eq-review"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const LESSONS = [
+  {
+    id: 1,
+    title: "受身・使役・受身使役形",
+    subtitle: "Bị động · Sai khiến · Bị sai khiến",
+    color: "#ff6b6b",
+    cat: ["joken"],
+    grammars: [
+      {
+        pattern: "〜（ら）れる（間接受身）",
+        meaning: "Dạng bị động gián tiếp – chủ thể bị ảnh hưởng bởi hành động của người khác dù không phải đối tượng trực tiếp",
+        structure: "Ｎに + Ｖ（ない形）＋れる／られる",
+        examples: [
+          { jp: "<ruby>隣<rt>となり</rt></ruby>の<ruby>人<rt>ひと</rt></ruby>に<ruby>騒<rt>さわ</rt></ruby>がれて、<ruby>全然<rt>ぜんぜん</rt></ruby><ruby>勉強<rt>べんきょう</rt></ruby>できなかった。", vn: "Bị người hàng xóm làm ồn nên không học được gì cả." },
+          { jp: "<ruby>赤<rt>あか</rt></ruby>ちゃんに<ruby>泣<rt>な</rt></ruby>かれて、あまり<ruby>眠<rt>ねむ</rt></ruby>れなかった。", vn: "Bị em bé khóc nên không ngủ được mấy." },
+        ],
+        tip: "Bị động gián tiếp = bị ảnh hưởng TIÊU CỰC. Không cần bạn là đối tượng trực tiếp!",
+      },
+      {
+        pattern: "〜させる（感情の使役）",
+        meaning: "Làm cho ai đó cảm thấy... (khiến ai xúc động)",
+        structure: "Ｎを + Ｖ（ない形）＋させる",
+        examples: [
+          { jp: "<ruby>先生<rt>せんせい</rt></ruby>はいつも<ruby>冗談<rt>じょうだん</rt></ruby>を<ruby>言<rt>い</rt></ruby>って、<ruby>学生<rt>がくせい</rt></ruby>たちを<ruby>笑<rt>わら</rt></ruby>わせる。", vn: "Giáo viên hay kể chuyện hài, làm học sinh cười." },
+        ],
+        tip: "Động từ cảm xúc + させる = khiến ai đó cảm thấy. VD: 笑わせる (làm cười), 感動させる (làm xúc động)",
+      },
+      {
+        pattern: "〜させられる（使役受身形）",
+        meaning: "Bị bắt buộc làm gì đó (không muốn mà vẫn phải làm)",
+        structure: "Ｎに + Ｖ（ない形）＋させられる",
+        examples: [
+          { jp: "<ruby>母<rt>はは</rt></ruby>に<ruby>野菜<rt>やさい</rt></ruby>をたくさん<ruby>食<rt>た</rt></ruby>べさせられた。", vn: "Bị mẹ bắt ăn rất nhiều rau." },
+        ],
+        tip: "させ＋られる = LÀM + BỊ → bị ÉP phải làm. Luôn có nghĩa tiêu cực!",
+      },
+    ]
+  },
+  {
+    id: 2,
+    title: "よう・らしい（情報）",
+    subtitle: "Suy đoán từ thông tin",
+    color: "#ffd93d",
+    cat: ["suiryou"],
+    grammars: [
+      {
+        pattern: "〜ようだ／みたいだ（推量）",
+        meaning: "Có vẻ như... (suy đoán từ quan sát trực tiếp, bằng mắt/tai)",
+        structure: "普通形(Ｎだ＋の) ＋ようだ／みたいだ",
+        examples: [
+          { jp: "<ruby>疲<rt>つか</rt></ruby>れているようですね。<ruby>大丈夫<rt>だいじょうぶ</rt></ruby>ですか。", vn: "Trông có vẻ mệt nhỉ. Bạn ổn không?" },
+          { jp: "<ruby>車<rt>くるま</rt></ruby>が<ruby>動<rt>うご</rt></ruby>かない。ガソリンがなくなったみたいだ。", vn: "Xe không chạy. Hình như hết xăng rồi." },
+        ],
+        tip: "ようだ ≈ みたいだ (hội thoại). Suy đoán từ MẮT THẤY TAI NGHE trực tiếp.",
+        compare: "らしい = nghe người khác nói; ようだ = tự mình quan sát thấy",
+      },
+      {
+        pattern: "〜らしい（推量）",
+        meaning: "Nghe nói... / Hình như... (suy đoán từ thông tin nghe/đọc được)",
+        structure: "Ｖ普通形 ／ Ｎ ／ Ａ ＋らしい",
+        examples: [
+          { jp: "あの<ruby>店<rt>みせ</rt></ruby>は<ruby>美味<rt>おい</rt></ruby>しいらしいよ。", vn: "Nghe nói quán đó ngon lắm." },
+          { jp: "<ruby>東大<rt>とうだい</rt></ruby>を<ruby>卒業<rt>そつぎょう</rt></ruby>するのはもっと<ruby>大変<rt>たいへん</rt></ruby>らしい。", vn: "Nghe nói tốt nghiệp Đại học Tokyo còn khó hơn nhiều." },
+        ],
+        compare: "らしい = NGHE NÓI (gián tiếp) vs ようだ = TỰ THẤY (trực tiếp)",
+      },
+      {
+        pattern: "ご<ruby>存知<rt>ぞんじ</rt></ruby>のように…",
+        meaning: "Như mọi người đều biết... / Như đã nói... (mở đầu bằng điều mọi người đã biết)",
+        structure: "ご存知のように ／ ～のように／わかるように",
+        examples: [
+          { jp: "ご<ruby>存知<rt>ぞんじ</rt></ruby>のように、<ruby>来年<rt>らいねん</rt></ruby>から<ruby>海外<rt>かいがい</rt></ruby>にも<ruby>支店<rt>してん</rt></ruby>を<ruby>出<rt>だ</rt></ruby>します。", vn: "Như mọi người đã biết, từ năm sau chúng tôi sẽ mở chi nhánh ở nước ngoài." },
+        ],
+        tip: "Dùng khi muốn nhắc lại điều người nghe đã biết, tạo sự đồng thuận",
+      },
+    ]
+  },
+  {
+    id: 3,
+    title: "よう・らしい（性質）",
+    subtitle: "So sánh ẩn dụ & tính chất điển hình",
+    color: "#6bcb77",
+    cat: ["suiryou"],
+    grammars: [
+      {
+        pattern: "〜ようだ／みたい（比喩）",
+        meaning: "Như là... / Giống như... (ẩn dụ so sánh)",
+        structure: "Ｎの＋ようだ／みたいだ ／ ように／みたいに＋Ｖ",
+        examples: [
+          { jp: "もう３<ruby>月<rt>がつ</rt></ruby>なのに、まだ１<ruby>月<rt>がつ</rt></ruby>のように<ruby>寒<rt>さむ</rt></ruby>いね。", vn: "Đã là tháng 3 rồi mà lạnh như tháng 1 ấy nhỉ." },
+          { jp: "<ruby>彼女<rt>かのじょ</rt></ruby>は<ruby>天使<rt>てんし</rt></ruby>みたいに<ruby>優<rt>やさ</rt></ruby>しいけど、<ruby>怒<rt>おこ</rt></ruby>ると<ruby>鬼<rt>おに</rt></ruby>みたいに<ruby>怖<rt>こわ</rt></ruby>い。", vn: "Cô ấy dịu dàng như thiên thần nhưng khi giận thì đáng sợ như ác quỷ." },
+        ],
+      },
+      {
+        pattern: "〜ようだ／みたい（例示）",
+        meaning: "Như kiểu... / Ví dụ như... (đưa ra ví dụ cụ thể)",
+        structure: "Ｎの＋ような＋Ｎ ／ Ｎみたいな＋Ｎ",
+        examples: [
+          { jp: "ナムさんのような<ruby>人<rt>ひと</rt></ruby>と<ruby>付<rt>つ</rt></ruby>き<ruby>合<rt>あ</rt></ruby>いたい。", vn: "Tôi muốn hẹn hò với người như anh Nam." },
+        ],
+        tip: "ような＋N = ví dụ điển hình (chỉ loại, không phải so sánh trực tiếp)",
+      },
+      {
+        pattern: "〜らしい（典型）",
+        meaning: "Đúng chất... / Rất... (mang đặc tính điển hình của cái gì đó)",
+        structure: "Ｎ＋らしい",
+        examples: [
+          { jp: "<ruby>桜<rt>さくら</rt></ruby>が<ruby>咲<rt>さ</rt></ruby>いて、<ruby>春<rt>はる</rt></ruby>らしい<ruby>季節<rt>きせつ</rt></ruby>になりました。", vn: "Hoa anh đào nở, đã vào mùa xuân đúng nghĩa rồi." },
+          { jp: "<ruby>今日<rt>きょう</rt></ruby>はあなたらしくないね。どうしたの？", vn: "Hôm nay bạn trông không giống bạn thường ngày nhỉ. Có chuyện gì vậy?" },
+        ],
+        tip: "Nらしい = 'rất Nらしい' → mang đặc trưng tiêu biểu. 子供らしい = đúng chất trẻ con",
+      },
+    ]
+  },
+  {
+    id: 4,
+    title: "希望",
+    subtitle: "Hy vọng & mong muốn",
+    color: "#c77dff",
+    cat: ["joken"],
+    grammars: [
+      {
+        pattern: "〜つもりはない",
+        meaning: "Không có ý định... / Không hề muốn...",
+        structure: "Ｖる＋つもりはない",
+        examples: [
+          { jp: "<ruby>自分<rt>じぶん</rt></ruby>の<ruby>意見<rt>いけん</rt></ruby>を<ruby>変<rt>か</rt></ruby>えるつもりはない。", vn: "Tôi không có ý định thay đổi ý kiến của mình." },
+          { jp: "そんなことを<ruby>言<rt>い</rt></ruby>うつもりはなかった。", vn: "Tôi không có ý định nói điều đó." },
+        ],
+        tip: "つもりはない = hoàn toàn KHÔNG CÓ Ý ĐỊNH. Mạnh hơn 〜ないつもり",
+      },
+      {
+        pattern: "〜つもりだった",
+        meaning: "Vốn định... nhưng (không xảy ra như kế hoạch)",
+        structure: "Ｖる／Ｖない＋つもりだった",
+        examples: [
+          { jp: "パーティーには<ruby>行<rt>い</rt></ruby>くつもりでしたが、ちょっと<ruby>用事<rt>ようじ</rt></ruby>ができて……", vn: "Tôi vốn định đi dự tiệc, nhưng có việc bận..." },
+        ],
+        tip: "つもりだった = kế hoạch trong quá khứ NHƯNG không thực hiện được",
+      },
+      {
+        pattern: "〜がる",
+        meaning: "Có vẻ..., tỏ ra... (diễn đạt cảm xúc của người thứ 3)",
+        structure: "Ａい（くない）＋がる ／ Ａな＋がる",
+        examples: [
+          { jp: "<ruby>彼<rt>かれ</rt></ruby>は<ruby>一人<rt>ひとり</rt></ruby>で<ruby>日本<rt>にほん</rt></ruby>に<ruby>来<rt>き</rt></ruby>て、<ruby>寂<rt>さび</rt></ruby>しがっています。", vn: "Anh ấy đến Nhật một mình và có vẻ cô đơn." },
+          { jp: "<ruby>最近<rt>さいきん</rt></ruby>、<ruby>結婚<rt>けっこん</rt></ruby>したがらない<ruby>若者<rt>わかもの</rt></ruby>が<ruby>増<rt>ふ</rt></ruby>えています。", vn: "Gần đây ngày càng nhiều bạn trẻ không muốn kết hôn." },
+        ],
+        tip: "がる chỉ dùng cho NGƯỜI THỨ 3. 'Tôi' dùng です/ます thông thường",
+      },
+    ]
+  },
+  {
+    id: 5,
+    title: "出来事の段階",
+    subtitle: "Giai đoạn của sự việc",
+    color: "#ff9a3c",
+    cat: ["jikan"],
+    grammars: [
+      {
+        pattern: "〜ことになる",
+        meaning: "Đã được quyết định là... / Trở thành... (quyết định không phải do ý chí cá nhân)",
+        structure: "Ｖる／Ｖない＋ことになる／なった",
+        examples: [
+          { jp: "<ruby>来年<rt>らいねん</rt></ruby>から、<ruby>転勤<rt>てんきん</rt></ruby>でタイに<ruby>住<rt>す</rt></ruby>むことになりました。", vn: "Từ năm sau, tôi sẽ chuyển công tác sống ở Thái Lan." },
+        ],
+        tip: "ことになる ≈ 'tự nhiên được quyết định' (khách quan). ことにする = tự mình quyết định (chủ quan)",
+        compare: "ことになる (ngoại lực quyết định) vs ことにする (tự mình quyết định)",
+      },
+      {
+        pattern: "複合動詞: 〜出す・始める・続ける・終わる",
+        meaning: "Động từ kép: đột ngột bắt đầu · bắt đầu · tiếp tục · kết thúc",
+        structure: "Ｖます＋{出す／始める／続ける／終わる}",
+        examples: [
+          { jp: "<ruby>店員<rt>てんいん</rt></ruby>が<ruby>突然<rt>とつぜん</rt></ruby><ruby>歌<rt>うた</rt></ruby>い<ruby>出<rt>だ</rt></ruby>して、びっくりした。", vn: "Nhân viên bỗng nhiên cất tiếng hát, làm tôi giật mình." },
+          { jp: "<ruby>努力<rt>どりょく</rt></ruby>し<ruby>続<rt>つづ</rt></ruby>けると、いつかきっと<ruby>成功<rt>せいこう</rt></ruby>するはずです。", vn: "Nếu tiếp tục nỗ lực, nhất định sẽ thành công." },
+        ],
+        tip: "出す = đột ngột; 始める = bắt đầu (có chủ đích); 続ける = tiếp tục; 終わる = xong",
+      },
+      {
+        pattern: "〜まま",
+        meaning: "Vẫn giữ nguyên trạng thái... (không thay đổi)",
+        structure: "Ｖた／Ｖない ／ Ａい ／ Ａな ／ Ｎの＋まま",
+        examples: [
+          { jp: "<ruby>普段着<rt>ふだんぎ</rt></ruby>を<ruby>着<rt>き</rt></ruby>たまま、<ruby>泳<rt>およ</rt></ruby>ぎました。", vn: "Tôi bơi trong khi vẫn mặc nguyên quần áo bình thường." },
+        ],
+        tip: "まま = 'y nguyên như thế'. Hành động B xảy ra trong khi trạng thái A vẫn còn nguyên.",
+      },
+      {
+        pattern: "〜っぱなし",
+        meaning: "Cứ để mặc... / Bỏ mặc không làm gì (mang nghĩa tiêu cực, trách móc)",
+        structure: "Ｖます＋っぱなし",
+        examples: [
+          { jp: "また<ruby>服<rt>ふく</rt></ruby>が<ruby>脱<rt>ぬ</rt></ruby>ぎっぱなしだよ。ちゃんと<ruby>洗濯機<rt>せんたくき</rt></ruby>に<ruby>入<rt>い</rt></ruby>れなさい。", vn: "Lại vứt quần áo bừa bãi rồi. Bỏ vào máy giặt đi!" },
+          { jp: "<ruby>水<rt>みず</rt></ruby>を<ruby>出<rt>だ</rt></ruby>しっぱなしにしたら<ruby>無駄<rt>むだ</rt></ruby>ですよ。", vn: "Để vòi nước chảy mãi thì lãng phí lắm đấy." },
+        ],
+        tip: "っぱなし luôn mang nghĩa TIÊU CỰC – bỏ mặc cái gì đó không giải quyết",
+      },
+    ]
+  },
+  {
+    id: 6,
+    title: "形が変わったＮ４の文法",
+    subtitle: "Ngữ pháp N4 dạng biến thể",
+    color: "#4d96ff",
+    cat: ["joken"],
+    grammars: [
+      {
+        pattern: "〜てもかまわない",
+        meaning: "...cũng không sao / không có vấn đề gì",
+        structure: "Ｖて／ Ｎで／ Ａいくて／ Ａなで＋も＋かまわない",
+        examples: [
+          { jp: "この<ruby>履歴書<rt>りれきしょ</rt></ruby>は<ruby>日本語<rt>にほんご</rt></ruby>でも、ベトナム<ruby>語<rt>ご</rt></ruby>でもかまいませんよ。", vn: "Hồ sơ xin việc này dùng tiếng Nhật hay tiếng Việt đều được." },
+        ],
+        tip: "かまわない ≈ いい ≈ 大丈夫. Nhưng かまわない lịch sự hơn trong văn viết.",
+      },
+      {
+        pattern: "〜なければ／なくては＋ならない／いけない",
+        meaning: "Phải... / Bắt buộc phải... (nghĩa vụ)",
+        structure: "Ｖない＋{なければ／なくては}＋{ならない／いけない}",
+        examples: [
+          { jp: "<ruby>図書館<rt>としょかん</rt></ruby>から<ruby>借<rt>か</rt></ruby>りた<ruby>本<rt>ほん</rt></ruby>は２<ruby>週間<rt>しゅうかん</rt></ruby>以内に<ruby>返<rt>かえ</rt></ruby>さなくてはなりません。", vn: "Sách mượn từ thư viện phải trả trong vòng 2 tuần." },
+        ],
+        tip: "ならない = nghĩa vụ xã hội/quy tắc; いけない = nghĩa vụ cá nhân/chủ quan",
+      },
+      {
+        pattern: "〜ず（に）",
+        meaning: "Không làm... mà... (thay cho 〜ないで, văn phong cứng hơn)",
+        structure: "Ｖない（形）＋ず（に） → しないで → せず（に）",
+        examples: [
+          { jp: "<ruby>辞書<rt>じしょ</rt></ruby>を<ruby>使<rt>つか</rt></ruby>わずに<ruby>新聞<rt>しんぶん</rt></ruby>が<ruby>読<rt>よ</rt></ruby>めるようになりたい。", vn: "Tôi muốn có thể đọc báo mà không cần dùng từ điển." },
+        ],
+        tip: "〜ずに ≈ 〜ないで. Dùng nhiều trong văn viết trang trọng. Đặc biệt: しない → せず",
+      },
+    ]
+  },
+  {
+    id: 7,
+    title: "出来事の時刻",
+    subtitle: "Thời điểm của sự việc",
+    color: "#ff6b6b",
+    cat: ["jikan"],
+    grammars: [
+      {
+        pattern: "〜うちに（１）",
+        meaning: "Trong khi còn... / Trước khi... (làm Y trước khi trạng thái X thay đổi)",
+        structure: "Ｖる／Ｖている／Ｖない ／ Ａい／Ａな＋うちに",
+        examples: [
+          { jp: "<ruby>雨<rt>あめ</rt></ruby>が<ruby>降<rt>ふ</rt></ruby>らないうちに、<ruby>早<rt>はや</rt></ruby>く<ruby>帰<rt>かえ</rt></ruby>りましょう。", vn: "Hãy về nhanh trước khi trời mưa." },
+          { jp: "まだ<ruby>元気<rt>げんき</rt></ruby>なうちに、<ruby>世界旅行<rt>せかいりょこう</rt></ruby>に<ruby>行<rt>い</rt></ruby>きたいです。", vn: "Tôi muốn đi du lịch thế giới khi còn đang khoẻ." },
+        ],
+        tip: "うちに(1) = hãy làm X trước khi Y thay đổi. Ý thức về giới hạn thời gian!",
+      },
+      {
+        pattern: "〜うちに（２）",
+        meaning: "Trong khi đang... thì bất ngờ... (sự việc Y xảy ra ngoài dự kiến trong quá trình X)",
+        structure: "Ｖる／Ｖている＋うちに",
+        examples: [
+          { jp: "テレビを<ruby>見<rt>み</rt></ruby>ているうちに、<ruby>眠<rt>ねむ</rt></ruby>ってしまった。", vn: "Đang xem tivi thì ngủ quên mất lúc nào không hay." },
+          { jp: "<ruby>毎日<rt>まいにち</rt></ruby><ruby>会<rt>あ</rt></ruby>っているうちに、だんだん<ruby>彼<rt>かれ</rt></ruby>のことが<ruby>気<rt>き</rt></ruby>になってきた。", vn: "Gặp nhau hàng ngày rồi dần dần bắt đầu thích anh ấy lúc không biết." },
+        ],
+        compare: "うちに(1): chủ động làm trước | うちに(2): sự việc tự nhiên xảy ra",
+      },
+      {
+        pattern: "〜間（に）",
+        meaning: "Trong khoảng thời gian... (〜間: suốt trong thời gian đó; 〜間に: xảy ra trong thời gian đó)",
+        structure: "Ｖている／Ｎの＋間（に）",
+        examples: [
+          { jp: "<ruby>飛行機<rt>ひこうき</rt></ruby>に<ruby>乗<rt>の</rt></ruby>っている<ruby>間<rt>あいだ</rt></ruby>、ずっと<ruby>寝<rt>ね</rt></ruby>ていました。", vn: "Trong suốt chuyến bay, tôi ngủ cả thời gian." },
+          { jp: "シャワーを<ruby>浴<rt>あ</rt></ruby>びている<ruby>間<rt>あいだ</rt></ruby>に、<ruby>電話<rt>でんわ</rt></ruby>がありました。", vn: "Trong khi đang tắm thì có điện thoại gọi đến." },
+        ],
+        tip: "間（ずっと）= suốt cả thời gian | 間に = vào một lúc nào đó trong khoảng đó",
+      },
+      {
+        pattern: "〜てからでないと",
+        meaning: "Nếu chưa... thì không thể... (phải làm X xong mới được làm Y)",
+        structure: "Ｖて＋からでないと／からでなければ",
+        examples: [
+          { jp: "<ruby>契約<rt>けいやく</rt></ruby><ruby>内容<rt>ないよう</rt></ruby>をきちんと<ruby>確認<rt>かくにん</rt></ruby>してからでないと、サインすることはできない。", vn: "Nếu chưa xác nhận kỹ nội dung hợp đồng thì không thể ký được." },
+        ],
+        tip: "てからでないと = điều kiện tiên quyết bắt buộc phải hoàn thành trước",
+      },
+    ]
+  },
+  {
+    id: 8,
+    title: "別の物事との関係",
+    subtitle: "Quan hệ với sự vật khác",
+    color: "#6bcb77",
+    cat: ["jikan"],
+    grammars: [
+      {
+        pattern: "〜ついでに",
+        meaning: "Nhân tiện... / Tiện thể... (khi đang làm X, tiện tay làm luôn Y)",
+        structure: "Ｎする＋の ／ Ｖる／た＋ついでに",
+        examples: [
+          { jp: "<ruby>薬局<rt>やっきょく</rt></ruby>へ<ruby>行<rt>い</rt></ruby>ったついでに、トイレットペーパーも<ruby>買<rt>か</rt></ruby>いました。", vn: "Nhân tiện đi hiệu thuốc, tôi mua luôn giấy vệ sinh." },
+        ],
+        tip: "ついでに = 'tiện tay làm thêm'. X là mục đích chính, Y là phụ thêm",
+      },
+      {
+        pattern: "〜によって・によっては",
+        meaning: "Tùy theo... / Khác nhau tùy... (X khác thì Y cũng khác)",
+        structure: "Ｎ＋によって／によっては",
+        examples: [
+          { jp: "このレストランでは<ruby>曜日<rt>ようび</rt></ruby>によってメニューが<ruby>違<rt>ちが</rt></ruby>います。", vn: "Nhà hàng này thực đơn thay đổi tùy theo ngày trong tuần." },
+          { jp: "<ruby>人<rt>ひと</rt></ruby>によっては１<ruby>日<rt>にち</rt></ruby>３<ruby>時間<rt>じかん</rt></ruby>しか<ruby>寝<rt>ね</rt></ruby>ない。", vn: "Có người chỉ ngủ 3 tiếng một ngày." },
+        ],
+        tip: "によって = mọi trường hợp đều khác; によっては = chỉ một số trường hợp nhất định",
+      },
+      {
+        pattern: "〜たびに",
+        meaning: "Mỗi khi... / Mỗi lần... (Y xảy ra đều đặn mỗi khi X)",
+        structure: "Ｎの ／ Ｖる＋たびに",
+        examples: [
+          { jp: "<ruby>父<rt>ちち</rt></ruby>は<ruby>出張<rt>しゅっちょう</rt></ruby>に<ruby>行<rt>い</rt></ruby>くたびに、おみやげをたくさん<ruby>買<rt>か</rt></ruby>ってきてくれる。", vn: "Mỗi lần đi công tác, bố đều mua nhiều quà về cho tôi." },
+        ],
+        tip: "たびに nhấn mạnh tính LẶP ĐI LẶP LẠI. Kết quả Y không phải là hệ quả tất yếu của X.",
+      },
+      {
+        pattern: "〜ば〜ほど",
+        meaning: "Càng... càng... (X tăng thì Y cũng tăng)",
+        structure: "Ｖば＋Ｖる ／ Ａいければ＋Ａい＋ほど",
+        examples: [
+          { jp: "<ruby>頑張<rt>がんば</rt></ruby>れば<ruby>頑張<rt>がんば</rt></ruby>るほど<ruby>給料<rt>きゅうりょう</rt></ruby>がもらえる<ruby>会社<rt>かいしゃ</rt></ruby>で<ruby>働<rt>はたら</rt></ruby>きたいです。", vn: "Tôi muốn làm ở công ty mà càng cố gắng thì lương càng cao." },
+        ],
+        tip: "ば〜ほど = mối quan hệ tỷ lệ thuận. Cả X và Y cùng loại từ!",
+      },
+    ]
+  },
+  {
+    id: 9,
+    title: "比較",
+    subtitle: "So sánh",
+    color: "#c77dff",
+    cat: ["hikaku"],
+    grammars: [
+      {
+        pattern: "〜くらい・ほど（程度）",
+        meaning: "Đến mức... / Khoảng... (so sánh mức độ)",
+        structure: "Ｎ／Ｖ普通形／Ａ＋くらい／ほど",
+        examples: [
+          { jp: "<ruby>先生<rt>せんせい</rt></ruby>の<ruby>宿題<rt>しゅくだい</rt></ruby>はいつも<ruby>山<rt>やま</rt></ruby>ほど<ruby>多<rt>おお</rt></ruby>い。", vn: "Bài tập của thầy lúc nào cũng nhiều như núi." },
+        ],
+        tip: "ほど có thể dùng trong mọi văn cảnh; くらい/ぐらい thường hội thoại hơn",
+      },
+      {
+        pattern: "〜くらい〜はない・ほど〜はない",
+        meaning: "Không có gì... bằng... (cái X là nhất, theo quan điểm chủ quan)",
+        structure: "Ｎ＋くらい／ほど＋〜はない",
+        examples: [
+          { jp: "<ruby>日本語<rt>にほんご</rt></ruby>の<ruby>勉強<rt>べんきょう</rt></ruby>で<ruby>漢字<rt>かんじ</rt></ruby>ぐらい<ruby>嫌<rt>いや</rt></ruby>なものはない。", vn: "Trong việc học tiếng Nhật, không có gì ghét bằng chữ Hán." },
+        ],
+        tip: "Ý kiến chủ quan của người nói. Không thể dùng để nói về số liệu khách quan.",
+      },
+      {
+        pattern: "〜くらいなら",
+        meaning: "Thà... còn hơn... (nếu phải làm X thì thà làm Y còn hơn)",
+        structure: "Ｖる＋くらいなら",
+        examples: [
+          { jp: "デート<ruby>代<rt>だい</rt></ruby>にお<ruby>金<rt>かね</rt></ruby>を<ruby>使<rt>つか</rt></ruby>うくらいなら、ゲームをたくさん<ruby>買<rt>か</rt></ruby>いたい。", vn: "Thà dùng tiền mua nhiều game còn hơn chi cho hẹn hò." },
+        ],
+        tip: "くらいなら = bày tỏ sự không thích với X mạnh mẽ. Y thường là điều bất thường/cực đoan.",
+      },
+      {
+        pattern: "〜に<ruby>限<rt>かぎ</rt></ruby>る",
+        meaning: "...là tốt nhất / Không gì bằng... (lời khuyên chủ quan)",
+        structure: "Ｎ ／ Ｖる／ない＋に限る",
+        examples: [
+          { jp: "<ruby>夏<rt>なつ</rt></ruby>の<ruby>仕事<rt>しごと</rt></ruby><ruby>終<rt>お</rt></ruby>わりはやっぱり<ruby>冷<rt>ひ</rt></ruby>えたビールに<ruby>限<rt>かぎ</rt></ruby>るよね。", vn: "Sau giờ làm việc mùa hè thì không gì tuyệt bằng bia lạnh nhỉ!" },
+        ],
+        tip: "に限る = lời khuyên dứt khoát từ kinh nghiệm cá nhân. Mang tính chủ quan cao.",
+      },
+    ]
+  },
+  {
+    id: 10,
+    title: "物事の二面性",
+    subtitle: "Hai mặt của sự vật",
+    color: "#ff9a3c",
+    cat: ["hikaku"],
+    grammars: [
+      {
+        pattern: "〜に対して",
+        meaning: "Trong khi A thì... / Đối lập với... (A và B có tính chất trái ngược)",
+        structure: "普通形(Ｎだ＋な) ／ Ｎ＋に対して",
+        examples: [
+          { jp: "<ruby>兄<rt>あに</rt></ruby>が<ruby>活発<rt>かっぱつ</rt></ruby>なのに<ruby>対<rt>たい</rt></ruby>して、<ruby>弟<rt>おとうと</rt></ruby>はおとなしい<ruby>性格<rt>せいかく</rt></ruby>だ。", vn: "Trong khi anh trai năng động thì em trai lại có tính cách trầm lặng." },
+        ],
+        tip: "に対して ở đây dùng để ĐỐI LẬP. Khác với に対して nghĩa 'hướng về ai'.",
+      },
+      {
+        pattern: "〜<ruby>反面<rt>はんめん</rt></ruby>",
+        meaning: "Mặt khác... / Nhưng ngược lại... (cùng một chủ thể có cả hai mặt tốt/xấu)",
+        structure: "普通形(Ｎだ＋である) ／ Ａだ＋な＋反面",
+        examples: [
+          { jp: "あの<ruby>店<rt>みせ</rt></ruby>の<ruby>商品<rt>しょうひん</rt></ruby>は、<ruby>安<rt>やす</rt></ruby>い<ruby>反面<rt>はんめん</rt></ruby>、<ruby>質<rt>しつ</rt></ruby>はあまりよくありません。", vn: "Hàng của cửa hàng đó rẻ nhưng ngược lại chất lượng không tốt lắm." },
+        ],
+        tip: "反面 = 'nhưng mặt khác'. X thường tốt, Y thường xấu (hoặc ngược lại)",
+      },
+      {
+        pattern: "〜<ruby>一方<rt>いっぽう</rt></ruby>（で）",
+        meaning: "Trong khi đó... / Mặt khác... (hai sự thật song song tồn tại)",
+        structure: "普通形(Ｎだ＋である) ＋一方（で）",
+        examples: [
+          { jp: "<ruby>日本<rt>にほん</rt></ruby>の<ruby>生活<rt>せいかつ</rt></ruby>は<ruby>楽<rt>たの</rt></ruby>しい<ruby>一方<rt>いっぽう</rt></ruby>で、<ruby>大変<rt>たいへん</rt></ruby>なこともある。", vn: "Cuộc sống ở Nhật vui nhưng mặt khác cũng có những điều vất vả." },
+        ],
+        compare: "反面 = trái ngược nhau (1 tốt 1 xấu); 一方 = hai thực tế song song",
+      },
+      {
+        pattern: "〜というより",
+        meaning: "Đúng hơn là... / Nói chính xác hơn là... (điều chỉnh cách diễn đạt)",
+        structure: "比較したい言葉＋というより",
+        examples: [
+          { jp: "トムさんってかっこいいというよりおしゃれだよね。", vn: "Tom ấy đúng hơn là sành điệu chứ không phải đẹp trai nhỉ." },
+        ],
+        tip: "というより = 'không hẳn là X, đúng hơn là Y'. Dùng để nói chính xác hơn.",
+      },
+    ]
+  },
+  {
+    id: 11,
+    title: "原因・きっかけ",
+    subtitle: "Nguyên nhân & cơ hội",
+    color: "#4d96ff",
+    cat: ["joken"],
+    grammars: [
+      {
+        pattern: "〜によって（原因）",
+        meaning: "Do... mà... / Vì... (nguyên nhân gây ra thay đổi, văn viết trang trọng)",
+        structure: "Ｎ＋によって",
+        examples: [
+          { jp: "<ruby>大雨<rt>おおあめ</rt></ruby>によって、サッカーの<ruby>試合<rt>しあい</rt></ruby>が<ruby>中止<rt>ちゅうし</rt></ruby>されてしまった。", vn: "Do mưa lớn nên trận bóng đá đã bị hủy." },
+        ],
+        tip: "によって(nguyên nhân) thường dùng cho thiên tai, sự cố lớn. Văn viết trang trọng.",
+      },
+      {
+        pattern: "〜おかげ ／ 〜せい",
+        meaning: "おかげ: Nhờ... (kết quả tốt) ／ せい: Tại vì... (kết quả xấu)",
+        structure: "Ｎの ／ Ｖ普通形・Ａ普通形＋{おかげで／せいで}",
+        examples: [
+          { jp: "Ｎ３に<ruby>合格<rt>ごうかく</rt></ruby>できたのは<ruby>先生<rt>せんせい</rt></ruby>のおかげです。", vn: "Tôi thi đậu N3 là nhờ thầy/cô." },
+          { jp: "さっきコーヒーを<ruby>飲<rt>の</rt></ruby>んだせいで、<ruby>全然<rt>ぜんぜん</rt></ruby><ruby>眠<rt>ねむ</rt></ruby>れない。", vn: "Tại vừa uống cà phê nên không ngủ được chút nào." },
+        ],
+        tip: "⚠️ おかげ có thể dùng với kết quả xấu nhưng mang nghĩa mỉa mai: 'Nhờ ơn anh...'",
+      },
+      {
+        pattern: "〜のだから",
+        meaning: "Vì đã... nên... (nhắc lại nguyên nhân người nghe đã biết để bày tỏ ý kiến mạnh)",
+        structure: "普通形(Ｎだ＋な／Ａだ＋な)＋のだから",
+        examples: [
+          { jp: "もうすぐテストなんだから、<ruby>一生懸命<rt>いっしょうけんめい</rt></ruby><ruby>勉強<rt>べんきょう</rt></ruby>しないと。", vn: "Sắp thi rồi nên phải học hành nghiêm túc vào!" },
+        ],
+        tip: "のだから = nhắc nguyên nhân MÀ NGƯỜI NGHE ĐÃ BIẾT, rồi đưa ra yêu cầu/đánh giá mạnh",
+      },
+    ]
+  },
+  {
+    id: 12,
+    title: "仮定・条件",
+    subtitle: "Giả định & điều kiện",
+    color: "#ff6b6b",
+    cat: ["joken"],
+    grammars: [
+      {
+        pattern: "〜（の）なら",
+        meaning: "Nếu... thì... (lặp lại thông tin người kia vừa nói rồi đưa ra ý kiến)",
+        structure: "普通形 ／ Ｎだ＋である＋なら",
+        examples: [
+          { jp: "その<ruby>本<rt>ほん</rt></ruby>、もう<ruby>読<rt>よ</rt></ruby>まないんですか。<ruby>読<rt>よ</rt></ruby>まないなら<ruby>私<rt>わたし</rt></ruby>にくださいね。", vn: "Bạn không đọc quyển sách đó nữa à? Nếu vậy cho tôi đi nhé." },
+        ],
+        tip: "なら khác たら/ば: なら dựa trên thông tin NHẬN ĐƯỢC từ người kia để đưa ý kiến",
+      },
+      {
+        pattern: "〜ては…・〜（の）では…",
+        meaning: "Nếu... thì (kết quả xấu)... / Như thế này thì...",
+        structure: "Ｖて／Ａいくて／Ｎで＋は",
+        examples: [
+          { jp: "<ruby>毎日<rt>まいにち</rt></ruby>たばこをよく<ruby>吸<rt>す</rt></ruby>っては、<ruby>体<rt>からだ</rt></ruby>をこわしてしまうよ。", vn: "Nếu ngày nào cũng hút thuốc nhiều thế thì hỏng người đấy." },
+        ],
+        tip: "ては／では luôn dẫn đến kết quả TIÊU CỰC hoặc KHÔNG THỂ CHẤP NHẬN",
+      },
+      {
+        pattern: "〜さえ〜ば",
+        meaning: "Chỉ cần... là đủ... (điều kiện tối thiểu để đạt được Y)",
+        structure: "Ｎ＋さえ＋Ｖば／Ａければ",
+        examples: [
+          { jp: "インスタントラーメンはお<ruby>湯<rt>ゆ</rt></ruby>さえあれば<ruby>食<rt>た</rt></ruby>べられるから、とても<ruby>便利<rt>べんり</rt></ruby>だ。", vn: "Mì gói chỉ cần có nước sôi là ăn được nên rất tiện." },
+          { jp: "<ruby>体<rt>からだ</rt></ruby>さえ<ruby>元気<rt>げんき</rt></ruby>なら、<ruby>他<rt>ほか</rt></ruby>には<ruby>何<rt>なに</rt></ruby>もほしくない。", vn: "Chỉ cần sức khỏe là được, không cần gì khác nữa." },
+        ],
+        tip: "さえ〜ば = điều kiện TỐI THIỂU, ĐỦ để kết quả xảy ra. 'Chỉ cần X là đủ'",
+      },
+      {
+        pattern: "〜ば／たら／なら…のに",
+        meaning: "Giá mà... thì đã... (tiếc nuối vì thực tế trái với điều muốn)",
+        structure: "条件形／Ｖた＋ら＋のに",
+        examples: [
+          { jp: "お<ruby>金<rt>かね</rt></ruby>が<ruby>足<rt>た</rt></ruby>りればハワイに<ruby>行<rt>い</rt></ruby>くんだけど……", vn: "Giá mà đủ tiền thì đã đi Hawaii rồi..." },
+          { jp: "そのことを<ruby>言<rt>い</rt></ruby>わなければよかったのに……", vn: "Giá mà hồi đó không nói điều đó thì tốt hơn..." },
+        ],
+        tip: "〜のに ở cuối = tiếc nuối, thất vọng. Thực tế NGƯỢC với điều muốn.",
+      },
+    ]
+  },
+  {
+    id: 13,
+    title: "情報の伝聞",
+    subtitle: "Truyền đạt thông tin",
+    color: "#ffd93d",
+    cat: ["denbun"],
+    grammars: [
+      {
+        pattern: "〜ということだ・とのことだ",
+        meaning: "Nghe nói... / Theo... thì... (truyền đạt thông tin từ nguồn khác, trang trọng)",
+        structure: "普通形＋ということだ／とのことだ",
+        examples: [
+          { jp: "<ruby>会社<rt>かいしゃ</rt></ruby>の<ruby>知<rt>し</rt></ruby>らせによると、<ruby>会議<rt>かいぎ</rt></ruby>は<ruby>明日<rt>あした</rt></ruby>の<ruby>朝<rt>あさ</rt></ruby>８<ruby>時<rt>じ</rt></ruby>からだということだ。", vn: "Theo thông báo của công ty, cuộc họp bắt đầu lúc 8 giờ sáng mai." },
+        ],
+        tip: "とのことだ thường dùng trong thư từ/văn bản trang trọng hơn ということだ",
+      },
+      {
+        pattern: "〜と<ruby>言<rt>い</rt></ruby>われている",
+        meaning: "Được cho là... / Người ta nói rằng... (thông tin nhiều người biết)",
+        structure: "普通形＋と言われている",
+        examples: [
+          { jp: "トマトは<ruby>目<rt>め</rt></ruby>に<ruby>役<rt>やく</rt></ruby>に<ruby>立<rt>た</rt></ruby>つと<ruby>言<rt>い</rt></ruby>われている。", vn: "Cà chua được cho là tốt cho mắt." },
+        ],
+        tip: "と言われている = kiến thức chung được nhiều người tin tưởng. Không rõ nguồn cụ thể.",
+      },
+      {
+        pattern: "〜とか",
+        meaning: "Nghe nói... / Hình như... (thông tin nghe được, không chắc chắn)",
+        structure: "普通形＋とか",
+        examples: [
+          { jp: "<ruby>駅<rt>えき</rt></ruby>の<ruby>前<rt>まえ</rt></ruby>のレストランは<ruby>寿司<rt>すし</rt></ruby>が<ruby>本当<rt>ほんとう</rt></ruby>においしいとか。", vn: "Nghe nói sushi ở nhà hàng trước nhà ga ngon lắm." },
+        ],
+        tip: "とか = thông tin nghe lỏm, tin đồn. Độ tin cậy thấp nhất trong nhóm truyền đạt.",
+      },
+      {
+        pattern: "〜って（伝聞）",
+        meaning: "...nói là... / Nghe nói... (khẩu ngữ, nói chuyện thân mật)",
+        structure: "普通形＋って",
+        examples: [
+          { jp: "<ruby>先生<rt>せんせい</rt></ruby>は<ruby>明日<rt>あした</rt></ruby>レポートを<ruby>出<rt>だ</rt></ruby>しなさいって。", vn: "Thầy nói mai nộp bài luận đó." },
+        ],
+        tip: "って = と言った (khẩu ngữ). Rất tự nhiên trong hội thoại hằng ngày",
+      },
+    ]
+  },
+  {
+    id: 14,
+    title: "肯定・否定",
+    subtitle: "Khẳng định & phủ định",
+    color: "#4d96ff",
+    cat: ["hikaku"],
+    grammars: [
+      {
+        pattern: "〜はずがない・わけがない",
+        meaning: "Không thể nào... (phủ định tuyệt đối theo suy luận logic)",
+        structure: "普通形(Ｎだ＋の／な)＋はずがない／わけがない",
+        examples: [
+          { jp: "<ruby>入学試験<rt>にゅうがくしけん</rt></ruby>なので、<ruby>簡単<rt>かんたん</rt></ruby>なわけがない。", vn: "Đây là kỳ thi đầu vào nên không thể dễ được." },
+        ],
+        tip: "はずがない = không thể (logic/kỳ vọng); わけがない = không thể (lý do hiển nhiên). Gần nghĩa.",
+      },
+      {
+        pattern: "〜とは<ruby>限<rt>かぎ</rt></ruby>らない",
+        meaning: "Không nhất thiết... / Chưa chắc... (không thể khẳng định tuyệt đối)",
+        structure: "普通形(だ)＋とは限らない",
+        examples: [
+          { jp: "<ruby>雑誌<rt>ざっし</rt></ruby>や<ruby>新聞<rt>しんぶん</rt></ruby>に<ruby>書<rt>か</rt></ruby>いてあることがいつも<ruby>本当<rt>ほんとう</rt></ruby>だとは<ruby>限<rt>かぎ</rt></ruby>らない。", vn: "Những gì được viết trên tạp chí hay báo chí không nhất thiết lúc nào cũng đúng." },
+        ],
+        tip: "とは限らない = 'không nhất thiết', phủ nhận suy nghĩ có vẻ đúng nhưng thực ra không tuyệt đối",
+      },
+      {
+        pattern: "〜わけではない",
+        meaning: "Không phải là... / Không có nghĩa là... (giải thích rõ ý không bị hiểu lầm)",
+        structure: "普通形(Ｎだ＋の／な)＋わけではない",
+        examples: [
+          { jp: "この<ruby>仕事<rt>しごと</rt></ruby>が<ruby>好<rt>す</rt></ruby>きというわけじゃない。<ruby>彼<rt>かれ</rt></ruby>と<ruby>一緒<rt>いっしょ</rt></ruby>に<ruby>仕事<rt>しごと</rt></ruby>ができていいんだ。", vn: "Không phải là tôi thích công việc này đâu. Là vì được làm cùng anh ấy thôi." },
+        ],
+        tip: "わけではない = đính chính lại suy luận của người nghe. 'Không phải ý đó đâu'",
+      },
+      {
+        pattern: "〜ないことはない",
+        meaning: "Không phải là không... (thừa nhận khả năng, nhưng khó/có điều kiện)",
+        structure: "Ｖない／Ａいくない＋ことはない",
+        examples: [
+          { jp: "<ruby>家<rt>いえ</rt></ruby>から<ruby>図書館<rt>としょかん</rt></ruby>まで<ruby>自転車<rt>じてんしゃ</rt></ruby>で<ruby>行<rt>い</rt></ruby>けないことはないが、<ruby>時間<rt>じかん</rt></ruby>がかかるよ。", vn: "Không phải là không thể đạp xe từ nhà đến thư viện, nhưng mất thời gian đó." },
+        ],
+        tip: "ないことはない = 'không hẳn là không được', thừa nhận có thể nhưng kèm điều kiện/hạn chế",
+      },
+    ]
+  },
+  {
+    id: 17,
+    title: "意向",
+    subtitle: "Ý định & quyết tâm",
+    color: "#6bcb77",
+    cat: ["joken"],
+    grammars: [
+      {
+        pattern: "〜ことにする・ことにしている",
+        meaning: "Quyết định sẽ... / Có quy tắc bản thân là... (quyết định có chủ đích)",
+        structure: "Ｖる／ている／ない＋ことにする／ことにしている",
+        examples: [
+          { jp: "<ruby>今日<rt>きょう</rt></ruby>は<ruby>仕事<rt>しごと</rt></ruby>が<ruby>終<rt>お</rt></ruby>わったら、<ruby>飲<rt>の</rt></ruby>み<ruby>会<rt>かい</rt></ruby>には<ruby>参加<rt>さんか</rt></ruby>しないことにする。", vn: "Hôm nay sau giờ làm tôi quyết định không tham gia tiệc nhậu." },
+          { jp: "<ruby>家<rt>いえ</rt></ruby>では<ruby>仕事<rt>しごと</rt></ruby>の<ruby>話<rt>はなし</rt></ruby>をしないことにしている。", vn: "Tôi có quy tắc là không nói chuyện công việc ở nhà." },
+        ],
+        compare: "ことにする = vừa quyết định; ことにした = đã quyết định trước đó; ことにしている = thói quen/quy tắc",
+      },
+      {
+        pattern: "〜（よ）うとする",
+        meaning: "Đang sắp... / Cố gắng... (ngay trước khi làm, hoặc nỗ lực)",
+        structure: "意向形（Ｖよう）＋とする",
+        examples: [
+          { jp: "<ruby>帰<rt>かえ</rt></ruby>ろうとしたら、<ruby>上司<rt>じょうし</rt></ruby>に<ruby>呼<rt>よ</rt></ruby>ばれてしまいました。", vn: "Vừa định về thì bị sếp gọi lại." },
+        ],
+        tip: "うとする = đang chuẩn bị làm thì bị ngắt / đang cố làm",
+      },
+      {
+        pattern: "〜つもりだ",
+        meaning: "Nghĩ là mình... (nhưng thực tế không đúng vậy)",
+        structure: "普通形(Ｎだ＋の／Ａだ＋な)＋つもりだ",
+        examples: [
+          { jp: "<ruby>彼女<rt>かのじょ</rt></ruby>は<ruby>頭<rt>あたま</rt></ruby>がいいつもりだけど、<ruby>同僚<rt>どうりょう</rt></ruby>の<ruby>評価<rt>ひょうか</rt></ruby>は<ruby>低<rt>ひく</rt></ruby>い。", vn: "Cô ấy tưởng mình thông minh nhưng đồng nghiệp đánh giá thấp." },
+        ],
+        tip: "つもりだ (hiện tại) = chủ thể TỰ NGHĨ VẬY nhưng thực tế KHÁC. Dùng cho người thứ 3.",
+      },
+    ]
+  },
+  {
+    id: 18,
+    title: "敬語",
+    subtitle: "Kính ngữ",
+    color: "#ff9a3c",
+    cat: ["keigo"],
+    grammars: [
+      {
+        pattern: "尊敬語（そんけいご）",
+        meaning: "Tôn kính ngữ – diễn đạt hành động của người cấp trên",
+        structure: "お＋Ｖます＋になる ／ ご＋Ｎ＋になる ／ Ｖ（れ）られる",
+        examples: [
+          { jp: "<ruby>先生<rt>せんせい</rt></ruby>はもう<ruby>資料<rt>しりょう</rt></ruby>をお<ruby>読<rt>よ</rt></ruby>みになりましたか。", vn: "Thầy/cô đã đọc tài liệu chưa ạ?" },
+          { jp: "カレーを<ruby>召<rt>め</rt></ruby>し<ruby>上<rt>あ</rt></ruby>がりませんか。", vn: "Ngài có dùng cà ri không ạ?" },
+        ],
+        tip: "Động từ đặc biệt: いる→いらっしゃる; 言う→おっしゃる; 食べる/飲む→召し上がる; 来る/行く/いる→いらっしゃる",
+      },
+      {
+        pattern: "謙譲語（けんじょうご）１",
+        meaning: "Khiêm nhường ngữ – diễn đạt hành động của bản thân liên quan đến người trên",
+        structure: "お＋Ｖます＋する ／ ご＋Ｎ＋する",
+        examples: [
+          { jp: "<ruby>部長<rt>ぶちょう</rt></ruby>に<ruby>製品<rt>せいひん</rt></ruby>をご<ruby>説明<rt>せつめい</rt></ruby>します。", vn: "Tôi xin giải thích sản phẩm cho trưởng phòng." },
+          { jp: "<ruby>会議<rt>かいぎ</rt></ruby>の<ruby>後<rt>あと</rt></ruby>で、お<ruby>目<rt>め</rt></ruby>にかかりたいです。", vn: "Sau cuộc họp tôi muốn được gặp ngài." },
+        ],
+        tip: "Động từ đặc biệt: 言う→申す; 知っている→存じる; 行く/来る→参る; 食べる/飲む→いただく",
+      },
+    ]
+  },
+  {
+    id: 21,
+    title: "「わけ」",
+    subtitle: "Lý do & không thể không",
+    color: "#c77dff",
+    cat: ["joken"],
+    grammars: [
+      {
+        pattern: "〜わけだ・というわけだ",
+        meaning: "Thảo nào... / Vậy là... (kết luận logic từ nguyên nhân đã biết)",
+        structure: "普通形(Ｎだ＋な／の)＋わけだ",
+        examples: [
+          { jp: "<ruby>彼<rt>かれ</rt></ruby>は<ruby>日本<rt>にほん</rt></ruby>に<ruby>来<rt>き</rt></ruby>てもう20<ruby>年<rt>ねん</rt></ruby>なんだ。それで<ruby>日本語<rt>にほんご</rt></ruby>がペラペラなわけだね。", vn: "Anh ấy đã ở Nhật 20 năm rồi. Thảo nào tiếng Nhật thành thạo như vậy!" },
+        ],
+        tip: "わけだ = 'thảo nào, ra vậy'. Kết luận từ nguyên nhân. Khoảnh khắc 'aha!'",
+      },
+      {
+        pattern: "〜わけにはいかない",
+        meaning: "Không thể... (do tình huống xã hội/đạo đức, không thể làm được)",
+        structure: "Ｖる＋わけにはいかない",
+        examples: [
+          { jp: "<ruby>明日<rt>あした</rt></ruby>は<ruby>大事<rt>だいじ</rt></ruby>な<ruby>会議<rt>かいぎ</rt></ruby>があるので、<ruby>休<rt>やす</rt></ruby>むわけにはいかない。", vn: "Ngày mai có cuộc họp quan trọng nên không thể nghỉ được." },
+        ],
+        tip: "わけにはいかない = không thể vì lý do ĐẠO ĐỨC/XÃ HỘI, dù muốn cũng không được.",
+      },
+      {
+        pattern: "〜ないわけにはいかない",
+        meaning: "Không thể không... / Buộc phải... (do hoàn cảnh bắt buộc phải làm)",
+        structure: "Ｖない＋わけにはいかない",
+        examples: [
+          { jp: "<ruby>行<rt>い</rt></ruby>くと<ruby>約束<rt>やくそく</rt></ruby>したから、<ruby>行<rt>い</rt></ruby>かないわけにはいきません。", vn: "Đã hứa sẽ đi rồi nên không thể không đi được." },
+        ],
+        tip: "ないわけにはいかない = không thể không làm. Đảo ngược của わけにはいかない.",
+      },
+    ]
+  },
+  {
+    id: 22,
+    title: "「ばかり」",
+    subtitle: "Chỉ toàn...",
+    color: "#ff6b6b",
+    cat: ["jiken"],
+    grammars: [
+      {
+        pattern: "〜ばかり",
+        meaning: "Toàn... / Chỉ... (chỉ làm một việc, không làm gì khác, thường có hàm ý phê phán)",
+        structure: "Ｎ(＋助詞)／Ｖる／ている＋ばかり",
+        examples: [
+          { jp: "トムさんは<ruby>文句<rt>もんく</rt></ruby>ばかり<ruby>言<rt>い</rt></ruby>って、<ruby>全然<rt>ぜんぜん</rt></ruby><ruby>宿題<rt>しゅくだい</rt></ruby>をしてこない。", vn: "Tom chỉ biết kêu ca, không bao giờ chịu làm bài tập." },
+        ],
+        tip: "ばかり ≈ だけ nhưng có thêm cảm giác phê phán, không hài lòng",
+      },
+      {
+        pattern: "〜ばかりだ（１）",
+        meaning: "Ngày càng... (một chiều hướng xấu dần không dừng)",
+        structure: "Ｖる＋ばかりだ",
+        examples: [
+          { jp: "<ruby>不景気<rt>ふけいき</rt></ruby>でますます<ruby>生活<rt>せいかつ</rt></ruby>は<ruby>苦<rt>くる</rt></ruby>しくなるばかりだ。", vn: "Do kinh tế trì trệ, cuộc sống ngày càng khó khăn hơn." },
+        ],
+        tip: "ばかりだ(1) = xu hướng một chiều, thường TIÊU CỰC. 忘れるばかり = cứ quên dần đi.",
+      },
+      {
+        pattern: "〜ばかりだ（２）",
+        meaning: "Chỉ còn việc... / Xong rồi, chỉ cần... (mọi chuẩn bị đã hoàn tất)",
+        structure: "Ｖる＋ばかりだ",
+        examples: [
+          { jp: "<ruby>荷物<rt>にもつ</rt></ruby>もみんな<ruby>用意<rt>ようい</rt></ruby>して、もう<ruby>出<rt>で</rt></ruby>かけるばかりです。", vn: "Hành lý đã chuẩn bị xong hết rồi, giờ chỉ cần ra đi là được." },
+        ],
+        tip: "ばかりだ(2) = tất cả đã chuẩn bị xong, còn mỗi việc X là xong. Nghĩa TÍCH CỰC.",
+      },
+    ]
+  },
+  {
+    id: 25,
+    title: "動詞や名詞の広げ",
+    subtitle: "Mở rộng động từ & danh từ",
+    color: "#4d96ff",
+    cat: ["joken"],
+    grammars: [
+      {
+        pattern: "〜かける・かけだ",
+        meaning: "Đang làm dở... / Chưa làm xong... (hành động chưa hoàn thành)",
+        structure: "Ｖます＋かける／かけだ",
+        examples: [
+          { jp: "<ruby>彼<rt>かれ</rt></ruby>は<ruby>何<rt>なに</rt></ruby>か<ruby>言<rt>い</rt></ruby>いかけて、だまってしまった。", vn: "Anh ấy định nói gì đó nhưng rồi lại im lặng." },
+        ],
+        tip: "かける = mới bắt đầu nhưng chưa kết thúc. 食べかけ = đang ăn dở",
+      },
+      {
+        pattern: "〜きる・きれない",
+        meaning: "Làm hết... / Làm trọn vẹn... (không thể làm hết/hết hoàn toàn)",
+        structure: "Ｖます＋きる／きれない",
+        examples: [
+          { jp: "<ruby>数<rt>かぞ</rt></ruby>えきれないほどの<ruby>星<rt>ほし</rt></ruby>が<ruby>空<rt>そら</rt></ruby>に<ruby>広<rt>ひろ</rt></ruby>がっている。", vn: "Vô số ngôi sao trải dài trên bầu trời." },
+        ],
+        tip: "きる = làm đến cùng; きれない = quá nhiều không làm hết được",
+      },
+      {
+        pattern: "〜がちだ",
+        meaning: "Hay bị... / Có xu hướng... (hành động/trạng thái xảy ra thường xuyên hơn mức mong muốn)",
+        structure: "Ｎ／Ｖます＋がちだ",
+        examples: [
+          { jp: "<ruby>最近<rt>さいきん</rt></ruby>、<ruby>夜<rt>よる</rt></ruby><ruby>歯磨<rt>はみが</rt></ruby>きをするのを<ruby>忘<rt>わす</rt></ruby>れがちなので、<ruby>忘<rt>わす</rt></ruby>れないようにしたい。", vn: "Gần đây hay quên đánh răng buổi tối, muốn cải thiện." },
+        ],
+        tip: "がちだ = 'hay bị', xu hướng không tốt xảy ra thường xuyên",
+      },
+      {
+        pattern: "〜だらけ",
+        meaning: "Đầy... / Toàn... (nhiều thứ gì đó không mong muốn)",
+        structure: "Ｎ＋だらけ",
+        examples: [
+          { jp: "こんな<ruby>泥<rt>どろ</rt></ruby>だらけの<ruby>靴<rt>くつ</rt></ruby>ではお<ruby>店<rt>みせ</rt></ruby>に<ruby>入<rt>い</rt></ruby>れないよ。", vn: "Đôi giày đầy bùn thế này không vào cửa hàng được đâu." },
+        ],
+        tip: "だらけ = 'đầy những thứ không muốn'. 間違いだらけ = đầy lỗi, 血だらけ = đầy máu",
+      },
+    ]
+  },
+  {
+    id: 15, title: "〜てほしい・依頼表現", color: "#ff6b6b",
+    grammars: [
+      {
+        pattern: "〜てほしい",
+        meaning: "Muốn ai đó làm gì... (mong cầu người khác thực hiện hành động)",
+        structure: "Ｖて＋ほしい　／　Ｖないで＋ほしい",
+        examples: [
+          { jp: "<ruby>毎日<rt>まいにち</rt></ruby><ruby>野菜<rt>やさい</rt></ruby>を<ruby>食<rt>た</rt></ruby>べてほしい。", vn: "Tôi muốn bạn ăn rau mỗi ngày." },
+          { jp: "<ruby>授業中<rt>じゅぎょうちゅう</rt></ruby>にスマホを<ruby>使<rt>つか</rt></ruby>わないでほしい。", vn: "Tôi muốn bạn đừng dùng điện thoại trong giờ học." },
+        ],
+        tip: "てほしい = 'muốn ai đó làm'. Chủ thể là người nói, đối tượng là người nghe hoặc người thứ ba.",
+      },
+      {
+        pattern: "〜させてください",
+        meaning: "Cho phép tôi làm... (xin phép thực hiện hành động)",
+        structure: "Ｖ（さ）せて＋ください",
+        examples: [
+          { jp: "ちょっと<ruby>休<rt>やす</rt></ruby>ませてください。", vn: "Cho tôi nghỉ một chút." },
+          { jp: "<ruby>説明<rt>せつめい</rt></ruby>させてください。", vn: "Cho tôi được giải thích." },
+        ],
+        tip: "させてください = lịch sự hơn させて. Dùng khi xin phép cấp trên hoặc người lạ.",
+      },
+      {
+        pattern: "〜させていただけませんか",
+        meaning: "Tôi có thể được phép làm... không? (xin phép rất lịch sự)",
+        structure: "Ｖ（さ）せて＋いただけませんか",
+        examples: [
+          { jp: "<ruby>資料<rt>しりょう</rt></ruby>を<ruby>確認<rt>かくにん</rt></ruby>させていただけませんか。", vn: "Tôi có thể xem tài liệu không ạ?" },
+        ],
+        tip: "Mức lịch sự cao nhất khi xin phép. させてください → させていただけませんか (lịch sự hơn).",
+        compare: "させてください < させていただけませんか (lịch sự hơn)",
+      },
+      {
+        pattern: "〜ていただけませんか",
+        meaning: "Bạn có thể làm... cho tôi không? (nhờ vả lịch sự)",
+        structure: "Ｖて＋いただけませんか",
+        examples: [
+          { jp: "もう<ruby>一度<rt>いちど</rt></ruby><ruby>説明<rt>せつめい</rt></ruby>していただけませんか。", vn: "Bạn có thể giải thích lại một lần nữa không ạ?" },
+        ],
+        tip: "いただけませんか = nhờ vả lịch sự. So sánh: てください < てもらえますか < ていただけませんか",
+      },
+    ]
+  },
+  {
+    id: 16, title: "目的・目標表現", color: "#ffd93d",
+    grammars: [
+      {
+        pattern: "〜ために（目的）",
+        meaning: "Để... / Nhằm mục đích... (diễn tả mục đích hành động)",
+        structure: "Ｖ辞書形／Ｎの＋ために",
+        examples: [
+          { jp: "<ruby>健康<rt>けんこう</rt></ruby>のために、<ruby>毎朝<rt>まいあさ</rt></ruby>ジョギングをしている。", vn: "Để giữ sức khỏe, tôi chạy bộ mỗi sáng." },
+          { jp: "JLPT N3に<ruby>合格<rt>ごうかく</rt></ruby>するために、<ruby>毎日<rt>まいにち</rt></ruby><ruby>勉強<rt>べんきょう</rt></ruby>している。", vn: "Để đỗ JLPT N3, tôi học mỗi ngày." },
+        ],
+        tip: "ために = mục đích có chủ ý. Động từ trước ために phải là từ điển hình (không dùng ている/た).",
+        compare: "ために（mục đích rõ ràng） vs ように（mục tiêu trừu tượng hơn）",
+      },
+      {
+        pattern: "〜ように（目標）",
+        meaning: "Để có thể... / Để trở nên... (diễn tả mục tiêu hoặc mong muốn)",
+        structure: "Ｖ辞書形／Ｖない＋ように",
+        examples: [
+          { jp: "<ruby>忘<rt>わす</rt></ruby>れないように、メモしておいた。", vn: "Để không quên, tôi đã ghi chú lại." },
+          { jp: "<ruby>日本語<rt>にほんご</rt></ruby>が<ruby>上手<rt>じょうず</rt></ruby>になるように、<ruby>毎日<rt>まいにち</rt></ruby>れんしゅうする。", vn: "Để giỏi tiếng Nhật hơn, tôi luyện tập mỗi ngày." },
+        ],
+        tip: "ように dùng với trạng thái hoặc khả năng (なる、できる、わかる). ために dùng với hành động có chủ ý.",
+      },
+      {
+        pattern: "〜ようにする",
+        meaning: "Cố gắng... / Tạo thói quen... (nỗ lực thực hiện hành động)",
+        structure: "Ｖ辞書形／Ｖない＋ようにする",
+        examples: [
+          { jp: "<ruby>毎日<rt>まいにち</rt></ruby><ruby>新聞<rt>しんぶん</rt></ruby>を<ruby>読<rt>よ</rt></ruby>むようにしている。", vn: "Tôi cố gắng đọc báo mỗi ngày." },
+          { jp: "お<ruby>酒<rt>さけ</rt></ruby>を<ruby>飲<rt>の</rt></ruby>みすぎないようにしています。", vn: "Tôi cố gắng không uống rượu quá nhiều." },
+        ],
+        tip: "ようにする = cố gắng/tạo thói quen. ようにしている = đang duy trì thói quen đó.",
+      },
+      {
+        pattern: "〜ようになる",
+        meaning: "Trở nên có thể... / Dần dần... (diễn tả sự thay đổi trạng thái)",
+        structure: "Ｖ辞書形／Ｖない＋ようになる",
+        examples: [
+          { jp: "れんしゅうして、<ruby>漢字<rt>かんじ</rt></ruby>が<ruby>読<rt>よ</rt></ruby>めるようになった。", vn: "Sau khi luyện tập, tôi đã có thể đọc được kanji." },
+          { jp: "<ruby>子<rt>こ</rt></ruby>どもが<ruby>野菜<rt>やさい</rt></ruby>を<ruby>食<rt>た</rt></ruby>べるようになった。", vn: "Đứa trẻ đã bắt đầu ăn rau." },
+        ],
+        tip: "ようになる = thay đổi từ trạng thái cũ sang mới. Nhấn mạnh sự biến chuyển theo thời gian.",
+      },
+    ]
+  },
+  {
+    id: 19, title: "てくる・ていく・変化", color: "#6bcb77",
+    grammars: [
+      {
+        pattern: "〜てくる（変化）",
+        meaning: "... đã/đang (thay đổi đến hiện tại) / Dần dần trở nên... (biến đổi hướng về phía hiện tại)",
+        structure: "Ｖて＋くる",
+        examples: [
+          { jp: "<ruby>最近<rt>さいきん</rt></ruby>、<ruby>寒<rt>さむ</rt></ruby>くなってきた。", vn: "Dạo này trời đã trở nên lạnh hơn." },
+          { jp: "<ruby>日本語<rt>にほんご</rt></ruby>が<ruby>少<rt>すこ</rt></ruby>しずつ<ruby>上手<rt>じょうず</rt></ruby>になってきた。", vn: "Tiếng Nhật của tôi dần dần khá hơn." },
+        ],
+        tip: "てくる = biến đổi từ quá khứ đến hiện tại (hướng về người nói). Ví dụ: 暖かくなってきた (đã ấm lên).",
+      },
+      {
+        pattern: "〜ていく（変化）",
+        meaning: "... sẽ dần dần... / Tiếp tục... (biến đổi hướng về phía tương lai)",
+        structure: "Ｖて＋いく",
+        examples: [
+          { jp: "<ruby>気温<rt>きおん</rt></ruby>はこれからさらに<ruby>上<rt>あ</rt></ruby>がっていくだろう。", vn: "Nhiệt độ sẽ còn tiếp tục tăng từ nay." },
+          { jp: "<ruby>人口<rt>じんこう</rt></ruby>が<ruby>減<rt>へ</rt></ruby>っていく<ruby>問題<rt>もんだい</rt></ruby>は<ruby>深刻<rt>しんこく</rt></ruby>だ。", vn: "Vấn đề dân số giảm dần là nghiêm trọng." },
+        ],
+        tip: "ていく = biến đổi từ hiện tại ra tương lai (rời xa người nói). てくる ↔ ていく là cặp đối lập.",
+      },
+      {
+        pattern: "〜とたん（に）",
+        meaning: "Ngay khi vừa... thì... (hành động xảy ra ngay lập tức sau hành động trước)",
+        structure: "Ｖた＋とたん（に）",
+        examples: [
+          { jp: "<ruby>外<rt>そと</rt></ruby>に<ruby>出<rt>で</rt></ruby>たとたん、<ruby>雨<rt>あめ</rt></ruby>が<ruby>降<rt>ふ</rt></ruby>り<ruby>始<rt>はじ</rt></ruby>めた。", vn: "Vừa bước ra ngoài thì trời bắt đầu mưa." },
+        ],
+        tip: "とたん = ngay lập tức sau đó. Vế sau thường là sự kiện bất ngờ, ngoài dự đoán. Không dùng cho hành động có chủ ý.",
+        compare: "〜たらすぐ（ngay sau khi, chủ động） vs 〜とたん（ngay lập tức, thường bất ngờ）",
+      },
+      {
+        pattern: "〜やすい・〜にくい",
+        meaning: "Dễ... / Khó... (tính chất của hành động)",
+        structure: "Ｖます＋やすい／にくい",
+        examples: [
+          { jp: "このペンは<ruby>書<rt>か</rt></ruby>きやすい。", vn: "Cây bút này dễ viết." },
+          { jp: "この<ruby>道<rt>みち</rt></ruby>は<ruby>夜<rt>よる</rt></ruby><ruby>歩<rt>ある</rt></ruby>きにくい。", vn: "Con đường này khó đi vào ban đêm." },
+        ],
+        tip: "やすい = dễ, にくい = khó. Đây là tính từ い, chia được: やすかった, にくくない.",
+      },
+    ]
+  },
+  {
+    id: 20, title: "逆接・対比表現", color: "#4d96ff",
+    grammars: [
+      {
+        pattern: "〜ながら（逆接）",
+        meaning: "Mặc dù... nhưng... / Dù... mà... (diễn tả mâu thuẫn, tương phản)",
+        structure: "Ｎ／Ｖます／い形／な形＋ながら（も）",
+        examples: [
+          { jp: "<ruby>知<rt>し</rt></ruby>っていながら、<ruby>教<rt>おし</rt></ruby>えてくれなかった。", vn: "Dù biết mà vẫn không cho tôi biết." },
+          { jp: "<ruby>狭<rt>せま</rt></ruby>いながらも、<ruby>居心地<rt>いごこち</rt></ruby>のいい<ruby>部屋<rt>へや</rt></ruby>だ。", vn: "Dù chật nhưng đây là căn phòng thoải mái." },
+        ],
+        tip: "ながら（逆接）khác ながら（同時）. Ở đây có nghĩa 'mặc dù'. Thường đi với も.",
+        compare: "〜けれど（も）/ 〜が（đơn giản hơn） vs 〜ながら（も）（sắc thái văn viết hơn）",
+      },
+      {
+        pattern: "〜ものの",
+        meaning: "Mặc dù... nhưng... (thừa nhận điều trước, nhưng kết quả không như mong đợi)",
+        structure: "Ｖ普通形／い形／な形な／Ｎである＋ものの",
+        examples: [
+          { jp: "<ruby>申<rt>もう</rt></ruby>し<ruby>込<rt>こ</rt></ruby>んだものの、<ruby>参加<rt>さんか</rt></ruby>できるかどうかわからない。", vn: "Dù đã đăng ký nhưng không biết có tham gia được không." },
+          { jp: "<ruby>薬<rt>くすり</rt></ruby>を<ruby>飲<rt>の</rt></ruby>んだものの、なかなかよくならない。", vn: "Dù uống thuốc rồi nhưng mãi không khỏi." },
+        ],
+        tip: "ものの = 'mặc dù đã... nhưng'. Nhấn mạnh kết quả không như kỳ vọng. Thường dùng trong văn viết.",
+      },
+      {
+        pattern: "〜にもかかわらず",
+        meaning: "Mặc dù... vẫn... (bất chấp điều trước, kết quả vẫn xảy ra - mạnh hơn のに）",
+        structure: "Ｖ普通形／Ｎ＋にもかかわらず",
+        examples: [
+          { jp: "<ruby>雨<rt>あめ</rt></ruby>にもかかわらず、<ruby>試合<rt>しあい</rt></ruby>は<ruby>行<rt>おこな</rt></ruby>われた。", vn: "Mặc dù trời mưa, trận đấu vẫn được tổ chức." },
+          { jp: "<ruby>高齢<rt>こうれい</rt></ruby>にもかかわらず、<ruby>元気<rt>げんき</rt></ruby>に<ruby>働<rt>はたら</rt></ruby>いている。", vn: "Mặc dù tuổi cao nhưng vẫn khỏe mạnh đi làm." },
+        ],
+        tip: "にもかかわらず = sắc thái văn viết/trang trọng. Mạnh hơn のに. Biểu thị sự tương phản rõ ràng.",
+      },
+      {
+        pattern: "〜くせに",
+        meaning: "Thế mà... / Dù... mà... (chứa hàm ý chỉ trích, không hài lòng)",
+        structure: "Ｖ普通形／い形／な形な／Ｎの＋くせに",
+        examples: [
+          { jp: "<ruby>知<rt>し</rt></ruby>らないくせに、<ruby>知<rt>し</rt></ruby>ったふりをする。", vn: "Rõ ràng không biết mà lại giả vờ biết." },
+          { jp: "<ruby>子<rt>こ</rt></ruby>どものくせに、えらそうなことを<ruby>言<rt>い</rt></ruby>う。", vn: "Còn là trẻ con mà đã nói những điều đao to búa lớn." },
+        ],
+        tip: "くせに = のに nhưng mang hàm ý phê phán. Không dùng khi nói về bản thân hoặc nói trang trọng.",
+        compare: "のに（trung tính） vs くせに（chỉ trích, không trang trọng）",
+      },
+    ]
+  },
+  {
+    id: 23, title: "強調・限定表現", color: "#c77dff",
+    grammars: [
+      {
+        pattern: "〜こそ",
+        meaning: "Chính là... / Đúng là... (nhấn mạnh từ ngữ đứng trước)",
+        structure: "Ｎ／助詞＋こそ",
+        examples: [
+          { jp: "これこそが<ruby>本当<rt>ほんとう</rt></ruby>の<ruby>友情<rt>ゆうじょう</rt></ruby>だ。", vn: "Đây chính là tình bạn thật sự." },
+          { jp: "こちらこそ、よろしくお<ruby>願<rt>ねが</rt></ruby>いします。", vn: "Chính tôi mới xin nhờ bạn nhiều." },
+        ],
+        tip: "こそ nhấn mạnh từ đứng ngay trước. Thường xuất hiện trong mẫu 〜からこそ（chính vì...）.",
+      },
+      {
+        pattern: "〜さえ（強調）",
+        meaning: "Ngay cả... (nhấn mạnh ví dụ cực đoan, hàm ý những cái khác hiển nhiên đúng/sai)",
+        structure: "Ｎ（助詞省略）＋さえ",
+        examples: [
+          { jp: "<ruby>子<rt>こ</rt></ruby>どもさえ<ruby>知<rt>し</rt></ruby>っている。", vn: "Ngay cả trẻ con cũng biết." },
+          { jp: "<ruby>彼<rt>かれ</rt></ruby>は<ruby>名前<rt>なまえ</rt></ruby>さえ<ruby>書<rt>か</rt></ruby>けない。", vn: "Anh ấy ngay cả tên cũng không viết được." },
+        ],
+        tip: "さえ = 'ngay cả'. Dùng để nêu ví dụ cực đoan. さえ〜ば = 'chỉ cần...là'.",
+        compare: "でさえ（văn viết, trang trọng hơn） vs さえ（thông dụng）",
+      },
+      {
+        pattern: "〜まで（強調）",
+        meaning: "Ngay đến cả... / Thậm chí... (mức độ bất ngờ, cực đoan)",
+        structure: "Ｎ＋まで",
+        examples: [
+          { jp: "<ruby>親友<rt>しんゆう</rt></ruby>にまで<ruby>裏切<rt>うらぎ</rt></ruby>られた。", vn: "Ngay đến bạn thân cũng phản bội tôi." },
+          { jp: "<ruby>先生<rt>せんせい</rt></ruby>まで<ruby>間違<rt>まちが</rt></ruby>えることがある。", vn: "Thậm chí giáo viên cũng có lúc nhầm." },
+        ],
+        tip: "まで（強調）= 'thậm chí đến cả'. Khác まで（đến）chỉ giới hạn không gian/thời gian.",
+      },
+      {
+        pattern: "〜すら",
+        meaning: "Ngay cả... cũng... (nhấn mạnh cực đoan, thường dùng trong văn viết)",
+        structure: "Ｎ（助詞省略）＋すら",
+        examples: [
+          { jp: "<ruby>彼<rt>かれ</rt></ruby>は<ruby>自分<rt>じぶん</rt></ruby>の<ruby>部屋<rt>へや</rt></ruby>すら<ruby>片付<rt>かたづ</rt></ruby>けられない。", vn: "Anh ấy ngay cả phòng mình cũng không dọn được." },
+        ],
+        tip: "すら ≒ さえ, nhưng文体がやや硬い（văn viết/trang trọng hơn）. Thường mang sắc thái tiêu cực.",
+        compare: "さえ（thông dụng） ≒ すら（trang trọng, văn viết）",
+      },
+    ]
+  },
+  {
+    id: 24, title: "立場・観点表現", color: "#ff9a3c",
+    grammars: [
+      {
+        pattern: "〜として",
+        meaning: "Với tư cách là... / Là... (vai trò hoặc tư cách)",
+        structure: "Ｎ＋として",
+        examples: [
+          { jp: "<ruby>代表<rt>だいひょう</rt></ruby>として<ruby>会議<rt>かいぎ</rt></ruby>に<ruby>出席<rt>しゅっせき</rt></ruby>した。", vn: "Tôi tham dự cuộc họp với tư cách là đại diện." },
+          { jp: "<ruby>友人<rt>ゆうじん</rt></ruby>として<ruby>相談<rt>そうだん</rt></ruby>に<ruby>乗<rt>の</rt></ruby>った。", vn: "Tôi lắng nghe và tư vấn với tư cách là bạn bè." },
+        ],
+        tip: "として = 'với tư cách là'. Đứng sau danh từ chỉ vai trò, vị trí, chức năng.",
+      },
+      {
+        pattern: "〜にとって",
+        meaning: "Đối với... / Về phía... (quan điểm, lợi ích của ai đó)",
+        structure: "Ｎ＋にとって（は／も）",
+        examples: [
+          { jp: "<ruby>私<rt>わたし</rt></ruby>にとって、<ruby>家族<rt>かぞく</rt></ruby>がいちばん<ruby>大切<rt>たいせつ</rt></ruby>だ。", vn: "Đối với tôi, gia đình là quan trọng nhất." },
+          { jp: "これは<ruby>子<rt>こ</rt></ruby>どもにとって<ruby>難<rt>むずか</rt></ruby>しすぎる。", vn: "Cái này quá khó đối với trẻ em." },
+        ],
+        tip: "にとって = quan điểm, đánh giá từ phía ai đó. Không dùng khi nói về hành động vật lý.",
+      },
+      {
+        pattern: "〜をはじめ（として）",
+        meaning: "Bắt đầu từ... / Điển hình là... và (nhiều thứ khác)",
+        structure: "Ｎ＋をはじめ（として・とする）",
+        examples: [
+          { jp: "アジアをはじめ、<ruby>世界中<rt>せかいじゅう</rt></ruby>で<ruby>人気<rt>にんき</rt></ruby>がある。", vn: "Nổi tiếng ở châu Á và khắp thế giới." },
+          { jp: "<ruby>田中先生<rt>たなかせんせい</rt></ruby>をはじめとする<ruby>先生方<rt>せんせいがた</rt></ruby>に<ruby>感謝<rt>かんしゃ</rt></ruby>します。", vn: "Tôi cảm ơn thầy Tanaka và các thầy cô." },
+        ],
+        tip: "をはじめ = nêu đại diện tiêu biểu rồi mở rộng ra nhiều cái khác. Dùng để liệt kê.",
+      },
+      {
+        pattern: "〜からすると・〜からみると",
+        meaning: "Xét từ... / Nhìn từ góc độ... (phán đoán dựa trên căn cứ)",
+        structure: "Ｎ＋からすると／からみると／からすれば",
+        examples: [
+          { jp: "<ruby>彼<rt>かれ</rt></ruby>の<ruby>様子<rt>ようす</rt></ruby>からすると、どこか<ruby>悪<rt>わる</rt></ruby>そうだ。", vn: "Nhìn vẻ mặt anh ấy thì có vẻ khó chịu ở đâu đó." },
+          { jp: "<ruby>経験者<rt>けいけんしゃ</rt></ruby>からみれば、それは<ruby>簡単<rt>かんたん</rt></ruby>なことだ。", vn: "Nhìn từ góc độ người có kinh nghiệm, đó là việc đơn giản." },
+        ],
+        tip: "からすると = từ dấu hiệu/căn cứ → suy luận. からみると = từ góc nhìn/quan điểm của ai.",
+      },
+    ]
+  },
+  {
+    id: 26, title: "ものの表現", color: "#ff6b6b",
+    grammars: [
+      {
+        pattern: "〜ものだ（道理・当然）",
+        meaning: "... là điều đương nhiên / Vốn dĩ... là vậy (chân lý, lẽ thường)",
+        structure: "Ｖ辞書形／い形／な形な＋ものだ",
+        examples: [
+          { jp: "<ruby>人間<rt>にんげん</rt></ruby>はいつか<ruby>死<rt>し</rt></ruby>ぬものだ。", vn: "Con người thì vốn dĩ ai cũng sẽ chết." },
+          { jp: "<ruby>子供<rt>こども</rt></ruby>はやんちゃなものだ。", vn: "Trẻ con thì đương nhiên là nghịch ngợm." },
+        ],
+        tip: "ものだ（道理）= nêu chân lý, lẽ thường của sự vật. Thường dùng để giải thích hoặc khuyên nhủ.",
+      },
+      {
+        pattern: "〜ものだ（懐かしさ・感慨）",
+        meaning: "... nhỉ / Ngày xưa từng... nhỉ (hoài niệm, cảm thán)",
+        structure: "Ｖた＋ものだ",
+        examples: [
+          { jp: "<ruby>子供<rt>こども</rt></ruby>の<ruby>頃<rt>ころ</rt></ruby>、よくここで<ruby>遊<rt>あそ</rt></ruby>んだものだ。", vn: "Hồi nhỏ, tôi hay chơi ở đây nhỉ." },
+          { jp: "<ruby>若<rt>わか</rt></ruby>いころは<ruby>無茶<rt>むちゃ</rt></ruby>をしたものだ。", vn: "Hồi trẻ tôi hay làm những chuyện liều lĩnh." },
+        ],
+        tip: "〜たものだ = hoài niệm về thói quen trong quá khứ. Không dùng cho hiện tại.",
+      },
+      {
+        pattern: "〜ものなら",
+        meaning: "Nếu có thể... thì... / Nếu mà... (điều kiện khó xảy ra hoặc thách thức)",
+        structure: "Ｖ可能形／辞書形＋ものなら",
+        examples: [
+          { jp: "できるものなら、<ruby>早<rt>はや</rt></ruby>く<ruby>帰<rt>かえ</rt></ruby>りたい。", vn: "Nếu có thể thì tôi muốn về sớm." },
+          { jp: "やれるものならやってみろ。", vn: "Nếu làm được thì thử đi." },
+        ],
+        tip: "ものなら = điều kiện gần như không thể, hoặc thách thức. Vế sau thường là nguyện vọng hoặc thách thức.",
+      },
+      {
+        pattern: "〜というものだ・〜というものではない",
+        meaning: "Đó chính là... / Không hẳn là...",
+        structure: "Ｖ/い形/な形+というものだ",
+        examples: [
+          { jp: "これこそ<ruby>本当<rt>ほんとう</rt></ruby>の<ruby>友情<rt>ゆうじょう</rt></ruby>というものだ。", vn: "Đây chính là tình bạn thật sự." },
+          { jp: "<ruby>値段<rt>ねだん</rt></ruby>が<ruby>高<rt>たか</rt></ruby>ければいいというものではない。", vn: "Không phải cứ đắt là tốt." },
+        ],
+        tip: "というものだ = khẳng định bản chất. というものではない = phủ nhận nhận định đơn giản hóa.",
+      },
+    ]
+  },
+  {
+    id: 27, title: "基準・照合表現", color: "#ffd93d",
+    grammars: [
+      {
+        pattern: "〜に基づいて",
+        meaning: "Dựa vào... / Căn cứ theo... (hành động dựa trên cơ sở, nền tảng)",
+        structure: "Ｎ＋に<ruby>基<rt>もと</rt></ruby>づいて／に<ruby>基<rt>もと</rt></ruby>づく",
+        examples: [
+          { jp: "<ruby>事実<rt>じじつ</rt></ruby>に<ruby>基<rt>もと</rt></ruby>づいて<ruby>報告<rt>ほうこく</rt></ruby>する。", vn: "Báo cáo dựa trên sự thật." },
+          { jp: "<ruby>法律<rt>ほうりつ</rt></ruby>に<ruby>基<rt>もと</rt></ruby>づいて<ruby>判断<rt>はんだん</rt></ruby>した。", vn: "Đã phán quyết dựa trên pháp luật." },
+        ],
+        tip: "に基づいて = 'căn cứ theo, dựa trên'. Dùng với danh từ chỉ nền tảng, tiêu chuẩn, quy định.",
+      },
+      {
+        pattern: "〜に従って",
+        meaning: "Theo... / Tuân theo... (làm theo quy định, hướng dẫn; hoặc biến đổi song song)",
+        structure: "Ｎ＋に<ruby>従<rt>したが</rt></ruby>って／に<ruby>従<rt>したが</rt></ruby>う",
+        examples: [
+          { jp: "<ruby>規則<rt>きそく</rt></ruby>に<ruby>従<rt>したが</rt></ruby>って<ruby>行動<rt>こうどう</rt></ruby>してください。", vn: "Vui lòng hành động theo quy định." },
+          { jp: "<ruby>年<rt>とし</rt></ruby>をとるに<ruby>従<rt>したが</rt></ruby>って、<ruby>体力<rt>たいりょく</rt></ruby>が<ruby>落<rt>お</rt></ruby>ちる。", vn: "Theo năm tháng, sức khỏe suy giảm dần." },
+        ],
+        tip: "に従って có 2 nghĩa: (1) tuân theo lệnh/quy định; (2) cùng thay đổi theo. Phân biệt qua ngữ cảnh.",
+        compare: "に基づいて（dựa trên nền tảng） vs に従って（tuân theo / cùng biến đổi）",
+      },
+      {
+        pattern: "〜に応じて",
+        meaning: "Tùy theo... / Phù hợp với... (thích ứng theo tình huống, nhu cầu)",
+        structure: "Ｎ＋に<ruby>応<rt>おう</rt></ruby>じて／に<ruby>応<rt>おう</rt></ruby>じた",
+        examples: [
+          { jp: "<ruby>能力<rt>のうりょく</rt></ruby>に<ruby>応<rt>おう</rt></ruby>じた<ruby>仕事<rt>しごと</rt></ruby>を<ruby>任<rt>まか</rt></ruby>せる。", vn: "Giao việc phù hợp với năng lực của từng người." },
+          { jp: "<ruby>状況<rt>じょうきょう</rt></ruby>に<ruby>応<rt>おう</rt></ruby>じて<ruby>対応<rt>たいおう</rt></ruby>する。", vn: "Ứng phó tùy theo tình huống." },
+        ],
+        tip: "に応じて = linh hoạt thích ứng theo. Nhấn mạnh sự phù hợp, không cứng nhắc.",
+      },
+      {
+        pattern: "〜に関して・〜に関わる",
+        meaning: "Về... / Liên quan đến... (chủ đề, phạm vi liên quan)",
+        structure: "Ｎ＋に<ruby>関<rt>かん</rt></ruby>して／に<ruby>関<rt>かん</rt></ruby>する／に<ruby>関<rt>かか</rt></ruby>わる",
+        examples: [
+          { jp: "<ruby>環境問題<rt>かんきょうもんだい</rt></ruby>に<ruby>関<rt>かん</rt></ruby>して、<ruby>話<rt>はな</rt></ruby>し<ruby>合<rt>あ</rt></ruby>いをした。", vn: "Chúng tôi đã thảo luận về vấn đề môi trường." },
+          { jp: "<ruby>命<rt>いのち</rt></ruby>に<ruby>関<rt>かか</rt></ruby>わる<ruby>問題<rt>もんだい</rt></ruby>だ。", vn: "Đây là vấn đề liên quan đến tính mạng." },
+        ],
+        tip: "に関して = 'về chủ đề X'. に関わる = 'liên quan đến, ảnh hưởng đến'. に関わる mang sắc thái nghiêm trọng hơn.",
+      },
+    ]
+  },
+  {
+    id: 28, title: "無条件・全範囲表現", color: "#6bcb77",
+    grammars: [
+      {
+        pattern: "〜にかかわらず",
+        meaning: "Bất kể... / Không quan trọng... (không phụ thuộc vào điều kiện)",
+        structure: "Ｎ／Ｖ普通形＋にかかわらず",
+        examples: [
+          { jp: "<ruby>天気<rt>てんき</rt></ruby>にかかわらず、<ruby>試合<rt>しあい</rt></ruby>は<ruby>行<rt>おこな</rt></ruby>われる。", vn: "Bất kể thời tiết thế nào, trận đấu vẫn tiến hành." },
+          { jp: "<ruby>年齢<rt>ねんれい</rt></ruby>にかかわらず<ruby>応募<rt>おうぼ</rt></ruby>できます。", vn: "Bất kể tuổi tác, ai cũng có thể ứng tuyển." },
+        ],
+        tip: "にかかわらず = 'bất kể, không phân biệt'. Thường dùng với các cặp đối lập: 多い少ないにかかわらず.",
+      },
+      {
+        pattern: "〜を問わず",
+        meaning: "Không phân biệt... / Dù... (không phân biệt các trường hợp)",
+        structure: "Ｎ＋を<ruby>問<rt>と</rt></ruby>わず",
+        examples: [
+          { jp: "<ruby>国籍<rt>こくせき</rt></ruby>を<ruby>問<rt>と</rt></ruby>わず<ruby>参加<rt>さんか</rt></ruby>できます。", vn: "Không phân biệt quốc tịch, ai cũng có thể tham gia." },
+          { jp: "<ruby>昼夜<rt>ちゅうや</rt></ruby>を<ruby>問<rt>と</rt></ruby>わず<ruby>働<rt>はたら</rt></ruby>く。", vn: "Làm việc cả ngày lẫn đêm." },
+        ],
+        tip: "を問わず ≒ にかかわらず. Thường dùng với danh từ chỉ phạm trù: 性別、年齢、昼夜、国籍.",
+        compare: "にかかわらず（rộng hơn） ≒ を問わず（thường dùng với danh từ đơn）",
+      },
+      {
+        pattern: "〜はもちろん",
+        meaning: "... đương nhiên rồi, mà... cũng... (tất nhiên A, hơn nữa còn B)",
+        structure: "Ｎ＋はもちろん（のこと）",
+        examples: [
+          { jp: "<ruby>日本語<rt>にほんご</rt></ruby>はもちろん、<ruby>英語<rt>えいご</rt></ruby>も<ruby>話<rt>はな</rt></ruby>せる。", vn: "Tiếng Nhật đương nhiên rồi, anh ấy còn nói được cả tiếng Anh." },
+          { jp: "<ruby>体<rt>からだ</rt></ruby>はもちろん、<ruby>心<rt>こころ</rt></ruby>の<ruby>健康<rt>けんこう</rt></ruby>も<ruby>大切<rt>たいせつ</rt></ruby>だ。", vn: "Sức khỏe thể chất đương nhiên rồi, cả sức khỏe tâm thần cũng quan trọng." },
+        ],
+        tip: "はもちろん = A hiển nhiên, B thêm vào. Cả 2 vế đều đúng. Vế sau thường là điều bất ngờ hơn.",
+      },
+      {
+        pattern: "〜はおろか",
+        meaning: "Đừng nói là... ngay cả... cũng... (A không được, B hiển nhiên càng không)",
+        structure: "Ｎ＋はおろか",
+        examples: [
+          { jp: "<ruby>英語<rt>えいご</rt></ruby>はおろか、<ruby>日本語<rt>にほんご</rt></ruby>すら<ruby>話<rt>はな</rt></ruby>せない。", vn: "Đừng nói tiếng Anh, ngay cả tiếng Nhật cũng không nói được." },
+          { jp: "<ruby>食事<rt>しょくじ</rt></ruby>はおろか、<ruby>水<rt>みず</rt></ruby>も<ruby>飲<rt>の</rt></ruby>めない<ruby>状態<rt>じょうたい</rt></ruby>だ。", vn: "Đừng nói ăn, ngay cả uống nước cũng không được." },
+        ],
+        tip: "はおろか = 'đừng nói là A, B còn không được nữa'. Hàm ý phủ định cả 2. Mạnh hơn はもちろん.",
+        compare: "はもちろん（cả 2 đều có） vs はおろか（cả 2 đều không có, phủ định）",
+      },
+    ]
+  },
+  {
+    id: 29, title: "変化・推移表現", color: "#4d96ff",
+    grammars: [
+      {
+        pattern: "〜につれて",
+        meaning: "Cùng với... thì... / Theo đà... (A thay đổi, B cũng thay đổi theo)",
+        structure: "Ｖ辞書形／Ｎ＋につれて",
+        examples: [
+          { jp: "<ruby>年<rt>とし</rt></ruby>をとるにつれて、<ruby>体力<rt>たいりょく</rt></ruby>が<ruby>落<rt>お</rt></ruby>ちる。", vn: "Theo tuổi tác, sức khỏe suy giảm dần." },
+          { jp: "<ruby>技術<rt>ぎじゅつ</rt></ruby>が<ruby>進歩<rt>しんぽ</rt></ruby>するにつれて、<ruby>生活<rt>せいかつ</rt></ruby>が<ruby>便利<rt>べんり</rt></ruby>になった。", vn: "Cùng với sự tiến bộ của công nghệ, cuộc sống trở nên tiện lợi hơn." },
+        ],
+        tip: "につれて = biến đổi song song, 2 thứ cùng thay đổi. Nhấn mạnh sự biến đổi dần dần.",
+        compare: "につれて（song song） ≒ にともなって（song song, văn viết） ≒ に従って（có thêm nghĩa tuân theo）",
+      },
+      {
+        pattern: "〜にともなって",
+        meaning: "Cùng với... / Kéo theo... (A xảy ra kéo theo B, thường là hậu quả)",
+        structure: "Ｎ／Ｖ辞書形＋にともなって／にともなう",
+        examples: [
+          { jp: "<ruby>経済成長<rt>けいざいせいちょう</rt></ruby>にともなって、<ruby>環境問題<rt>かんきょうもんだい</rt></ruby>が<ruby>深刻<rt>しんこく</rt></ruby>になった。", vn: "Cùng với tăng trưởng kinh tế, vấn đề môi trường trở nên nghiêm trọng." },
+        ],
+        tip: "にともなって = thay đổi kéo theo. Thường dùng trong văn viết/trang trọng. Nhấn mạnh hệ quả.",
+      },
+      {
+        pattern: "〜をきっかけに",
+        meaning: "Lấy... làm cơ hội / Nhân dịp... (sự kiện là điểm khởi đầu cho thay đổi)",
+        structure: "Ｎ＋をきっかけに（して）／をきっかけとして",
+        examples: [
+          { jp: "その<ruby>映画<rt>えいが</rt></ruby>をきっかけに、<ruby>日本語<rt>にほんご</rt></ruby>に<ruby>興味<rt>きょうみ</rt></ruby>を<ruby>持<rt>も</rt></ruby>った。", vn: "Nhân duyên từ bộ phim đó, tôi bắt đầu quan tâm đến tiếng Nhật." },
+          { jp: "<ruby>病気<rt>びょうき</rt></ruby>をきっかけに、<ruby>生活習慣<rt>せいかつしゅうかん</rt></ruby>を<ruby>見直<rt>みなお</rt></ruby>した。", vn: "Lấy cơn bệnh làm cơ hội, tôi xem xét lại thói quen sinh hoạt." },
+        ],
+        tip: "をきっかけに = 'nhân dịp, lấy X làm cơ hội khởi đầu'. Nhấn mạnh điểm bắt đầu của sự thay đổi.",
+      },
+      {
+        pattern: "〜次第（で）",
+        meaning: "Tùy vào... / Phụ thuộc vào... (kết quả phụ thuộc vào điều kiện)",
+        structure: "Ｎ＋次第（で／では／によっては）",
+        examples: [
+          { jp: "<ruby>努力<rt>どりょく</rt></ruby>次第で、<ruby>誰<rt>だれ</rt></ruby>でもできる。", vn: "Tùy vào sự cố gắng, ai cũng có thể làm được." },
+          { jp: "<ruby>天気<rt>てんき</rt></ruby>次第では、<ruby>中止<rt>ちゅうし</rt></ruby>になるかもしれない。", vn: "Tùy thời tiết, có thể sẽ bị hủy." },
+        ],
+        tip: "次第で = 'phụ thuộc vào, tùy theo'. Cùng cấu trúc với 次第（Vます + 次第 = ngay khi） nhưng nghĩa khác.",
+        compare: "Ｎ＋次第（で）: tùy thuộc vào ≠ Ｖます＋次第: ngay khi (vừa xong thì)",
+      },
+    ]
+  },
+  {
+    id: 30, title: "謙譲語２・敬語まとめ", color: "#c77dff",
+    grammars: [
+      {
+        pattern: "お〜する・ご〜する",
+        meaning: "Tôi xin... / Để tôi... (khiêm tốn ngữ - hạ thấp hành động của bản thân)",
+        structure: "お＋Ｖます＋する　／　ご＋漢語動詞＋する",
+        examples: [
+          { jp: "<ruby>荷物<rt>にもつ</rt></ruby>をお<ruby>持<rt>も</rt></ruby>ちします。", vn: "Tôi xin xách hành lý cho." },
+          { jp: "ご<ruby>案内<rt>あんない</rt></ruby>します。", vn: "Tôi xin hướng dẫn." },
+        ],
+        tip: "お + 和語動詞のます形 + する. ご + 漢語動詞 + する. Hạ thấp bản thân, tôn trọng người nghe.",
+        compare: "お〜する（和語）例：お持ちする、お送りする　／　ご〜する（漢語）例：ご説明する、ご連絡する",
+      },
+      {
+        pattern: "〜させていただく",
+        meaning: "Tôi xin phép được... (khiêm tốn ngữ - xin phép thực hiện hành động)",
+        structure: "Ｖ（さ）せて＋いただく",
+        examples: [
+          { jp: "<ruby>本日<rt>ほんじつ</rt></ruby>は<ruby>早退<rt>そうたい</rt></ruby>させていただきます。", vn: "Hôm nay tôi xin phép ra về sớm." },
+          { jp: "<ruby>資料<rt>しりょう</rt></ruby>を<ruby>確認<rt>かくにん</rt></ruby>させていただきます。", vn: "Tôi xin phép được xem tài liệu." },
+        ],
+        tip: "させていただく = rất lịch sự. Dùng khi làm việc gì đó cần sự cho phép của người khác (dù ngầm hiểu).",
+      },
+      {
+        pattern: "〜でございます",
+        meaning: "... là / Đây là... (丁寧語 mức cao - thay thế です trong văn phong trang trọng)",
+        structure: "Ｎ＋でございます",
+        examples: [
+          { jp: "こちらが<ruby>田中<rt>たなか</rt></ruby>でございます。", vn: "Đây là anh Tanaka ạ." },
+          { jp: "お<ruby>手洗<rt>てあら</rt></ruby>いは<ruby>右手<rt>みぎて</rt></ruby>でございます。", vn: "Nhà vệ sinh ở bên tay phải ạ." },
+        ],
+        tip: "でございます = cấp độ lịch sự cao nhất của です. Thường dùng trong dịch vụ, công sở, thông báo.",
+      },
+      {
+        pattern: "謙譲語まとめ",
+        meaning: "Tổng hợp các động từ khiêm tốn ngữ thông dụng",
+        structure: "普通語 → 謙譲語",
+        examples: [
+          { jp: "<ruby>言<rt>い</rt></ruby>う → <ruby>申<rt>もう</rt></ruby>す　／　もらう → いただく　／　<ruby>行<rt>い</rt></ruby>く・<ruby>来<rt>く</rt></ruby>る → <ruby>参<rt>まい</rt></ruby>る", vn: "Nói → Thưa / Nhận → Được nhận (kính) / Đi・Đến → Đến (khiêm)" },
+          { jp: "<ruby>食<rt>た</rt></ruby>べる・<ruby>飲<rt>の</rt></ruby>む → いただく　／　<ruby>知<rt>し</rt></ruby>っている → <ruby>存<rt>ぞん</rt></ruby>じている　／　いる → おる", vn: "Ăn・Uống → Được dùng (kính) / Biết → Biết (khiêm) / Ở → Ở (khiêm)" },
+        ],
+        tip: "Khiêm tốn ngữ hạ thấp hành động của BẢN THÂN để tôn kính NGƯỜI KHÁC. Khác với tôn kính ngữ (尊敬語) nâng cao hành động của người khác.",
+        compare: "尊敬語（tôn kính, nâng cao người khác）：いらっしゃる、おっしゃる、なさる　vs　謙譲語（khiêm tốn, hạ thấp bản thân）：まいる、いただく、もうす",
+      },
+    ]
+  },
+];
+
+// Color palette for lesson numbers
+const COLORS = ["#ff6b6b","#ffd93d","#6bcb77","#4d96ff","#c77dff","#ff9a3c"];
+
+let masteredSet = new Set(JSON.parse(localStorage.getItem('n3_mastered') || '[]'));
+let activeFilter = 'all';
+let searchTerm = '';
+
+function saveMastered() {
+  try { localStorage.setItem('n3_mastered', JSON.stringify([...masteredSet])); } catch(e) {}
+}
+
+function totalGrammars() {
+  return LESSONS.reduce((s, l) => s + l.grammars.length, 0);
+}
+
+function updateProgress() {
+  const total = totalGrammars();
+  const done = masteredSet.size;
+  const pct = total > 0 ? Math.round(done / total * 100) : 0;
+  document.getElementById('progressText').textContent = `${done} / ${total} đã thuộc`;
+  document.getElementById('percentText').textContent = `${pct}%`;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function buildCard(lesson, colorIdx) {
+  const color = lesson.color || COLORS[colorIdx % COLORS.length];
+  const card = document.createElement('div');
+  card.className = 'lesson-card';
+  card.dataset.cat = (lesson.cat || []).join(' ');
+  card.dataset.id = lesson.id;
+
+  // Header
+  const hdr = document.createElement('div');
+  hdr.className = 'lesson-header';
+  hdr.innerHTML = `
+    <div class="lesson-num" style="background:${color}22;color:${color}">${lesson.id}</div>
+    <div>
+      <div class="lesson-title">${lesson.title}</div>
+      <div class="lesson-subtitle">${lesson.subtitle}</div>
+    </div>
+    <div class="lesson-toggle">▼</div>
+  `;
+  hdr.addEventListener('click', () => {
+    card.classList.toggle('open');
+  });
+  card.appendChild(hdr);
+
+  // Body
+  const body = document.createElement('div');
+  body.className = 'lesson-body';
+
+  lesson.grammars.forEach((g, gi) => {
+    const nodeId = `${lesson.id}-${gi}`;
+    const isMastered = masteredSet.has(nodeId);
+
+    const node = document.createElement('div');
+    node.className = 'grammar-node';
+    node.style.borderColor = color;
+
+    let examplesHtml = '';
+    if (g.examples && g.examples.length) {
+      examplesHtml = `<div class="examples-label">📝 Ví dụ</div>`;
+      g.examples.forEach(ex => {
+        examplesHtml += `<div class="example">
+          <div class="jp">${ex.jp}</div>
+          <div class="vn">→ ${ex.vn}</div>
+        </div>`;
+      });
+    }
+
+    const tipHtml = g.tip ? `<div class="memory-tip">${g.tip}</div>` : '';
+    const compareHtml = g.compare ? `<div class="compare-note">${g.compare}</div>` : '';
+
+    node.innerHTML = `
+      <div class="grammar-pattern" style="color:${color}">${g.pattern}</div>
+      <span class="meaning-tag" style="background:${color}22;color:${color}">意味</span>
+      <div class="grammar-meaning">${g.meaning}</div>
+      ${g.structure ? `<div class="grammar-structure">📐 ${g.structure}</div>` : ''}
+      ${examplesHtml}
+      ${tipHtml}
+      ${compareHtml}
+      <button class="mastered-btn ${isMastered ? 'done' : ''}" data-nid="${nodeId}">
+        ${isMastered ? '✅ Đã thuộc' : '☐ Đánh dấu thuộc'}
+      </button>
+    `;
+
+    node.querySelector('.mastered-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const nid = e.currentTarget.dataset.nid;
+      if (masteredSet.has(nid)) {
+        masteredSet.delete(nid);
+        e.currentTarget.textContent = '☐ Đánh dấu thuộc';
+        e.currentTarget.classList.remove('done');
+      } else {
+        masteredSet.add(nid);
+        e.currentTarget.textContent = '✅ Đã thuộc';
+        e.currentTarget.classList.add('done');
+      }
+      saveMastered();
+      updateProgress();
+    });
+
+    body.appendChild(node);
+  });
+
+  card.appendChild(body);
+  return card;
+}
+
+function render() {
+  const grid = document.getElementById('lessonsGrid');
+  grid.innerHTML = '';
+  let shown = 0;
+  LESSONS.forEach((lesson, idx) => {
+    const catMatch = activeFilter === 'all' || (lesson.cat || []).includes(activeFilter);
+    const textMatch = searchTerm === '' ||
+      lesson.title.toLowerCase().includes(searchTerm) ||
+      lesson.subtitle.toLowerCase().includes(searchTerm) ||
+      lesson.grammars.some(g =>
+        g.pattern.includes(searchTerm) ||
+        g.meaning.toLowerCase().includes(searchTerm) ||
+        (g.tip || '').toLowerCase().includes(searchTerm)
+      );
+    if (catMatch && textMatch) {
+      grid.appendChild(buildCard(lesson, idx));
+      shown++;
+    }
+  });
+  if (shown === 0) {
+    grid.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-dim);grid-column:1/-1">🔍 Không tìm thấy kết quả phù hợp</div>';
+  }
+  updateProgress();
+}
+
+// Filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.cat;
+    render();
+  });
+});
+
+// Search
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  searchTerm = e.target.value.toLowerCase().trim();
+  render();
+});
+
+render();
+
+// ═══════════════════════════════════════════════════
+// EXAM DATA
+// ═══════════════════════════════════════════════════
+const GRAMMAR_EXAM_DATA = [
+  {
+    id: "12-2010", label: "12/2010",
+    m1: [
+      {q:"今日は風が強くて、庭の木が今にも（　）。",opts:["折れています","折れそうです","折れたと思います","折れたんです"],ans:1,exp:"今にも〜そうです = sắp sửa... (quan sát trực tiếp)"},
+      {q:"このテレビドラマは人気が出なかった（　）、全20回の放送予定だったものが、10回で終わってしまった。",opts:["たびに","ために","なかに","ように"],ans:1,exp:"〜ために = vì lý do... (nguyên nhân)"},
+      {q:"9月の会社説明会の日程を（　）いたします。",opts:["知らせ","知らせて","お知らせ","お知らせして"],ans:2,exp:"お〜します = kính ngữ khiêm nhường (謙譲語)"},
+      {q:"子どもだ子どもだと思っていた息子も、明日から（　）大学生になります。",opts:["まだ","いつか","しだいに","とうとう"],ans:3,exp:"とうとう = cuối cùng cũng... (sau bao lâu chờ đợi)"},
+      {q:"A「沖縄旅行、どうだった？」B「沖縄は、旅行の（　）ずっと天気がよくて、毎日海で遊べたよ。」",opts:["あいだじゅう","うちには","なかで","ころまでに"],ans:0,exp:"〜あいだじゅう = suốt trong khoảng thời gian..."},
+      {q:"弟と妹がいると集中できないから、今日は二人が（　）うちに、宿題をやってしまおう。",opts:["帰ってこない","帰っていかない","帰ってこなかった","帰っていかなかった"],ans:0,exp:"〜ないうちに = trước khi... xảy ra (tranh thủ lúc chưa)"},
+      {q:"学生「先生、日本語で作文を書いたのですが、わたしの作文を（　）。」先生「ええ、いいですよ。」",opts:["見たいでしょうか","見てもよろしいでしょうか","見たらいかがですか","見ていただけませんか"],ans:3,exp:"〜ていただけませんか = xin hãy... (lịch sự nhất, nhờ vả người trên)"},
+      {q:"山下「ねえ、わたし、この問題全然わかんないんだけど、田中さん、解けた？」田中「わたしに（　）じゃない。わたしが数学苦手なの知ってるでしょ。」",opts:["解けない","解けないに違いない","解けるはずがない","解くことができない"],ans:2,exp:"〜はずがない = không thể nào... (theo lý luận là không thể)"},
+      {q:"「私たちが作ったABCこども新聞は、すべての漢字に振り仮名をつけてあるので、小学1年生からでも読める（　）。」",opts:["ことによります","ことにあります","ようになっています","ようになさっています"],ans:2,exp:"〜ようになっています = đã trở nên có thể... (kết quả sau quá trình)"},
+      {q:"上田「来週、兄の誕生日なんだけど、プレゼントに何を買おうかな。」山本「ネクタイでも買って（　）？上田さんからのプレゼント、お兄さん、喜ぶと思うよ。」",opts:["もらってもいい","もらったらどう","あげてもいい","あげたらどう"],ans:3,exp:"〜たらどう = thử... thì sao? (gợi ý nhẹ nhàng)"},
+      {q:"妻「この前の試合、あなたがけがしなかったら、優勝できたかもねえ。」夫「けがをしなかったら、4位くらいには（　）、それでもやっぱり優勝はできなかったと思うよ。」",opts:["なれたらしいし","なりたかったらしいし","なれただろうけど","なりたかったんだろうけど"],ans:2,exp:"〜ただろうけど = có lẽ đã... nhưng (giả định quá khứ không xảy ra)"},
+      {q:"先輩「さっきの会議で話に出た営業の仕事を、たぶん山川部長は、君に（　）？」後輩「えっ、そうなんでしょうか。」",opts:["やらせるつもりじゃない","やられるつもりじゃない","やらされるんじゃない","やれるんじゃない"],ans:2,exp:"〜させられる = bị ép buộc làm... (thụ động sai khiến)"},
+      {q:"わたしの気持ちは、きっとあなたにはわからないだろうし、あなたに（　）。",opts:["わかりたくもない","わかってほしくもない","わかりたくはないだろう","わかってほしくはないだろう"],ans:1,exp:"〜てほしくない = không muốn ai đó làm gì (phủ định 〜てほしい)"}
+    ]
+  },
+  {
+    id: "12-2018", label: "12/2018",
+    m1: [
+      {q:"田中「先輩、来月の発表会の準備はどうですか。」先輩「まあまあですね。田中さんも（　）、手伝ってもらえると助かるけど。」田中「もちろんです。ぜひ手伝わせてください。」",opts:["よかったら","よくなければ","よかったのに","よくなかったら"],ans:0,exp:"〜たら = nếu... (điều kiện lịch sự để đề nghị)"},
+      {q:"（アナウンス）「ただいまより、本日のコンサートを始めます。演奏（　）は、拍手でお迎えください。」",opts:["してくる人","してくる方","される人","される方"],ans:3,exp:"〜される方 = kính ngữ bị động + 方 (người biểu diễn → kính trọng)"},
+      {q:"先生「どうしたんですか。」学生「実は最近、体の調子が悪くて、薬を飲んでいるんですが、（　）ぜんぜんよくならなくて。」",opts:["飲めば飲むほど","飲んでも飲んでも","飲んだり飲まなかったりで","飲めば飲まないほど"],ans:1,exp:"〜ても〜ても = dù... đến thế nào cũng không... (nhấn mạnh nỗ lực mà không kết quả)"},
+      {q:"（職場で）「来月から始まる新しいプロジェクトは、私（　）任されることになった。」",opts:["に","を","が","で"],ans:0,exp:"〜に任される = được giao phó cho... (đối tượng nhận ủy thác)"},
+      {q:"先生「ホワイトさんは初めて相撲を見てどうでしたか。」ホワイト「試合（　）もちろん面白かったですが、観客の方々の応援の声もすごくて、感動しました。」",opts:["にとって","はもとより","によって","にしたら"],ans:1,exp:"〜はもとより = không chỉ... mà cả... (điều hiển nhiên cộng thêm)"},
+      {q:"（病院で）患者「先生、退院できますか。」医者「そうですね。あと1週間ほど（　）、退院できますよ。」",opts:["すれば","しても","するなら","するほど"],ans:0,exp:"〜ば〜できる = nếu làm thì có thể..."},
+      {q:"山田「林さん、昨日電話したんですけど、出なかったですよね。」林「すみません。昨日は一日外出していて、帰ったときには（　）。」",opts:["もう夜になっていました","まだ夜になっていません","もう夜になってきました","まだ夜になってきません"],ans:0,exp:"もう〜ていました = đã... rồi (trạng thái hoàn thành khi trở về)"},
+      {q:"（病院の受付で）受付「田中さん、ちょっとお待ちください。先生が（　）からご案内します。」田中「はい、わかりました。」",opts:["お呼びします","お呼びになります","呼んでいただきます","呼んでさしあげます"],ans:0,exp:"お〜します = kính ngữ khiêm nhường (người nói làm cho người khác)"},
+      {q:"ケビン「先週の映画、どうでした？」アン「とても感動して、（　）くらいでした。」ケビン「それはよかった。」",opts:["泣いてしまいそうになった","泣いてしまいそうになる","泣けてしまいそうになった","泣けてしまいそうになる"],ans:0,exp:"〜そうになった = suýt... (gần như đã xảy ra nhưng không)"},
+      {q:"A「今日の試合、応援に行けなくてごめん。」B「いいよ。（　）結果がよければそれで十分だから。」",opts:["応援に来てくれなくても","応援に来てくれるなら","応援に来てくれなければ","応援に来てくれるのに"],ans:0,exp:"〜なくても = dù không... cũng (điều kiện nhượng bộ)"},
+      {q:"（会社で）部長「鈴木くん、今度のプレゼン、うまくいくといいね。」鈴木「ありがとうございます。（　）ように、精一杯がんばります。」",opts:["うまくいける","うまくいきます","うまくいく","うまくいける"],ans:2,exp:"〜ように + 頑張る = cố gắng để... (mục tiêu của nỗ lực)"},
+      {q:"（電話で）客「すみません。今日の３時に予約しているんですが、30分ほど（　）んですが、大丈夫でしょうか。」",opts:["遅れそうな","遅れたような","遅れているような","遅れてしまいそうな"],ans:3,exp:"〜てしまいそうだ = có vẻ sẽ... (kết quả không mong muốn sắp xảy ra)"},
+      {q:"A「来週の旅行、楽しみだね。」B「そうだね。ただ、天気が（　）いいんだけど。」",opts:["よければ","よかったら","よくなれば","よくなったら"],ans:0,exp:"〜ければいい = nếu... thì tốt (mong muốn/điều kiện)"}
+    ]
+  },
+  {
+    id: "12-2021", label: "12/2021",
+    m1: [
+      {q:"母は、留学している兄と久しぶりに電話で話して、とてもうれしそうな顔（　）していた。",opts:["へ","が","を","の"],ans:3,exp:"顔をする = có vẻ mặt... (biểu đạt cảm xúc qua nét mặt)"},
+      {q:"長い間建設中だったABCビルが、昨日（　）完成した。",opts:["ずっと","今にも","次第に","ついに"],ans:3,exp:"ついに = cuối cùng cũng... (sau thời gian dài chờ đợi)"},
+      {q:"（電話で）店長「大下さん、急で申し訳ないんですけど、明日出勤することはできますか。」大下「午後（　）行けますが、それでも大丈夫ですか。」",opts:["でなら","からなら","へでも","まででも"],ans:1,exp:"〜からなら = nếu từ... thì (điều kiện giới hạn thời gian)"},
+      {q:"音楽会は、あすの11時からさくら広場（　）開かれます。",opts:["に対して","によって","について","において"],ans:3,exp:"〜において = tại... (chỉ địa điểm, văn phong trang trọng)"},
+      {q:"去年姉に子供が生まれた。2、3か月に1回ぐらい会っているが、会う（　）大きくなっていて、びっくりする。",opts:["たびに","うちに","間に","前に"],ans:0,exp:"〜たびに = mỗi lần... (lặp lại sự kiện)"},
+      {q:"私は10年前から同じかばんを（　）続けている。",opts:["使う","使い","使おう","使った"],ans:1,exp:"Vます形＋続ける = tiếp tục làm... (動詞連用形接続)"},
+      {q:"田中さんがわたしの方に（　）見えました。",opts:["走っていくことが","走ってくることが","走っていくのが","走ってくるのが"],ans:3,exp:"〜てくる＋のが見える = nhìn thấy ai đó đang chạy lại (hướng về phía người nói)"},
+      {q:"山田「ジョンくんは、毎日バスケットボールの練習をしているんですか。」ジョン「はい。早く試合に（　）なりたいんです。」",opts:["出られるように","出られるために","出させるように","出させるために"],ans:0,exp:"〜ように＋なりたい = muốn trở nên có thể... (mục tiêu khả năng)"},
+      {q:"今朝はすごい雨だったが、今はもう（　）",opts:["降っている","降っていない","降る","降らない"],ans:1,exp:"もう〜ていない = không còn... nữa (trạng thái đã thay đổi)"},
+      {q:"西川「あ、森さん、携帯電話がポケットから（　）よ。」森「本当だ。ありがとうございます。」",opts:["落ちるそうです","落ちそうです","落とすそうです","落としそうです"],ans:1,exp:"〜そうです = có vẻ sắp... (quan sát thấy trực tiếp, nguy cơ xảy ra)"},
+      {q:"A「今度駅前に新しいケーキ屋さんができる（　）ね。」B「本当ですか。楽しみですね。」",opts:["でしょう","といい","ほうがいい","みたいだ"],ans:3,exp:"〜みたいだ = hình như... (suy đoán từ thông tin nghe/đọc được)"},
+      {q:"この花は、上が乾いたら水をやる必要があるが、（　）。水が多いと根が腐ってしまう。",opts:["やりすぎるのもよくない","やらなくていいのがいい","やってやるのもよくない","やらないでおくのがいい"],ans:0,exp:"〜すぎる＋のもよくない = làm quá cũng không tốt"},
+      {q:"（患者が病院に電話をする）患者「すみません。10時に予約した田中と申しますが、11時に（　）。」",opts:["変えましょうか","変えたほうがいいですか","変えていただきましょう","変えていただけないでしょうか"],ans:3,exp:"〜ていただけないでしょうか = liệu có thể làm ơn... không ạ? (lịch sự tối đa)"}
+    ]
+  },
+  {
+    id: "7-2019", label: "7/2019",
+    m1: [
+      {q:"今朝、気持ちよく起きられたのは、昨晩しっかり眠れた（　）だと思う。",opts:["せい","こと","おかげ","ため"],ans:2,exp:"〜おかげだ = nhờ có... mà (nguyên nhân tốt)"},
+      {q:"新しい趣味を（　）と思って、先週から料理を習い始めた。",opts:["持とう","持つ","持つよう","持った"],ans:0,exp:"〜（よ）うと思って = nghĩ muốn làm gì đó (ý định → hành động)"},
+      {q:"A「最近、料理にはまっているって本当？」B「うん。毎日作って（　）、料理が楽しくなってきた。」",opts:["いるうちに","いるためには","いるためのに","いるだけあって"],ans:0,exp:"〜ているうちに = trong khi làm... thì dần dần... (thay đổi không nhận ra)"},
+      {q:"（駅で）A「すみません。地下鉄の乗り方を教えていただけますか。」B「ええ、いいですよ。まずここに（　）切符を買います。」",opts:["入ったとき","入る前に","入ってから","入るために"],ans:1,exp:"〜前に = trước khi... (trình tự hành động)"},
+      {q:"あの店のラーメンは、並んで（　）食べる価値がある。",opts:["でも","さえ","まで","こそ"],ans:2,exp:"〜まで = đến mức... (mức độ cực đoan, dù phải xếp hàng cũng đáng ăn)"},
+      {q:"彼女はフランス語（　）、スペイン語も話せる。",opts:["だけでなく","のほかに","に加えて","はもちろん"],ans:3,exp:"〜はもちろん = không chỉ... mà cả... (điều hiển nhiên cộng thêm)"},
+      {q:"この歌を聞く（　）、子どものころを思い出す。",opts:["ために","ものを","たびに","ことで"],ans:2,exp:"〜たびに = mỗi khi... (lặp lại sự việc)"},
+      {q:"（会社で）上司「田中さん、明日の会議の資料、準備できてる？」田中「あ、すみません。今日中に（　）。」",opts:["準備いたします","準備なさいます","準備させていただきます","準備していただきます"],ans:2,exp:"〜させていただきます = xin phép được làm... (kính ngữ khiêm nhường nhất)"},
+      {q:"A「最近、仕事が忙しくて、なかなか勉強できないんだ。」B「忙しくて大変だね。（　）、少しでも続けることが大切だよ。」",opts:["それどころか","それでも","そうしたら","それなのに"],ans:1,exp:"それでも = nhưng dù vậy... (tiếp tục bất chấp khó khăn)"},
+      {q:"A「部長、もう一度確認させてください。」B「うん。この書類を（　）いいんだよね。」",opts:["送ればかり","送るだけで","送っただけで","送れば"],ans:3,exp:"〜ればいい = chỉ cần làm... là đủ"},
+      {q:"（バス停で）乗客「すみません。市民病院に行くにはこのバス（　）乗ればいいですか。」",opts:["だけに","でさえ","にだけ","でいい"],ans:3,exp:"〜でいい = bằng... cũng được (chấp nhận phương tiện đơn giản)"},
+      {q:"今の若者は、親に（　）のが当たり前だと思っているのだろうか。",opts:["養われる","養わせる","養ってもらう","養わせてもらう"],ans:2,exp:"〜てもらう = được ai đó làm cho mình (hướng lợi ích về phía người nói)"},
+      {q:"（掲示板より）「緊急の場合は（　）警備室に連絡してください。」",opts:["すぐ","まず","必ず","ただちに"],ans:3,exp:"直ちに = ngay lập tức (văn phong trang trọng, khẩn cấp)"}
+    ]
+  },
+  {
+    id: "7-2021", label: "7/2021",
+    m1: [
+      {q:"両親に買ってもらった着物（　）大学の卒業式に出席した。",opts:["を","が","で","に"],ans:2,exp:"〜で = bằng/mặc... (phương tiện, trang phục)"},
+      {q:"本を読んでいたら、（　）5時間も経ってしまった。",opts:["そろそろ","だんだん","ようやく","いつのまにか"],ans:3,exp:"いつのまにか = không biết từ lúc nào... (không nhận ra thời gian trôi)"},
+      {q:"日わたしに（　）。今一番大切なものは、飼っている犬です。",opts:["対して","比べて","おいて","とって"],ans:3,exp:"〜にとって = đối với... (quan điểm/nhận định chủ quan của ai đó)"},
+      {q:"A「部長の田中さんとのお会いになるのは今日が初めてですね。」B「はい。山下課長（　）お目にかかったことがございませんので。」",opts:["にだけ","にしか","でしか","だけ"],ans:1,exp:"〜にしか〜ません = chỉ... mà thôi (giới hạn + phủ định)"},
+      {q:"この図書館は、入口の近くに、返す本を入れるためのブックポストがあり、図書館が開いている（　）、本を返すことができる。",opts:["ときでも","まで","間だからが","ところなら"],ans:0,exp:"〜ときでも = kể cả khi... cũng (bất kể thời gian nào)"},
+      {q:"A「今夜は晴れているから星がよく見えるよ。」B「わあ、本当だ。（　）きれいなんだろう。」",opts:["ときも","なんか","なんて","なんでも"],ans:2,exp:"なんて〜だろう = thật là... ! (cảm thán, ngạc nhiên trước điều tuyệt đẹp)"},
+      {q:"展覧会に知り合いの絵がかざられるので、わたしも見に（　）と思う。",opts:["行こうか","行かないか","行くのか","行ったか"],ans:0,exp:"〜（よ）うかと思う = đang nghĩ sẽ... (ý định chưa quyết hẳn)"},
+      {q:"夏は食べ物が悪く（　）ので、注意してください。",opts:["なりにくい","しやすい","しにくい","なりやすい"],ans:3,exp:"〜やすい = dễ... (dễ xảy ra tính chất/hiện tượng)"},
+      {q:"乗っていた電車が急に止まって、隣に立っていた人に新しい白い靴を（　）。",opts:["踏んでしまった","踏んでおいた","踏まれてしまった","踏ませておいた"],ans:2,exp:"〜れてしまった = bị... (bị động, kết quả không mong muốn)"},
+      {q:"明日からテニスの国際大会が始まる。参加する8名は皆、過去に国際大会での優勝経験があり、今回の大会は誰が（　）。",opts:["優勝しても不思議ではない","優勝したらいい。","優勝するに違いない","優勝するのではないだろうか"],ans:0,exp:"〜ても不思議ではない = dù ai thắng cũng không lạ (ai cũng có khả năng)"},
+      {q:"（駅の改札口で）妻「あ、もう10時だよ。急がないと新幹線が出発（　）。」夫「本当だ。急ごう。」",opts:["して","しとく","しちゃう","しなきゃなる"],ans:2,exp:"〜てしまう → しちゃう (khẩu ngữ) = sẽ bị... mất (kết quả không mong muốn)"},
+      {q:"山田「あ、課長、明日はどうもごちそうさまでした。おいしい物をたくさん（　）。」課長「それはよかった。またうちで食事をしよう。」",opts:["いただいていました","いただきました","めしあがっていました","めしあがりました"],ans:1,exp:"いただきました = đã được thụ hưởng ạ (khiêm nhường 謙譲語 của 食べる)"},
+      {q:"妻「明日食べに行くラーメン屋、11時半ごろから込むらしいよ。」夫「じゃあ、11時過ぎに店に着けるように早めに家を（　）ね。」妻「うん、そうね。早めに出よう。」",opts:["出るつもりかもしれない。","出たほうがいいかもしれない。","出てはいけないそうだ","出なくてもよさそうだ"],ans:1,exp:"〜たほうがいい = nên làm... (lời khuyên)"}
+    ]
+  },
+  {
+    id: "7-2022", label: "7/2022",
+    m1: [
+      {q:"友達がおいしいカレー屋があると言って連れていってくれた。友達と同じものを頼んだが、私（　）辛すぎた。",opts:["で","へ","には","より"],ans:2,exp:"〜には = đối với... (đánh giá dựa trên tiêu chuẩn cá nhân)"},
+      {q:"A「（　）絵本、知ってる？」B「うん、知ってるよ。子供のとき、大好きだった。」",opts:["「大きな家」と","「大きな家」って","「大きな家」でも","「大きな家」なんか"],ans:1,exp:"〜って = tên là... / gọi là... (khẩu ngữ của と言う)"},
+      {q:"昨日見た映画は、面白いと聞いていたのに（　）面白くなかった。",opts:["やっと","すっかり","せっかく","ちっとも"],ans:3,exp:"ちっとも〜ない = hoàn toàn không... (phủ định tuyệt đối)"},
+      {q:"近所のパン屋は、パンの種類が多い。一年中売っているパン（　）季節ごとに発売されるパンもある。",opts:["のほかに","のことで","に比べて","について"],ans:0,exp:"〜のほかに = ngoài... ra còn có... (bổ sung thông tin)"},
+      {q:"夫は、プロのサッカー選手として活動する（　）大学院でスポーツ科学を学んでいる。",opts:["点で","一方で","としたら","のだから"],ans:1,exp:"〜一方で = trong khi đó... / vừa... vừa... (hai hành động song song)"},
+      {q:"もうすぐ夏だ。（　）エアコンが問題なく動くかどうか、確認しておこうと思う。",opts:["暑くなるまで","暑くなる前に","暑くするまで","暑くする前に"],ans:1,exp:"〜前に = trước khi... (làm trước để phòng ngừa)"},
+      {q:"新しいパソコンを買って1か月（　）使っていないのに、壊れてしまった。",opts:["ごろしか","ごろだけ","ぐらいしか","ぐらいだけ"],ans:2,exp:"〜ぐらいしか〜ない = chỉ khoảng... thôi (nhấn mạnh ít ỏi)"},
+      {q:"（薬局で）店員「この薬を1日3回、食事の後に飲んでください。飲むと眠く（　）、飲んだ後、車の運転などはしないでください。」",opts:["なればいいので","なったばかりなので","なることがあるので","なってはいけないので"],ans:2,exp:"〜ことがある = đôi khi có thể... (khả năng không thường xuyên)"},
+      {q:"（インタビューで）選手「優勝できたのは皆さんの応援の（　）。ありがとうございました。」",opts:["はずです","ようです","ことです","おかげです"],ans:3,exp:"〜おかげです = nhờ có... mà (lý do tốt đẹp)"},
+      {q:"（電話で）田中「はい、営業課の田中です。」石山「会計課の石山ですが、今ちょっとよろしいですか。」田中「すみません。これから会議なんです。」田中「わかりました。では、またあとで（　）。」",opts:["かけ直します","かけ出します","かけています","かけておきます"],ans:0,exp:"かけ直す = gọi lại (làm lại hành động gọi điện)"},
+      {q:"（玄関で）妻「帰りにスーパーで卵を（　）？」夫「わかった。」",opts:["買っていってもらわない","買ってきてもらわない","買っていってくれない","買ってきてくれない"],ans:3,exp:"〜てきてくれない = giúp mang về/mua về cho tôi không? (hướng về phía người nói)"},
+      {q:"村山「中野さん、3月で会社を辞めるって本当ですか。」中野「はい、私、4月から（　）。」",opts:["留学することにしたんです","留学することにしそうです","留学したことがあるんです","留学したことがありそうです"],ans:0,exp:"〜ことにした = đã quyết định sẽ... (quyết định của bản thân)"},
+      {q:"（銀行のホームページで）キャッシュカードの暗証番号は決して他人に（　）。",opts:["知ってはいけません","知らせにくいです","知られないようにしてください","知らないほうがいいでしょう"],ans:2,exp:"〜られないようにしてください = hãy đề phòng để không bị... (cảnh báo lịch sự)"}
+    ]
+  },
+  {
+    id: "12-2022", label: "12/2022",
+    m1: [
+      {q:"（留学生が日本のホストファミリーへのお礼の手紙で）「おかげ（　）日本語の力がかなり上達しました。」",opts:["で","が","に","をもって"],ans:0,exp:"おかげで = nhờ có... mà (lý do tốt đẹp)"},
+      {q:"（掃除の案内）「掃除をするときは窓を開けて、換気をするように（　）ください。」",opts:["して","してき","しておいて","させて"],ans:0,exp:"〜するようにしてください = hãy cố gắng... (hướng dẫn, yêu cầu hành vi)"},
+      {q:"（天気予報で）「台風の影響で、沿岸地域では高波に（　）十分注意してください。」",opts:["ついて","対して","よって","おいて"],ans:1,exp:"〜に対して = đối với... / về phía... (hướng tới đối tượng cụ thể)"},
+      {q:"A「最近スポーツを始めたって聞いたけど？」B「うん。ダイエットしたくて、走り始めたんだ。走って（　）、気持ちよくなってきた。」",opts:["しまうと","みると","いると","いかないと"],ans:1,exp:"〜てみると = khi thử... thì (kết quả bất ngờ sau khi thử)"},
+      {q:"料理を作るのが好きで、料理のレシピを見（　）にはいられない。",opts:["ないで","ないでは","ないでも","ないとは"],ans:1,exp:"〜ずにはいられない / 〜ないではいられない = không thể không... (không kiềm chế được)"},
+      {q:"（大学の授業で）「では、このテーマについてグループで話し合い、一人一人が自分の意見を発表する（　）してください。」",opts:["ように","ことに","ことが","ために"],ans:1,exp:"〜ことにする = quyết định làm... (quy định, chỉ định)"},
+      {q:"「私は20年間、ずっと貿易の仕事を（　）。この経験を生かして、これからも頑張ります。」",opts:["してきました","していきました","してありました","していました"],ans:0,exp:"〜てきた = đã làm liên tục đến nay (quá khứ → hiện tại)"},
+      {q:"（職場で）「田中くん、今日のお昼はどうする？」「ちょっと体の調子が悪くて、（　）。」",opts:["食欲がないんです","食欲のないんです","食欲はないほうです","食欲なんです"],ans:0,exp:"〜んです = giải thích lý do... (説明・弁明の「んです」)"},
+      {q:"祖父は野菜だけ（　）好きで、肉はあまり食べない。",opts:["ばかりか","を通じて","がゆえに","にかけては"],ans:3,exp:"〜にかけては = khi nói đến chuyện... (lĩnh vực xuất sắc)"},
+      {q:"（コンビニで）店員「あ、だいぶ大変そうですね。袋は（　）。」客「お願いします。」",opts:["おつけしましょうか","おつけになりましょうか","つけてさしあげましょうか","つけていただきましょうか"],ans:0,exp:"おつけしましょうか = kính ngữ khiêm nhường, đề nghị phục vụ khách"},
+      {q:"体の具合が悪いので、今日のパーティーは（　）しまった。",opts:["休もうと","休もうかと","休んでも","休んでしまおうかと"],ans:1,exp:"〜（よ）うかと思う = đang nghĩ muốn... (ý định chưa chắc)"},
+      {q:"（バス停）「次のバスは、10時50分に参ります。今しばらく（　）。」",opts:["お待ちします","お待ちください","お待ちになります","お待ちになってください"],ans:1,exp:"お待ちください = xin hãy đợi ạ (lịch sự 丁寧語)"},
+      {q:"A「最近、子供が言うことを聞かなくて、どうしたらいいかわからなくて。」B「（　）ね。悩みを聞いてあげることが大切だと思うよ。」",opts:["それは大変だった","それは大変だろう","それは大変そうだ","それは大変だね"],ans:3,exp:"〜ね = cảm thông với người nghe (共感の表現)"}
+    ]
+  },
+  {
+    id: "7-2024", label: "7/2024",
+    m1: [
+      {q:"久しぶりに大学時代の友人と会って、楽しい時間（　）過ごした。",opts:["で","に","が","を"],ans:3,exp:"時間を過ごす = trải qua thời gian... (を là tân ngữ của 過ごす)"},
+      {q:"私の家の近くにはスーパーが2軒あって、（　）歩いて行けるので便利だ。",opts:["どちらから","どちらへも","どちらかでも","どちらかまで"],ans:1,exp:"どちらへも = đến cả hai (〜へも = cả hướng này cũng)"},
+      {q:"子供のころからバスが大好きだったはバスの運転手（　）働いている。",opts:["として","のほうが","にとって","のほかに"],ans:0,exp:"〜として = với tư cách là... (身分・立場)"},
+      {q:"今朝、寝坊して会議に遅れそうだったので、タクシーに乗ったが、道が込んでいて（　）遅刻してしまった。",opts:["つい","結局","次第に","ほとんど"],ans:1,exp:"結局 = rốt cuộc... (sau tất cả diễn biến, kết quả là)"},
+      {q:"この歌を（　）たびに大学時代のことを思い出す。",opts:["聞き","聞く","聞いた","聞いている"],ans:1,exp:"〜たびに = mỗi khi... (Vる形 + たびに)"},
+      {q:"（大学で）アン「国に帰りますが、帰ってからどう（　）まだ決めていません。」",opts:["するかは","するかが","することは","することが"],ans:0,exp:"どう〜かは = chuyện sẽ... như thế nào (間接疑問文 + は/が)"},
+      {q:"インターネットで買ったセーターが届いた。サイズが少し大きいかもしれないと心配していたが、実際に（　）ぴったりだった。",opts:["着てみると","着たのだから","着るとしたら","着ていることで"],ans:0,exp:"〜てみると = khi thử... thì (kết quả thực tế)"},
+      {q:"（大学で）A「ごめん、授業の後は図書館へ行くつもりなんだ。あしたレポートを（　）まだ終わってなくて。」",opts:["出したほうがよくても","出さなくてもいいのに","出してはいけなくても","出さないといけないのに"],ans:3,exp:"〜ないといけないのに = dù phải... mà vẫn... (nêu lý do kèm tình trạng)"},
+      {q:"この夏祭りは、100年以上前から、この町に住む人々によって（　）。",opts:["続けてもらえる","続けさせられる","続けられている","続けてくれている"],ans:2,exp:"〜によって〜られている = được duy trì bởi... (bị động tôn trọng, chủ thể tập thể)"},
+      {q:"A「このクッキー、おいしいね。どこで（　）？」B「さくらデパートだよ。」",opts:["買ったの","買ったよね","買ったことある","買ったんじゃない"],ans:0,exp:"〜の？ = hỏi thông tin (疑問の「の」khẩu ngữ thân mật)"},
+      {q:"（会議室で）A「この会議室、あとでまた使うので、エアコンはつけたままに（　）。」B「はい、わかりました。」",opts:["していませんか","なっていませんか","なっておいてください","なっておいてください"],ans:2,exp:"〜たままにしておく = giữ nguyên trạng thái... (để nguyên không tắt)"},
+      {q:"昨日読んだ雑誌に、「忘れることは、必ずしも（　）」と書いてあった。",opts:["悪いことなのだ","悪いことではない","悪いことのはずだ","悪いことかもしれない"],ans:1,exp:"必ずしも〜ではない = không nhất thiết là... (phủ định tương đối)"},
+      {q:"学生「先生は、ふだん何かスポーツを（　）。」先生「ええ。ゴルフにはときどき行きますよ。」",opts:["いたしますか","まいりますか","なさいますか","いらっしゃいますか"],ans:2,exp:"なさいますか = kính ngữ tôn kính (尊敬語) của する, hỏi hành động của người trên"}
+    ]
+  },
+  {
+    id: "12-2024", label: "12/2024",
+    m1: [
+      {q:"私は、自分の作ったパンをたくさんの人（　）食べてほしいと思って、パン屋を始めた。",opts:["は","に","まで","なら"],ans:1,exp:"〜に食べてほしい = muốn ai đó ăn (〜に + Vてほしい, đối tượng là に)"},
+      {q:"（研究室で）学生「先生、今、よろしいですか。来週の発表（　）、ちょっとご相談したいのですが。」先生「ええ、いいですよ。」",opts:["にとって","によると","のことで","のほか"],ans:2,exp:"〜のことで = về chuyện... (chủ đề muốn bàn luận)"},
+      {q:"いつもは宿題に2時間以上かかるが、今日は1時間（　）終わりそうだ。",opts:["ごろに","ごろで","ぐらいに","ぐらいで"],ans:3,exp:"〜ぐらいで = trong khoảng... (thời gian hoàn thành, ぐらい + で)"},
+      {q:"（家で）息子「ねえ、お母さん、おなかすいた。」母「えっ、（　）ご飯食べたばかりなのに、もうおなかすいたの？」",opts:["そろそろ","だんだん","さっき","ずっと"],ans:2,exp:"さっき = vừa nãy (chỉ thời điểm gần đây)"},
+      {q:"大事なレシートをズボンのポケットに（　）洗濯してしまった。",opts:["入れたまま","入ったまま","入れている間","入っている間"],ans:0,exp:"〜たまま = giữ nguyên trạng thái... mà làm gì (hành động không ý thức)"},
+      {q:"（駅の近くで）A「急げば、9時の電車に間に合うかもしれないよ。走ろうか。」B「いや、（　）もう間に合わないと思うよ。次の電車にしよう。」",opts:["走ってて","走ったって","走らなきゃ","走っちゃって"],ans:1,exp:"〜たって = dù có... cũng không (khẩu ngữ của 〜ても)"},
+      {q:"私はよくインターネットで買い物をするが、洋服は買わない。実際に（　）買いたいからだ。",opts:["着てみないと","着ておかないと","着てみてから","着ておいてから"],ans:2,exp:"〜てみてから = sau khi thử... rồi mới (trình tự: thử trước, mua sau)"},
+      {q:"（林さんの家で）山下「おいしそうなお料理ですね。」林「どうぞたくさん（　）ください。」山下「ありがとうございます。いただきます。」",opts:["なさって","おっしゃって","めしあがって","いらっしゃって"],ans:2,exp:"めしあがる = ăn/uống (尊敬語 của 食べる/飲む)"},
+      {q:"A「最近、寒くなって（　）ね。」B「ええ。今日は特に冷えますね。」",opts:["いました","ありました","いきました","きました"],ans:3,exp:"〜てきた = dần dần trở nên... (thay đổi theo thời gian hướng đến hiện tại)"},
+      {q:"（大学で）A「日曜日の留学生交流会、どうだったた？」B「楽しかったよ。初めてだったからちょっと緊張したけど、新しい友達もできたし、（　）。」",opts:["行ってよかったよ","行こうかと思うよ","行きたかったなあ","行けたらいいなあ"],ans:0,exp:"〜てよかった = may mà đã... / thật tốt vì đã... (hối tiếc ngược: vui vì đã làm)"},
+      {q:"（大学の事務所で）学生「すみません。ペンを（　）。」事務所の人「あ、はい。これを使ってください。」",opts:["お貸しできますか","お貸しいたしますか","貸したらいかがですか","貸していただけませんか"],ans:3,exp:"〜ていただけませんか = Nhờ/xin... được không ạ? (lịch sự cao nhất khi nhờ vả)"},
+      {q:"以前は、会社の窓から海を見ることができたが、隣に高いビルができて、（　）。",opts:["見えなくてもよくなった","見られたかもしれない","見えなくなってしまった","見られるようにならない"],ans:2,exp:"〜てしまった = đã... mất rồi (kết quả không thể đảo ngược, tiếc nuối)"},
+      {q:"（病院で）医者「この薬を五日間飲んでください。」患者「わかりました。熱が下がっても（　）。」医者「はい。五日間必ず飲んでください。」",opts:["飲んではいけませんか","飲んでいないんでしょうか","飲んでみようと思いますか","飲んだほうがいいでしょうか"],ans:3,exp:"〜たほうがいいでしょうか = có nên... không ạ? (hỏi lời khuyên lịch sự)"}
+    ]
+  },
+  {
+    id: "7-2025", label: "7/2025",
+    m1: [
+      {q:"先月東京で行われたサッカーの国際大会には、世界中（　）多くのサッカーファンが集まった。",opts:["に","で","から","まで"],ans:2,exp:"世界中から = từ khắp nơi trên thế giới đến (起点を示す「から」)"},
+      {q:"食事のマナーは国（　）違うので、私は旅行に行く前に、気をつけたほうがいいことはないか調べるようにしている。",opts:["によって","に対して","にとって","において"],ans:0,exp:"〜によって違う = khác nhau tùy theo... (原因・基準のによって)"},
+      {q:"A「もうすぐ（　）この前言ってたけど、準備は進んでる？」B「うん。」",opts:["引っ越す","引っ越すか","引っ越すって","引っ越すのを"],ans:2,exp:"〜って = là... / rằng... (khẩu ngữ của と言った: truyền đạt thông tin)"},
+      {q:"田中「山下さん、映画をよく見るそうですね。映画館で見るんですか。」山下「映画館にも行きますが、（　）、家でDVDを見ることが多いですね。」",opts:["確かに","まるで","必ずしも","どちらかというと"],ans:3,exp:"どちらかというと = nếu phải chọn thì... / nói chung là... (xu hướng)"},
+      {q:"（料理番組で）「じゃがいもは、ゆでてから皮をむいたほうが、きれいに皮がむけます。ゆでた後、熱い（　）皮をむきましょう。」",opts:["のに","うちに","ことで","とすると"],ans:1,exp:"熱いうちに = khi còn nóng (〜うちに = tranh thủ lúc còn trong trạng thái đó)"},
+      {q:"少し前にご飯を食べた（　）なのに、もうおなかがすいてきた。",opts:["せい","とき","よう","ばかり"],ans:3,exp:"〜ばかり = vừa mới... xong (hành động vừa hoàn thành không lâu)"},
+      {q:"私は小学生のころ、ゲームが大好きだった。早く家で、ゲームが（　）、毎日学校から走って帰っていた。",opts:["したくて","したくても","するためで","するためでも"],ans:0,exp:"〜たくて = vì muốn... nên (desire as reason for action)"},
+      {q:"弟の誕生日プレゼントを何にするか考えている。何を（　）、喜ぶだろうか。",opts:["くれたら","あげたら","くれるから","あげるから"],ans:1,exp:"何をあげたら = nếu tặng gì thì... (điều kiện + 喜ぶ)"},
+      {q:"（電話で）A「この前借りた小説、もう1回貸してもらえない？」B「うん、いいよ。あした、学校に（　）ね。」",opts:["持とっく","持ってる","持ってく","持っちゃう"],ans:2,exp:"持ってく = 持っていく (khẩu ngữ, sẽ mang đến)"},
+      {q:"A「来週の登山、楽しみだね。」B「うん、（　）ね。」",opts:["晴れてきた","晴れるといい","晴れるんだ","晴れてよかった"],ans:1,exp:"〜といい = thật tốt nếu... (mong muốn, hy vọng)"},
+      {q:"（市のホームページで）9月30日に絵本作家の坂本みどりさんによる講演会が開かれます。市民の方であれば、どなたでも無料で（　）。",opts:["ご参加になれます","参加いたします","ご参加になっています","参加できます"],ans:0,exp:"ご〜になれます = có thể... được ạ (kính ngữ tôn trọng + khả năng)"},
+      {q:"以前は、会社の窓から海を見ることができたが、隣に高いビルができて、（　）。",opts:["見えなくてもよくなった","見られたかもしれない","見えなくなってしまった","見られるようにならない"],ans:2,exp:"〜てしまった = đã... mất rồi (kết quả không thể đảo ngược, tiếc)"},
+      {q:"（病院で）医者「この薬を五日間飲んでください。」患者「わかりました。熱が下がっても（　）。」",opts:["飲んではいけませんか","飲んでいないんでしょうか","飲んでみようと思いますか","飲んだほうがいいでしょうか"],ans:3,exp:"〜たほうがいいでしょうか = có nên... không ạ? (xác nhận lịch sự)"}
+    ]
+  }
+];
+
+// Thêm 7 đề còn thiếu từ Drive
+const GRAMMAR_EXAM_DATA_EXTRA = [
+  {
+    id: "12-2011", label: "12/2011",
+    m1: [
+      {q:"来週、社長が日本に出張するので、私も通訳（　）一緒に行きます。",opts:["として","にして","とまで","にまで"],ans:0,exp:"〜として = với tư cách là... (身分)"},
+      {q:"わたしたちがふだん使っているコインには、丸い形（　）しているものが多い。",opts:["の","も","を","で"],ans:2,exp:"形をしている = có hình dạng... (を + する = trạng thái)"},
+      {q:"「かわいい」とか「ひとりではさびしい」（　）いう理由でペットを簡単に買い始める人がいるが、最後まで飼い続ける強い意志も必要だと思う。",opts:["などを","などと","ことを","ことと"],ans:3,exp:"〜ことと = cùng với chuyện... (列挙)"},
+      {q:"子ども「何か食べるもの、ある？」母親「おなかがすいて（　）ドーナツがあるよ。」",opts:["いても","いるけど","いるのに","いるから"],ans:1,exp:"〜けど = nhưng... (逆接, giới thiệu thêm)"},
+      {q:"今回発売されたパソコンは、今までのもの（　）かなり軽くなったので、持ち運びが楽だ。",opts:["にしたがって","にくらべて","の一方で","のことで"],ans:1,exp:"〜に比べて = so với... (比較)"},
+      {q:"課長「山田さん、明日の会議の資料、もう部長に届けた？」山田「はい、届けました。ついさっき、持って（　）ところです。」",opts:["来る","行った","行く","来た"],ans:3,exp:"持ってきたところ = vừa mang đến (〜たところ = vừa xong)"},
+      {q:"（会社の説明会で）「これで、わたしからの説明は終わりますが、質問がある人はいますか。」学生「はい、二つ、質問（　）ください」",opts:["して","させて","やって","させていただいて"],ans:1,exp:"させていただく = kính ngữ khiêm nhường khi xin phép"},
+      {q:"先輩「また遅刻。この前も先生に、これから練習は遅刻（　）って言われたでしょう。」西田「はい、本当にすみません。」",opts:["するな","するよ","するんだ","するね"],ans:0,exp:"〜するな = cấm làm... (禁止命令)"},
+      {q:"わたしたちは、先生にプレゼントを用意して、最後の授業の日に（　）計画を立てています。",opts:["くださる","もらう","さしあげる","いただく"],ans:2,exp:"さしあげる = kính ngữ khiêm nhường của あげる (tặng cho người trên)"},
+      {q:"あの時は仕方なかったのだが、彼を怒らせる（　）言ってしまって悪かったと思っている。",opts:["ようなことで","ようなことを","そうなことで","そうなことを"],ans:1,exp:"〜ようなことを言う = nói những điều kiểu như... (gây ra kết quả tiêu cực)"},
+      {q:"山下「田中君、明日、研究室の片付けに来られる？」田中「午後は予定があるんだ。午前中（　）大丈夫だよ。」",opts:["だけでよければ","だけでよくても","だけにすれば","だけにしても"],ans:0,exp:"〜だけでよければ = nếu chỉ cần... là được (điều kiện nhượng bộ)"},
+      {q:"山口「中川先生。」中川先生「あ、山口さん。偶然ですね。」山口「はい。わたしもこのパーティーで先生に（　）とは思いませんでした。」",opts:["会われる","お会いできる","お目にかかる","ご覧になる"],ans:2,exp:"お目にかかる = gặp (kính ngữ khiêm nhường của 会う)"},
+      {q:"わたしの娘は小さいときは体が弱かったが、小学校に入学したことからは、だんだん風を引いたり熱を出したり（　）。",opts:["しないようになった","しないことになった","しないようにした","しないことにした"],ans:0,exp:"〜ないようになった = dần dần không còn... nữa (thay đổi tự nhiên)"}
+    ]
+  },
+  {
+    id: "7-2010", label: "7/2010",
+    m1: [
+      {q:"A「田中さんは今日もアルバイトでしょうか。」B「今日はない（　）言っていましたよ。」",opts:["と","って","には","では"],ans:1,exp:"〜って = nghe nói... (khẩu ngữ của と言っていた)"},
+      {q:"わたしは山田さんに会う（　）すてきな人だといつも思う。",opts:["うちに","はじめに","たびに","だけに"],ans:2,exp:"〜たびに = mỗi khi... (hành động lặp lại)"},
+      {q:"本を読んでいたら、（　）五時間も経ってしまった。",opts:["そろそろ","だんだん","ようやく","いつの間にか"],ans:3,exp:"いつの間にか = không biết từ lúc nào... (thời gian trôi mà không hay biết)"},
+      {q:"今日は七時に東京駅で友達と（　）ことになっているので、そろそろ出ます。",opts:["会おう","会う","会った","会って"],ans:1,exp:"〜ことになっている = đã được quyết định sẽ... (sắp xếp từ trước)"},
+      {q:"医者からたばこを（　）ように言われているのだが、なかなかやめられない。",opts:["やる","やめる","やらない","やめない"],ans:1,exp:"〜ように言われている = được dặn phải... (lời khuyên/chỉ thị từ người khác)"},
+      {q:"山田先生の講演の（　）、皆熱心に話を聞いていた。",opts:["あいだと","あいだに","あいだで","あいだも"],ans:1,exp:"〜あいだに = trong khoảng thời gian... (suốt lúc đó)"},
+      {q:"「かばん売り場はどこ？」「5階に（　）」",opts:["ございます","いらっしゃいます","おります","なさいます"],ans:0,exp:"ございます = kính ngữ lịch sự (了寧語) của あります"},
+      {q:"A「何か食べようか。」C「わたし、おなかすいてないから、コーヒー（　）する。」",opts:["だけ","しか","ばかり","のみ"],ans:0,exp:"〜だけにする = chỉ... thôi (giới hạn lựa chọn)"},
+      {q:"勉強して、ある程度日本が話せる（　）、日本語の授業がおもしろくなった。",opts:["ようにして","ようになって","ようになってから","ようにしてから"],ans:2,exp:"〜ようになってから = kể từ khi có thể... thì... (thay đổi → kết quả)"},
+      {q:"社外の商品の腰の痛みにどのくらい効果が（　）詳しく知りたい。",opts:["あるのかによって","あるのかについて","あるのかにとって","あるのかにおいて"],ans:1,exp:"〜について詳しく知りたい = muốn biết rõ về... (주제의 について)"},
+      {q:"昨日、わたしと妹でスープを作ったんですが、塩の量が間違えて味が（　）いました。",opts:["濃くなりやすくなって","濃くしやすくなって","濃くなりすぎて","濃くしすぎて"],ans:2,exp:"〜すぎて = quá... nên... (nguyên nhân quá mức)"},
+      {q:"A「あれ、財布がない。」B「もう、びっくり（　）よ。でも、よかったですね。」",opts:["させないでください","させてください","しないでください","してください"],ans:1,exp:"びっくりさせてください = để tôi được ngạc nhiên (使役 + もらう ý nghĩa)"},
+      {q:"今朝からひどく歯が痛い。すぐに歯医者に（　）、行きたくない。",opts:["行かなくてもいいのだろうが","行かなくてもいいようだが","行けばいいのだろうが","行けばいいようだが"],ans:2,exp:"〜ばいいのだろうが = đáng ra nên... nhưng (tiếc nuối, lý trí vs cảm xúc)"}
+    ]
+  },
+  {
+    id: "7-2013", label: "7/2013",
+    m1: [
+      {q:"兄と私は、意志が強い（　）点でよく似ている。",opts:["の","という","に","な"],ans:1,exp:"〜という点で = ở điểm... (nêu tiêu chí so sánh)"},
+      {q:"ガイドブックに金閣寺（　）行き方が書いてある。",opts:["に","で","への","とは"],ans:2,exp:"〜への行き方 = cách đi đến... (N + への + N)"},
+      {q:"隣の町（　）、私の住んでいる町は水道代が高い。",opts:["として","と比べて","にまで","において"],ans:1,exp:"〜と比べて = so với... (比較)"},
+      {q:"昨日、駅前の本屋に（　）、偶然、学生時代の友人に会った。",opts:["行けば","行くなら","行こうと","行ったら"],ans:3,exp:"〜たら = khi... thì (điều kiện thực tế đã xảy ra)"},
+      {q:"せっかく海外に（　）、いろいろな所を見たい。",opts:["来たのだから","来たために","来たおかげで","来たかったから"],ans:0,exp:"せっかく〜のだから = đã khó khăn mới... nên... (tận dụng cơ hội)"},
+      {q:"山下「さっき田中さんから、風邪ひいて、スキーに行けないって連絡が来たんだ。」川村「えっ、田中さん、（　）楽しみにしていたのに、残念だね。」",opts:["あんなに","こんなに","そんなに","どんなに"],ans:0,exp:"あんなに = đến vậy, nhiều như thế (ám chỉ điều đã biết chung)"},
+      {q:"妹は、最初は「水泳教室に行きたくない」と（　）が、今では友達もできて、楽しそうに通っている。",opts:["嫌がっていた","嫌いだった","嫌そうだった","嫌がった"],ans:0,exp:"嫌がる = tỏ ra không thích, phản đối (態度の表現)"},
+      {q:"（電話で）A「はい。Mサッカークラブです。」B「もしもし。そちらのサッカークラブに入りたいのですが、一度そちらの練習を（　）」A「ええ、いいですよ」",opts:["拝見できませんか","見学させていただけませんか","ご覧になりませんか","見学してもいいでしょうか"],ans:1,exp:"見学させていただけませんか = cho phép tôi được tham quan... (lịch sự nhất)"},
+      {q:"（デパートで）客「すみません、トイレはどこですか。」店員「はい。あちらの（　）ございます。」",opts:["階段の近く","階段に近くて","階段のそばに","階段の近くに"],ans:3,exp:"階段の近くに + ございます = ở gần cầu thang (に + ございます)"},
+      {q:"習慣にしていた朝のジョギングを（　）、1年がたつ。",opts:["しないときに","しないあいだは","しなくなってから","しなくなったあとで"],ans:2,exp:"〜なくなってから = kể từ khi không còn... nữa (起点)"},
+      {q:"会議で、使う資料に間違いがあったが、今から（　）時間が足りない。",opts:["作り直すには","作り直したら","作り直すまで","作り直すなら"],ans:0,exp:"〜には時間が足りない = không đủ thời gian để... (Vる + には)"},
+      {q:"山下かずおは、いつも首相（　）実力を持っている。",opts:["になるのに","になってもいい","になってもおかしくない","になるべき"],ans:2,exp:"〜てもおかしくない = dù có... cũng không lạ (khả năng cao)"},
+      {q:"A「このテレビ、ずいぶん古いね。」A「えっ！15年前？そろそろ（　）？」B「まだ見られるから、必要ないよ。」",opts:["買い替えなし、かもしれない","買い替えてみたかもしれない","買い替えにくかったんじゃない","買い替えてもいいんじゃない"],ans:3,exp:"〜てもいいんじゃない = có lẽ nên... đi (gợi ý nhẹ nhàng)"}
+    ]
+  },
+  {
+    id: "7-2017", label: "7/2017",
+    m1: [
+      {q:"留学中は、楽しいこと（　）ではなく、大変なことも多かったが、1年間の留学生活はとてもいい経験になった。",opts:["ばかり","なんか","しか","でも"],ans:0,exp:"〜ばかり = chỉ toàn... (nhiều/chỉ có điều đó)"},
+      {q:"レストランで働き始めたころは毎日緊張していたが、仕事に慣れる（　）、笑顔でお客様と話せるようになってきた。",opts:["までに","たびに","のに対して","にしたがって"],ans:3,exp:"〜にしたがって = theo đà... / khi... dần dần (変化の過程)"},
+      {q:"三日間降り続けた雨が（　）やんで、今日は青空が見えた。",opts:["今にも","ようやく","絶対","あまりに"],ans:1,exp:"ようやく = cuối cùng cũng... (sau thời gian chờ đợi lâu)"},
+      {q:"インターネットで買い物をするのは、（　）売っている人の顔が見えないという怖さもある。",opts:["便利である一方で","便利なのだから","利だとすると","便利であるように"],ans:0,exp:"〜一方で = trong khi đó... (hai mặt của vấn đề)"},
+      {q:"赤ちゃんは、つかんだものは何でも口に（　）たがるので、危ないものは近くに置かないよう注意が必要だ。",opts:["入れる","入る","入れ","入り"],ans:2,exp:"〜たがる = có vẻ muốn... (第三者의 욕구) → 入れ + たがる"},
+      {q:"南：「もしもし。」山下：「あ、もしもし、南さん。今急いでそっちに向かってるんだけど、約束の時間に（　）。」南：「うん、大丈夫だよ。喫茶店に入って待ってるから、ゆっくり来て。」",opts:["間に合うに違いなくて","間に合いそうになくて","間に合わないはずがなくて","間に合わないといけなくて"],ans:1,exp:"〜そうにない = có vẻ sẽ không kịp... (dự đoán tiêu cực)"},
+      {q:"A小学校の近くにある池は深くて、子供が遊ぶと危ないので、数年前に町の人たちが「危険！池に（　）！」という看板を立てた。",opts:["入ろう","入って","入るな","入りなさい"],ans:2,exp:"〜るな = cấm làm... (禁止命令)"},
+      {q:"靴は、はいてみて、自分の足に合うかどうか確認してから買ったほうがいいのはわかっているが、インターネットで気に入ったものを見つけると、つい（　）。",opts:["買うところだ","買うことにする","買ってほしい","買ってしまう"],ans:3,exp:"つい〜てしまう = vô tình lỡ... (hành động không kiềm chế được)"},
+      {q:"先週からうちの庭によく同じ猫が来る。今日（　）朝と夕方の2回見た。",opts:["だけで","までは","だけに","まででも"],ans:0,exp:"〜だけで = chỉ trong... (giới hạn phạm vi)"},
+      {q:"天気予報では今日は晴れると言っていたので、傘を（　）出かけたが、夕方急に雨が降り出して、ぬれてしまった。",opts:["持たなくて","持てなくて","持たないで","持てないで"],ans:2,exp:"〜ないで = không... mà (không mang ô mà ra ngoài)"},
+      {q:"受験勉強も大変だったが、大学に（　）もっと大変だった。",opts:["入りたいのも","入れたのは","入るまでより","入ってからのほうが"],ans:3,exp:"入ってからのほうが = sau khi vào thì... hơn (比較)"},
+      {q:"夕方、窓を開けていると、いつもみそ汁のにおい（　）。",opts:["をしていく","がしてくる","をしている","がしてある"],ans:1,exp:"〜がしてくる = mùi... bay đến (方向：外→内, 感覚動詞)"},
+      {q:"（会社で）青木「林さん、お先に失礼します。まだ帰らないんですか。」林「ええ、私はもう少しやって帰ります。この仕事は今日中に（　）。」青木「そうですか。お疲れさまです。」",opts:["やっておきそうなので","やってしまいたいので","やってみてもいいんですが","やっているところなんですが"],ans:1,exp:"〜てしまいたい = muốn làm xong cho xong (完了への意志)"}
+    ]
+  },
+  {
+    id: "12-2020", label: "12/2020",
+    m1: [
+      {q:"今年の出張は、多い月も少ない月もありますが、わたしは（　）一か月に二回くらいです。",opts:["平均","合計","割合","全体"],ans:0,exp:"平均 = trung bình (平均すると = trung bình khoảng)"},
+      {q:"今、毎週日曜日に近所を30分ほど（　）して、健康のために歩くようになりました。",opts:["散歩","運動","ジョギング","トレーニング"],ans:0,exp:"散歩する = đi dạo (thường dùng cho hoạt động đi bộ nhẹ nhàng)"},
+      {q:"今日、電車を（　）まちがえてしまって、一駅乗り過ごしました。",opts:["乗るのを","乗ってを","乗ることを","乗って"],ans:0,exp:"〜のをまちがえる = nhầm lẫn việc... (動詞のをまちがえる)"},
+      {q:"会議は午後2時に始まった。（　）、参加者全員が集まるのに時間がかかった。",opts:["しかし","ところが","そして","それに"],ans:1,exp:"ところが = thế nhưng bất ngờ là... (逆接、予想外)"},
+      {q:"来月から始まる新しいプロジェクトは、私（　）任されることになった。",opts:["を","に","が","で"],ans:1,exp:"私に任される = được giao cho tôi (〜に + 任される)"},
+      {q:"（コンビニで）店員「お弁当、温め（　）か。」客「はい、お願いします。」",opts:["しましょう","いたしましょう","なさいましょう","されましょう"],ans:1,exp:"温めいたしましょうか = kính ngữ khiêm nhường, đề nghị phục vụ"},
+      {q:"自分の体の健康を（　）、毎日の食事と運動に気をつけるようにしています。",opts:["守るために","守るといえば","守るとすると","守るようなら"],ans:0,exp:"〜ために = để... (目的)"},
+      {q:"いつもジョギングをしている公園が今日は閉まっていた。それで、（　）別の場所を走った。",opts:["かわりに","おかげで","せいで","たとえ"],ans:0,exp:"かわりに = thay vì... (代替)"},
+      {q:"友達が「この映画、絶対面白いから、一緒に見に行こう」と誘ってくれたので、映画館に（　）が、あまり好きではなかった。",opts:["行ってきた","行ったところ","行ってみた","行くことにした"],ans:2,exp:"〜てみた = đã thử... (結果が期待と違った)"},
+      {q:"（スーパーで）店員「うちのアプリを（　）、毎回割引になりますよ。」客「そうですか。いいですね。」",opts:["使うことで","使うために","使うなら","使うのに"],ans:2,exp:"〜なら = nếu... thì (条件・提案)"},
+      {q:"A「今日は休日だというのに、田中くんは会社に来てるんだね。」B「そうなんだよ。今月締め切りのプロジェクトがあって、（　）なんだって。」",opts:["休んでいられない","休むことができた","休まなかった","休もうとした"],ans:0,exp:"〜ていられない = không thể cứ... mãi được (状況の切迫)"},
+      {q:"父は、毎朝近所をジョギングしながら、体の（　）を確認しているそうだ。",opts:["具合","様子","気分","感覚"],ans:0,exp:"体の具合 = tình trạng sức khỏe (慣用表現)"},
+      {q:"病院で先生に「（　）続けてください」と言われた。薬は痛みがなくなっても、最後まで飲まなければならないそうだ。",opts:["飲みきって","飲み終わって","飲み続けて","飲んでいって"],ans:2,exp:"飲み続けてください = hãy tiếp tục uống (〜続ける = tiếp tục hành động)"}
+    ]
+  },
+  {
+    id: "12-2023", label: "12/2023",
+    m1: [
+      {q:"この辺りは古いお寺や神社が多く、外国（　）観光客にも人気がある。",opts:["で","での","から","からの"],ans:3,exp:"外国からの観光客 = khách du lịch từ nước ngoài (起点のから + の)"},
+      {q:"10年前に友人と2人で会社を作った。10年間で会社は少しずつ大きくなり、社員の数は100人（　）増えた。",opts:["までが","まででも","にまで","のまで"],ans:2,exp:"100人にまで増えた = đã tăng đến 100 người (到達点のにまで)"},
+      {q:"弁当屋で働いている友人が、よく売れる弁当は天気（　）違うと言っていた。",opts:["について","によって","において","に比べて"],ans:1,exp:"〜によって違う = khác nhau tùy theo... (原因・基準)"},
+      {q:"中学生のころから留学したいと思っていた日本に、（　）留学できることになった。",opts:["どうか","決して","ついに","今にも"],ans:2,exp:"ついに = cuối cùng cũng... (念願が叶った)"},
+      {q:"虫歯は、ひどくなってからだと治すのに時間がかかる。ひどくならない（　）歯医者に診てもらうことが重要だ。",opts:["うちに","ときに","までに","たびに"],ans:2,exp:"ひどくならないまでに = trước khi nặng hơn (期限のまでに)"},
+      {q:"来月から大学の近くで一人暮らしを始める。通学のしやすさを（　）、大学まで歩いて通える所にした。",opts:["考えるように","考えて","考えたのに","考えるのか"],ans:1,exp:"〜を考えて = có cân nhắc đến... (Nを + 考えて→理由)"},
+      {q:"実家からみかんがたくさん送られてきた。一人では全部（　）と思ったので、友達に半分あげた。",opts:["食べられそうにない","食べられなくなる","食べられるだろう","食べたほうがいい"],ans:0,exp:"食べられそうにない = có vẻ không ăn hết được (可能 + そうにない)"},
+      {q:"動物が好きな2歳の娘を（　）、先週初めて動物園に連れていった。",opts:["喜んだら","喜ぶと","喜ばせたら","喜ばせたくて"],ans:3,exp:"喜ばせたくて = vì muốn làm cho vui (使役 + たくて = 목적·이유)"},
+      {q:"最近、バレエを習い始めた。上手に（　）何年かかるかわからないが、頑張りたい。",opts:["踊れるようにすると","踊れるようになっても","踊れるようにして","踊れるようになるのに"],ans:3,exp:"踊れるようになるのに = để có thể nhảy được (Vるのに + かかる)"},
+      {q:"うちの犬は散歩が大好きだが、雨の日はぬれるのが嫌なようで、散歩に（　）。",opts:["行かなくてはいけない","行きたがらない","行かなくていい","行くに違いない"],ans:1,exp:"〜たがらない = tỏ ra không muốn... (第三者の意思表現)"},
+      {q:"（デパートで）客「すみません、子供服の売り場は何階ですか。」店員「5階（　）。」",opts:["がございます","がいらっしゃいます","でございます","でいらっしゃいます"],ans:2,exp:"5階でございます = là tầng 5 ạ (丁寧語でで場所表現)"},
+      {q:"（家で）A「夕飯に使う卵が足りないから、ちょっとスーパーまで（　）ね。」B「うん、わかった。」",opts:["買ってきておく","買いにきている","買いにいってくる","買っていってしまう"],ans:2,exp:"買いにいってくる = đi mua rồi về (移動の「いってくる」)"},
+      {q:"（電話で）田中「もしもし、田中です。山下さん、今ちょっといいですか。」山下「あ、田中さん。私も今ちょうど田中さんに電話をしようと（　）。」",opts:["思っていたところでした","思っているところです","思っていたからでした","思っているからです"],ans:0,exp:"〜しようと思っていたところでした = đang định... thì (動作の直前)"}
+    ]
+  }
+];
+
+// Đề 7/2023 - thêm từ PDF
+const GRAMMAR_EXAM_DATA_7_2023 = [
+  {
+    id: "7-2023", label: "7/2023",
+    m1: [
+      {q:"歌手の青山ケイは、海外でも人気があり、アジア（　）中心にいろいろな国でコンサートを行っている。",opts:["が","で","の","を"],ans:3,exp:"アジアを中心に = lấy châu Á làm trung tâm (〜を中心に = tập trung ở...)"},
+      {q:"南中学校で、読書の習慣について調査が行われた。調査の結果を見ると、学年が上がる（　）生徒の読書時間が減っていることがわかる。",opts:["ことから","としたら","にしたがって","のに比べて"],ans:2,exp:"〜にしたがって = theo đà... / khi... thì dần dần (変化の過程)"},
+      {q:"友達に誘われて、夏休みに二人で海外旅行に行くことになった。海外旅行は今まで家族（　）行ったことがないので、楽しみだ。",opts:["だけで","だけが","となら","としか"],ans:3,exp:"〜としか行ったことがない = chỉ từng đi cùng... (限定 + 経験の否定)"},
+      {q:"（不動産屋で）店員「こちらのアパートはいかがですか。駅から歩いて15分なんですが、広くてきれいですよ。」客「ああ、部屋はよさそうなんですが、ちょっと駅から遠いですね。（　）もう少し近いところがいいんですが……。」",opts:["できれば","別に","せっかく","確かに"],ans:0,exp:"できれば = nếu có thể thì... (điều kiện mong muốn lịch sự)"},
+      {q:"散歩中、急に雨が（　）だしたので、慌てて近くの喫茶店に入った。",opts:["降る","降り","降って","降った"],ans:1,exp:"〜だす = bắt đầu... đột ngột (Vます形 + 出す = bắt đầu hành động)"},
+      {q:"（病院の受付で）受付の人「お名前が（　）、診察室の前でお待ちください。」",opts:["呼ぶと","呼ぶまで","呼ばれると","呼ばれるまで"],ans:3,exp:"呼ばれるまで = cho đến khi được gọi tên (受け身 + まで)"},
+      {q:"今朝は電車が遅れた（　）、会社に遅刻してしまった。",opts:["間に","点で","たびに","せいで"],ans:3,exp:"〜せいで = vì... mà (nguyên nhân tiêu cực)"},
+      {q:"明日の授業までにテキストを30ページまで（　）のに、まだ全然読んでいない。",opts:["読んでおいてはいけない","読んでおかなければならない","読むことにしてはいけない","読むことにしなければならない"],ans:1,exp:"〜ておかなければならない = phải làm trước để chuẩn bị (義務 + 準備)"},
+      {q:"昨日の夜は風の音が気になって、少しも（　）。",opts:["眠りたかった","眠ろうとした","眠れなかった","眠らなくなった"],ans:2,exp:"少しも〜なかった = không... chút nào (全否定)"},
+      {q:"私の夢は、いつか自分のケーキ屋を（　）。",opts:["開くと思う","開きたいと思う","開くことだ","開きたいことだ"],ans:2,exp:"〜ことだ = điều mà... / là... (名詞節で夢を表現)"},
+      {q:"妻「雨、全然（　）ね。今日は出かけるのやめようか。」夫「そうだね。」",opts:["やまないはずがない","やみそうにない","やむに違いない","やんでもしかたない"],ans:1,exp:"〜そうにない = có vẻ sẽ không... (dự đoán tiêu cực dựa trên quan sát)"},
+      {q:"（大学で）A「先輩に聞いたんだけど、今度、駅前に新しいカフェが（　）よ。」B「そうなんだ。楽しみだね。」",opts:["できるらしい","できてほしい","できることがある","できたほうがいい"],ans:0,exp:"〜らしい = nghe nói... / hình như... (伝聞・推定)"},
+      {q:"（美容院で）店員「長さは、このぐらいでいいですか。」客「もう少し短く（　）。」店員「はい、わかりました。」",opts:["してあげますか","なってあげますか","してもらえますか","なってもらえますか"],ans:2,exp:"短くしてもらえますか = nhờ cắt ngắn hơn được không? (依頼の表現)"}
+    ]
+  }
+];
+GRAMMAR_EXAM_DATA.push(...GRAMMAR_EXAM_DATA_7_2023);
+
+// Merge into main data
+GRAMMAR_EXAM_DATA.push(...GRAMMAR_EXAM_DATA_EXTRA);
+
+
+// Merge extra data if exists
+if (typeof GRAMMAR_EXAM_DATA_EXTRA !== 'undefined') {
+  GRAMMAR_EXAM_DATA.push(...GRAMMAR_EXAM_DATA_EXTRA);
+}
+// Sort by year then month
+GRAMMAR_EXAM_DATA.sort((a,b)=>{
+  const [ma,ya]=[parseInt(a.id),parseInt(a.id.split('-')[1])];
+  const [mb,yb]=[parseInt(b.id),parseInt(b.id.split('-')[1])];
+  return ya!==yb?ya-yb:ma-mb;
+});
+
+// ═══════════════════════════════════════════════════
+// 問題2 (sắp xếp câu) + 問題3 (ngữ pháp đoạn văn) DATA
+// m2: [{pre,post,opts[4],order[4],starPos,ans,exp}]
+//   order = thứ tự đúng theo index opts; starPos = blank cần chọn (0-3)
+// m3: {title, text (dùng [51]~[55]), qs:[{n,opts[4],ans,exp}]}
+// ═══════════════════════════════════════════════════
+const GRAMMAR_M2M3 = {
+  "12-2024": {
+    m2:[
+      {pre:"試験前に",post:"とよい。",opts:["復習する","一度","ノートを","見ながら"],order:[1,2,3,0],starPos:2,ans:3,exp:"ノートを見ながら = vừa nhìn vở vừa (〜ながら: đồng thời)"},
+      {pre:"彼は",post:"ような人だ。",opts:["どんな","にも","困難","めげない"],order:[0,2,1,3],starPos:2,ans:1,exp:"どんな困難にもめげない = không nản dù gặp khó khăn nào (強い否定)"},
+      {pre:"山田さんは",post:"と言った。",opts:["もっと","よかった","早く","来れば"],order:[0,2,3,1],starPos:2,ans:3,exp:"〜ばよかった = giá như đã... (後悔・反事実)"},
+      {pre:"このレストランは",post:"サービスも有名だ。",opts:["だけでなく","料理が","おいしい","さらに"],order:[1,2,0,3],starPos:2,ans:0,exp:"〜だけでなく〜も = không chỉ... mà cả... (添加)"},
+      {pre:"外国で暮らすのは",post:"ものだ。",opts:["思う","大変だと","経験して","みて"],order:[2,3,1,0],starPos:2,ans:1,exp:"〜てみて（初めて）大変だとわかる = thử rồi mới biết khó (〜てみて)"}
+    ],
+    m3:{
+      title:"プレゼントの習慣",
+      text:"プレゼントをする習慣は世界中に[51]、国によってその意味や慣習は様々だ。日本では、贈り物を渡す[52]、包み方や渡すタイミングが大切にされる。相手の好みを[53]考えて選ぶことで、贈り物は単なる物ではなく気持ちを伝えるものに[54]。もし何を贈ればいいか迷った[55]は、相手に直接聞いてみるのも一つの方法だ。",
+      qs:[
+        {n:51,opts:["あって","あるが","あり","あります"],ans:0,exp:"〜があって = tồn tại, và... (te-form nối mệnh đề)"},
+        {n:52,opts:["とき","間","たびに","ついて"],ans:0,exp:"贈り物を渡すとき = khi trao tặng quà (〜とき: thời điểm)"},
+        {n:53,opts:["よく","丁寧に","直接","十分に"],ans:1,exp:"丁寧に考えて = suy nghĩ cẩn thận (丁寧に: trạng từ)"},
+        {n:54,opts:["なる","なった","なれる","なっている"],ans:0,exp:"気持ちを伝えるものになる = trở thành thứ truyền cảm xúc (変化)"},
+        {n:55,opts:["場合","こと","とき","ほう"],ans:0,exp:"迷った場合は = trong trường hợp phân vân (〜場合は: điều kiện lịch sự)"}
+      ]
+    }
+  },
+  "7-2024": {
+    m2:[
+      {pre:"子供たちに",post:"のは親の役目だ。",opts:["考える","を伝える","大切さ","こと"],order:[0,2,1,3],starPos:2,ans:1,exp:"考える大切さを伝える = truyền đạt tầm quan trọng của tư duy"},
+      {pre:"彼女が",post:"ようだ。",opts:["悲しんで","いる","何かを","ひどく"],order:[2,3,0,1],starPos:2,ans:0,exp:"何かをひどく悲しんでいる = đang rất đau buồn vì điều gì đó (ようだ: suy đoán)"},
+      {pre:"会議の",post:"大切なことだ。",opts:["まとめておくことは","内容を","事前に","資料に"],order:[1,2,3,0],starPos:2,ans:3,exp:"事前に資料にまとめておく = chuẩn bị tài liệu trước (〜ておく: làm sẵn)"},
+      {pre:"この映画は",post:"できた作品だ。",opts:["力を","スタッフ全員が","合わせて","一生懸命"],order:[1,3,0,2],starPos:2,ans:0,exp:"力を合わせて = cùng nhau hợp sức (力を合わせる)"},
+      {pre:"病気が",post:"休んでいた。",opts:["よくなる","まで","家で","ずっと"],order:[0,1,2,3],starPos:2,ans:2,exp:"よくなるまで家でずっと = mãi ở nhà cho đến khi khỏi bệnh (〜まで)"}
+    ],
+    m3:{
+      title:"日本の四季",
+      text:"日本には春・夏・秋・冬の四季が[51]、それぞれの季節に特徴的な行事や食べ物がある。春は桜の花[52]、多くの人が花見を楽しむ。夏は祭りや花火が[53]、各地でさまざまなイベントが開催される。秋は紅葉が美し[54]、観光客が多く訪れる。冬は雪や寒さ[55]特徴だが、鍋料理など温かい食べ物が楽しみだ。",
+      qs:[
+        {n:51,opts:["あり","あって","あるが","ある"],ans:1,exp:"四季があって = có 4 mùa, và... (te-form nối câu tiếp theo)"},
+        {n:52,opts:["を見て","が咲き","が好きで","に行き"],ans:1,exp:"桜の花が咲き = hoa anh đào nở (咲く・連用形 nối câu)"},
+        {n:53,opts:["盛んで","多くて","ようで","盛んに"],ans:0,exp:"祭りや花火が盛んで = lễ hội và pháo hoa rộn ràng (盛んで nối câu)"},
+        {n:54,opts:["く","い","に","さ"],ans:0,exp:"紅葉が美しく = lá đỏ đẹp và... (美しく: 連用形 nối tính từ)"},
+        {n:55,opts:["が","を","は","も"],ans:0,exp:"雪や寒さが特徴 = đặc trưng là tuyết và lạnh giá (が: chủ ngữ)"}
+      ]
+    }
+  },
+  "12-2023": {
+    m2:[
+      {pre:"友達から",post:"うれしかった。",opts:["ずっと","してもらえて","サポートを","たくさんの"],order:[0,3,2,1],starPos:2,ans:2,exp:"サポートをしてもらえて = được hỗ trợ (〜てもらえる: nhận ân huệ)"},
+      {pre:"来年から",post:"ことにした。",opts:["始める","日本語を","もっと","真剣に"],order:[2,3,1,0],starPos:2,ans:1,exp:"もっと真剣に日本語を始める = nghiêm túc học tiếng Nhật hơn (真剣に)"},
+      {pre:"健康のために",post:"続けている。",opts:["を","毎日","30分","歩くこと"],order:[1,2,3,0],starPos:2,ans:3,exp:"歩くことを続ける = tiếp tục việc đi bộ (〜ことを + 続ける)"},
+      {pre:"この店は",post:"お客さんが多い。",opts:["若い","ため","おしゃれな","リーズナブルで"],order:[3,2,1,0],starPos:2,ans:1,exp:"リーズナブルでおしゃれなため = vì vừa phải giá vừa sành điệu (〜なため: lý do văn viết)"},
+      {pre:"この仕事を",post:"つもりだ。",opts:["最後まで","やり遂げる","どんなに","大変でも"],order:[2,3,0,1],starPos:2,ans:0,exp:"どんなに大変でも最後までやり遂げる = dù khó đến đâu cũng làm đến cùng (どんなに〜でも)"}
+    ],
+    m3:{
+      title:"ペットを飼うこと",
+      text:"最近、ペットを飼う人が[51]いる。ペットは家族の一員として大切に[52]存在だ。しかし、ペットを飼うためには、毎日の食事や運動など、様々な世話が[53]。また、病気になった[54]、すぐに病院に連れていける準備も必要だ。ペットと長く[55]ためには、日ごろから健康管理に気をつけることが重要だ。",
+      qs:[
+        {n:51,opts:["増えて","増えた","増えている","増える"],ans:2,exp:"増えている = đang tăng lên (〜ている: trạng thái tiếp diễn)"},
+        {n:52,opts:["する","した","される","している"],ans:2,exp:"大切にされる = được trân trọng (受身: dạng bị động)"},
+        {n:53,opts:["ある","必要だ","多い","大変だ"],ans:1,exp:"様々な世話が必要だ = cần chăm sóc đa dạng (必要だ: xác nhận cần thiết)"},
+        {n:54,opts:["とき","場合","ならば","ら"],ans:3,exp:"病気になったら = nếu/khi bị bệnh (〜たら: điều kiện)"},
+        {n:55,opts:["暮らす","付き合う","生活する","いる"],ans:0,exp:"長く暮らす = sống lâu dài cùng nhau (暮らす: chung sống)"}
+      ]
+    }
+  },
+  "7-2023": {
+    m2:[
+      {pre:"彼は毎日",post:"ようになった。",opts:["続けた","練習を","ことで","話せる"],order:[1,0,2,3],starPos:2,ans:2,exp:"練習を続けたことで = nhờ kiên trì luyện tập mà (〜たことで: lý do tích cực)"},
+      {pre:"今日は",post:"ようにしよう。",opts:["勉強する","早く","前に","寝る"],order:[3,2,1,0],starPos:2,ans:1,exp:"寝る前に早く勉強する = trước khi ngủ sớm học bài (〜前に: trình tự)"},
+      {pre:"山田さんが",post:"みんな驚いた。",opts:["優勝して","大会で","金メダルを","取って"],order:[1,2,3,0],starPos:2,ans:3,exp:"大会で金メダルを取って = giành huy chương vàng tại giải (取る + て形)"},
+      {pre:"この計画は",post:"と思います。",opts:["すべき","もっと","だ","検討"],order:[1,3,0,2],starPos:2,ans:0,exp:"もっと検討すべきだ = nên xem xét thêm (〜すべき: nghĩa vụ)"},
+      {pre:"環境問題は",post:"問題ではないか。",opts:["取り組む","べき","早急に","という"],order:[2,0,1,3],starPos:2,ans:1,exp:"早急に取り組むべき = cần hành động gấp (早急に + べき)"}
+    ],
+    m3:{
+      title:"読書の習慣",
+      text:"読書は、知識を[51]だけでなく、思考力や想像力を鍛える上でも重要だ。しかし、最近の若者はスマートフォンの[52]、読書をする時間が減ってきていると言われている。読書を[53]ためには、毎日少しずつ読む時間を作ることが効果的だ。本を選ぶ[54]は、自分の興味のある分野から始めるとよい。読書は、一度[55]なかなかやめられない魅力的な趣味だ。",
+      qs:[
+        {n:51,opts:["得る","広げる","深める","得て"],ans:0,exp:"知識を得るだけでなく = không chỉ thu nhận kiến thức (得る + だけでなく)"},
+        {n:52,opts:["利用で","普及で","人気で","影響で"],ans:1,exp:"スマートフォンの普及で = do sự phổ biến của smartphone (普及: lan rộng)"},
+        {n:53,opts:["習慣にする","続ける","楽しむ","好きになる"],ans:0,exp:"習慣にするためには = để biến thành thói quen (習慣にする)"},
+        {n:54,opts:["とき","際","場合","間"],ans:0,exp:"本を選ぶとき = khi chọn sách (〜とき: thời điểm cụ thể)"},
+        {n:55,opts:["始めると","慣れると","読むと","好きになると"],ans:0,exp:"一度始めると = một khi đã bắt đầu thì (〜と: kết quả tự nhiên)"}
+      ]
+    }
+  },
+  "12-2022": {
+    m2:[
+      {pre:"子供の頃から",post:"を持ってきた。",opts:["という","宇宙飛行士になる","ずっと","夢"],order:[2,1,0,3],starPos:2,ans:0,exp:"宇宙飛行士になるという夢 = giấc mơ trở thành phi hành gia (〜という + N: nội dung)"},
+      {pre:"このプロジェクトを",post:"大切だ。",opts:["成功させる","全員で","ことが","協力して"],order:[1,3,0,2],starPos:2,ans:0,exp:"全員で協力して成功させる = cùng nhau hợp tác để thành công (全員で + 協力して)"},
+      {pre:"旅行中に",post:"ことがある。",opts:["困った","財布を","なくして","ひどく"],order:[1,2,3,0],starPos:2,ans:3,exp:"財布をなくしてひどく困った = mất ví và rất khốn đốn (ひどく = trầm trọng)"},
+      {pre:"先生には",post:"感謝しています。",opts:["指導して","ずっと","いただいて","本当に"],order:[1,0,2,3],starPos:2,ans:2,exp:"ずっと指導していただいて = được hướng dẫn suốt (〜ていただく: kính ngữ khiêm tốn)"},
+      {pre:"仕事と",post:"毎日大変だ。",opts:["育児を","両立させながら","家事と","働くのは"],order:[2,0,1,3],starPos:2,ans:1,exp:"家事と育児を両立させながら = vừa cân bằng việc nhà lẫn chăm con (両立させる)"}
+    ],
+    m3:{
+      title:"コンビニの役割",
+      text:"日本のコンビニエンスストア（コンビニ）は、今や生活に[51]存在だ。24時間営業している[52]、食べ物や飲み物だけでなく、公共料金の支払いなども[53]。最近では、高齢者にとっても[54]な存在になっており、地域の見守りの役割も果たしている。さらに、コンビニは外国語にも対応している[55]、観光客にも人気が高い。",
+      qs:[
+        {n:51,opts:["なくてはならない","欠かせない","大切な","必要な"],ans:0,exp:"生活になくてはならない = không thể thiếu trong cuộc sống (〜なくてはならない)"},
+        {n:52,opts:["ので","ため","から","けど"],ans:0,exp:"24時間営業しているので = vì mở cửa 24 giờ (〜ので: lý do tự nhiên)"},
+        {n:53,opts:["できる","ある","行う","している"],ans:0,exp:"支払いなどもできる = có thể thanh toán... (できる: khả năng)"},
+        {n:54,opts:["便利","大切","必要","特別"],ans:0,exp:"高齢者にとっても便利な = tiện lợi với người cao tuổi (〜にとって: quan điểm)"},
+        {n:55,opts:["ことから","ことで","ために","ので"],ans:0,exp:"対応していることから = từ việc hỗ trợ đa ngôn ngữ (〜ことから: lý do, văn viết)"}
+      ]
+    }
+  },
+  "7-2022": {
+    m2:[
+      {pre:"夏休みに",post:"ことにした。",opts:["友達と","旅行する","海外に","初めて"],order:[0,2,3,1],starPos:2,ans:3,exp:"友達と海外に初めて旅行する = lần đầu du lịch nước ngoài cùng bạn (初めて)"},
+      {pre:"この本は",post:"ものだ。",opts:["ためになる","若い人に","ぜひ","読んでほしい"],order:[1,2,3,0],starPos:2,ans:3,exp:"若い人にぜひ読んでほしい = muốn người trẻ nhất định đọc (〜にぜひVてほしい)"},
+      {pre:"この問題については",post:"が必要だ。",opts:["慎重に","考える","さらに","こと"],order:[2,0,1,3],starPos:2,ans:1,exp:"さらに慎重に考えること = việc suy nghĩ cẩn thận hơn nữa (さらに + こと)"},
+      {pre:"昨日の会議で",post:"決まった。",opts:["計画が","来月から","新しい","始まることが"],order:[1,2,0,3],starPos:2,ans:0,exp:"来月から新しい計画が始まることが決まった = quyết định kế hoạch mới (〜ことが決まった)"},
+      {pre:"両親の",post:"働いている。",opts:["恩に","報いる","ために","一生懸命"],order:[0,1,2,3],starPos:2,ans:2,exp:"恩に報いるために = để đền ơn cha mẹ (恩に報いる + ために)"}
+    ],
+    m3:{
+      title:"スポーツの効果",
+      text:"スポーツをすることは、体の健康[51]よいだけでなく、精神的な健康にも大切だ。運動をすると、ストレスが[52]、気分がすっきりする。また、チームスポーツは仲間と協力する[53]、コミュニケーション能力も鍛えられる。忙しい毎日の中でも、週に[54]運動する時間を作ることが重要だ。スポーツを通して、健康で充実した生活を[55]ことができる。",
+      qs:[
+        {n:51,opts:["に","で","を","が"],ans:0,exp:"体の健康によい = tốt cho sức khỏe thể chất (〜によい: tốt cho)"},
+        {n:52,opts:["消えて","減って","取れて","なくなって"],ans:2,exp:"ストレスが取れて = stress được giải tỏa (取れる: giải phóng)"},
+        {n:53,opts:["ので","ために","ことで","から"],ans:2,exp:"協力することで = nhờ việc hợp tác (〜ことで: phương tiện)"},
+        {n:54,opts:["一回は","数回は","少なくとも一回は","何度か"],ans:0,exp:"週に一回は = ít nhất một lần mỗi tuần (週に一回は)"},
+        {n:55,opts:["送る","すごす","楽しむ","保つ"],ans:0,exp:"充実した生活を送る = sống một cuộc sống sung mãn (生活を送る: cố định)"}
+      ]
+    }
+  },
+  "12-2021": {
+    m2:[
+      {pre:"卒業後に",post:"と思っている。",opts:["気持ちを","両親への","伝えたい","感謝の"],order:[1,3,0,2],starPos:2,ans:0,exp:"両親への感謝の気持ちを伝えたい = muốn bày tỏ lòng biết ơn (感謝の気持ちを伝える)"},
+      {pre:"この仕事は",post:"時間がかかりそうだ。",opts:["慣れる","まで","に","思ったより"],order:[3,0,1,2],starPos:2,ans:1,exp:"思ったより慣れるまでに = hơn mức tưởng cho đến lúc quen (〜まで: cho đến khi)"},
+      {pre:"子供に",post:"親の大切な役割だ。",opts:["本を","のは","聞かせる","読んで"],order:[0,3,2,1],starPos:2,ans:2,exp:"本を読んで聞かせる = đọc sách cho con nghe (〜て聞かせる: đọc to cho nghe)"},
+      {pre:"学生たちが",post:"姿に感動した。",opts:["熱心に","取り組んで","いる","必死で"],order:[0,3,1,2],starPos:2,ans:1,exp:"熱心に必死で取り組んでいる = chăm chỉ cố gắng hết sức (熱心に + 必死で)"},
+      {pre:"日本語のスピーチ大会に",post:"練習している。",opts:["出る","毎日","ために","一生懸命"],order:[0,2,1,3],starPos:2,ans:1,exp:"出るために毎日一生懸命 = hằng ngày ra sức để tham dự (〜ために: mục đích)"}
+    ],
+    m3:{
+      title:"一人暮らし",
+      text:"大学入学を[51]に、一人暮らしを始める若者は多い。一人暮らしでは、[52]自分で食事を作ったり、洗濯をしたりと、家事全般を行わなければならない。最初は大変だが、一人暮らしの経験は自立する[53]役立つと言われている。また、自分の[54]に生活できるため、自由な時間も増える。しかし、体調を崩した[55]、誰にも気づいてもらえないという不安もある。",
+      qs:[
+        {n:51,opts:["機会","きっかけ","ため","こと"],ans:1,exp:"〜をきっかけに = lấy... làm cơ hội/bước đệm (きっかけ: động lực thay đổi)"},
+        {n:52,opts:["今まで以上に","毎日","一人で","全部"],ans:1,exp:"毎日自分で食事を作ったり = mỗi ngày tự nấu ăn (毎日: tần suất)"},
+        {n:53,opts:["のに","ために","ように","こと"],ans:0,exp:"自立するのに役立つ = hữu ích cho việc tự lập (〜のに: mục đích/lợi ích)"},
+        {n:54,opts:["ペース","時間","好み","スタイル"],ans:0,exp:"自分のペースに生活できる = có thể sống theo nhịp của mình (ペース: nhịp độ)"},
+        {n:55,opts:["とき","場合","ならば","ので"],ans:0,exp:"体調を崩したとき = khi sức khỏe sa sút (〜とき: thời điểm giả định)"}
+      ]
+    }
+  },
+  "7-2021": {
+    m2:[
+      {pre:"先生の話を",post:"聞いた。",opts:["取り","ながら","メモを","真剣に"],order:[2,0,1,3],starPos:2,ans:1,exp:"メモを取りながら = vừa ghi chép vừa (〜ながら: đồng thời)"},
+      {pre:"彼女は",post:"続けた。",opts:["自分の","あきらめずに","やりたいことを","どこまでも"],order:[0,2,1,3],starPos:2,ans:1,exp:"自分のやりたいことをあきらめずに = không bỏ cuộc với điều mình muốn (〜ずに)"},
+      {pre:"このプロジェクトを",post:"不可欠だ。",opts:["成功させる","ため","には","全員の協力が"],order:[0,1,2,3],starPos:2,ans:2,exp:"成功させるためには = để thành công thì cần (〜ためには: điều kiện mục đích)"},
+      {pre:"姉は",post:"健康を保っている。",opts:["毎日","欠かさず","ヨガを","することで"],order:[0,1,2,3],starPos:2,ans:2,exp:"毎日欠かさずヨガをすることで = nhờ không bỏ luyện yoga hằng ngày (欠かさず)"},
+      {pre:"山田先生の",post:"上達した。",opts:["おかげで","指導の","ずいぶん","日本語が"],order:[1,0,3,2],starPos:2,ans:3,exp:"指導のおかげで日本語がずいぶん上達した = nhờ sự hướng dẫn tiếng Nhật tiến bộ nhiều (〜のおかげで)"}
+    ],
+    m3:{
+      title:"日本語の学習",
+      text:"日本語は世界で多くの人に[51]学ばれている言語だ。日本語の特徴は、ひらがな・カタカナ・漢字という三つの文字を[52]点だ。日本語を学ぶ目的は人[53]様々で、仕事や旅行のために学ぶ人もいれば、アニメや漫画が[54]学ぶ人もいる。日本語を上達[55]は、たくさん話す機会を作ることが大切だ。",
+      qs:[
+        {n:51,opts:["積極的に","熱心に","広く","正式に"],ans:2,exp:"広く学ばれている = được học rộng rãi (広く: phó từ trạng thái)"},
+        {n:52,opts:["使う","使い","使える","使い分ける"],ans:3,exp:"三つの文字を使い分ける点 = điểm phân biệt 3 hệ chữ (使い分ける: dùng phân biệt)"},
+        {n:53,opts:["に","によって","ごとに","にとって"],ans:1,exp:"人によって様々 = khác nhau tùy người (〜によって: tùy theo)"},
+        {n:54,opts:["きっかけで","好きで","好きだから","好きなので"],ans:1,exp:"アニメや漫画が好きで = vì thích anime và manga (〜が好きで: nối câu)"},
+        {n:55,opts:["させるために","させるには","するために","するには"],ans:3,exp:"日本語を上達するには = để tiến bộ tiếng Nhật thì... (〜するには: điều kiện hướng dẫn)"}
+      ]
+    }
+  },
+  "7-2025": {
+    m2:[
+      {pre:"初めて",post:"不安だったが楽しかった。",opts:["一人で","海外へ","旅行した","とき"],order:[0,1,2,3],starPos:2,ans:2,exp:"初めて一人で海外へ旅行したとき = lần đầu du lịch nước ngoài một mình (〜とき)"},
+      {pre:"この店のケーキは",post:"最高だ。",opts:["見た目が","うえに","美しい","味も"],order:[0,2,1,3],starPos:2,ans:1,exp:"見た目が美しいうえに味も = không chỉ đẹp mắt mà còn ngon (〜うえに: thêm vào đó)"},
+      {pre:"試合に",post:"よく頑張った。",opts:["にもかかわらず","負けた","チームは","最後まで"],order:[1,0,2,3],starPos:2,ans:2,exp:"負けたにもかかわらずチームは = mặc dù thua nhưng cả đội (にもかかわらず: nhượng bộ)"},
+      {pre:"彼は",post:"練習している。",opts:["疲れていても","どれだけ","欠かさず","毎日"],order:[1,0,3,2],starPos:2,ans:3,exp:"どれだけ疲れていても毎日欠かさず = dù mệt đến đâu cũng không bỏ ngày nào (欠かさず)"},
+      {pre:"今後の",post:"行動するべきだ。",opts:["もっと","ために","計画的に","は"],order:[1,3,0,2],starPos:2,ans:0,exp:"今後のためにはもっと計画的に = từ nay cần hành động có kế hoạch hơn (計画的に)"}
+    ],
+    m3:{
+      title:"環境とリサイクル",
+      text:"地球温暖化が進む中、環境問題は私たちが[51]課題となっている。日常生活の中でできることの一つは、ゴミを[52]分けることだ。ペットボトルや缶などは洗って[53]、資源ごみとして出す必要がある。また、買い物袋を[54]かわりにエコバッグを使うことも大切だ。環境を守るためには、一人一人が小さなことから[55]ことが重要だ。",
+      qs:[
+        {n:51,opts:["解決すべき","守るべき","直面している","考えなければ"],ans:2,exp:"直面している課題 = thách thức đang đối mặt (直面する: đối mặt)"},
+        {n:52,opts:["きちんと","正しく","うまく","適切に"],ans:0,exp:"きちんと分ける = phân loại đúng cách (きちんと: cẩn thận, đúng đắn)"},
+        {n:53,opts:["から","ので","ほしい","だけで"],ans:0,exp:"洗ってから = sau khi rửa thì... (〜てから: trình tự hành động)"},
+        {n:54,opts:["使わない","使わず","やめた","持たない"],ans:1,exp:"買い物袋を使わず = không dùng túi mua sắm (〜ず: phủ định nối câu)"},
+        {n:55,opts:["始める","取り組む","行動する","努力する"],ans:0,exp:"小さなことから始める = bắt đầu từ những việc nhỏ (始める: khởi đầu)"}
+      ]
+    }
+  },
+  "12-2020": {
+    m2:[
+      {pre:"最近の子供は",post:"まったく勉強しない。",opts:["ばかりで","ゲームを","する","それでも"],order:[1,2,0,3],starPos:2,ans:0,exp:"ゲームをするばかりで = chỉ toàn chơi game (〜ばかりで: chỉ mải làm một việc)"},
+      {pre:"彼は",post:"責任が重くなったようだ。",opts:["部長に","ことで","なった","より"],order:[0,2,1,3],starPos:2,ans:1,exp:"部長になったことで = do/vì đã trở thành trưởng phòng (〜たことで: kết quả)"},
+      {pre:"今年の夏は",post:"ものだ。",opts:["くらべて","例年に","暑い","ずいぶん"],order:[1,0,3,2],starPos:2,ans:3,exp:"例年にくらべてずいぶん暑い = nóng hơn mọi năm nhiều (〜にくらべて: so sánh)"},
+      {pre:"仕事のことで",post:"相談に乗ってあげた。",opts:["悩んでいる","友人に","そっと","という"],order:[0,1,2,3],starPos:2,ans:2,exp:"悩んでいる友人にそっと = lặng lẽ đến với bạn đang lo lắng (そっと: nhẹ nhàng)"},
+      {pre:"彼女は",post:"ことができる人だ。",opts:["どんな場所でも","振る舞う","明るく","いつでも"],order:[0,3,2,1],starPos:2,ans:2,exp:"どんな場所でもいつでも明るく振る舞う = luôn vui vẻ bất kể ở đâu (どんな〜でも)"}
+    ],
+    m3:{
+      title:"SNSの使い方",
+      text:"現代の社会では、SNSは私たちの生活に[51]存在となっている。SNSを使うことで、遠くにいる友人や家族と[52]連絡が取れる。しかし、SNSには注意が[53]。個人情報を[54]投稿することで、思わぬトラブルにつながる可能性があるからだ。SNSと正しく[55]ためには、まず使い方のルールを理解することが大切だ。",
+      qs:[
+        {n:51,opts:["欠かせない","あってはならない","あり得ない","大変な"],ans:0,exp:"生活に欠かせない存在 = không thể thiếu trong cuộc sống (欠かせない)"},
+        {n:52,opts:["すぐに","簡単に","いつでも","お互いに"],ans:1,exp:"簡単に連絡が取れる = có thể liên lạc dễ dàng (簡単に: dễ dàng)"},
+        {n:53,opts:["必要だ","ある","払わなければ","なる"],ans:0,exp:"注意が必要だ = cần chú ý (〜が必要だ: xác nhận cần thiết)"},
+        {n:54,opts:["むやみに","正しく","いつでも","気軽に"],ans:0,exp:"むやみに投稿する = đăng bừa bãi không suy nghĩ (むやみに: thiếu suy nghĩ)"},
+        {n:55,opts:["使う","活用する","楽しむ","付き合う"],ans:3,exp:"SNSと正しく付き合う = tương tác đúng đắn với MXH (付き合う: giao tiếp/tương tác)"}
+      ]
+    }
+  },
+  "7-2019": {
+    m2:[
+      {pre:"先生の言葉を",post:"感動した。",opts:["思わず","聞いて","涙が出るほど","私は"],order:[1,2,0,3],starPos:2,ans:0,exp:"聞いて涙が出るほど思わず = nghe xong vô tình rơi nước mắt (思わず: không kìm được)"},
+      {pre:"来月の試験に",post:"しかない。",opts:["向けて","今から","一生懸命","勉強する"],order:[0,1,2,3],starPos:2,ans:2,exp:"試験に向けて今から一生懸命 = hướng tới kỳ thi từ bây giờ ra sức (〜に向けて)"},
+      {pre:"みんなの",post:"進めることができた。",opts:["協力の","おかげで","プロジェクトを","何とか"],order:[0,1,2,3],starPos:2,ans:2,exp:"協力のおかげでプロジェクトを = nhờ sự hợp tác mà dự án (〜のおかげで: nhờ)"},
+      {pre:"昨日は",post:"今日は元気になった。",opts:["ものの","少し","体調が悪かった","それでも"],order:[2,0,1,3],starPos:2,ans:1,exp:"体調が悪かったものの少し = mặc dù không khỏe nhưng một chút (〜ものの: nhượng bộ)"},
+      {pre:"彼女の歌は",post:"ものだ。",opts:["感動する","それほど","聞くたびに","美しく"],order:[2,3,1,0],starPos:2,ans:1,exp:"聞くたびに美しくそれほど感動する = mỗi lần nghe lại cảm động đến vậy (〜たびに)"}
+    ],
+    m3:{
+      title:"ボランティア活動",
+      text:"近年、様々なボランティア活動に[51]若者が増えている。ボランティアとは、報酬を[52]、自ら進んで社会のために活動することだ。活動を通して、参加者は多くのことを[53]、成長できると言われている。ボランティアに参加する[54]は、地域の掲示板やインターネットで情報を集めるとよい。ボランティアは、社会に貢献するだけでなく、自分自身の[55]にもなる。",
+      qs:[
+        {n:51,opts:["参加する","取り組む","関わる","活動する"],ans:0,exp:"ボランティア活動に参加する若者 = thanh niên tham gia hoạt động tình nguyện (参加する)"},
+        {n:52,opts:["もらって","受け取らずに","稼いで","求めずに"],ans:3,exp:"報酬を求めずに = không đòi thù lao (〜ずに: không... mà)"},
+        {n:53,opts:["学べ","学び","学ぶ","学んで"],ans:1,exp:"多くのことを学び、成長できる = học được nhiều và có thể trưởng thành (〜学び: 連用形 nối câu)"},
+        {n:54,opts:["とき","場合","際","ため"],ans:2,exp:"参加する際は = khi tham gia thì (〜際: dịp/lúc, văn viết)"},
+        {n:55,opts:["楽しみ","学び","成長","喜び"],ans:1,exp:"自分自身の学びにもなる = cũng trở thành bài học cho bản thân (学び: sự học hỏi)"}
+      ]
+    }
+  },
+  "12-2018": {
+    m2:[
+      {pre:"仕事で",post:"正直に報告するべきだ。",opts:["とき","ミスをした","上司に","すぐに"],order:[1,0,2,3],starPos:2,ans:2,exp:"ミスをしたとき上司にすぐに = khi mắc lỗi ngay lập tức báo cáo cấp trên (すぐに)"},
+      {pre:"彼女は仕事が",post:"そのまま友人と食事した。",opts:["終わった","あとで","という","きた"],order:[0,1,3,2],starPos:2,ans:3,exp:"仕事が終わったあとで = sau khi xong việc (〜たあとで: sau khi)"},
+      {pre:"このプロジェクトは",post:"完成させなければならない。",opts:["締め切り","まで","に","絶対に"],order:[0,1,2,3],starPos:2,ans:2,exp:"締め切りまでに = trước thời hạn (〜までに: trước khi đến thời điểm)"},
+      {pre:"上司の",post:"大切だ。",opts:["素直に","アドバイスを","聞くことが","いつでも"],order:[1,0,2,3],starPos:2,ans:2,exp:"アドバイスを素直に聞くことが = việc lắng nghe lời khuyên thẳng thắn (素直に)"},
+      {pre:"仕事中は",post:"心がけている。",opts:["を","集中すること","常に","忘れずに"],order:[1,0,2,3],starPos:2,ans:2,exp:"集中することを常に忘れずに = không bao giờ quên luôn tập trung (常に: luôn luôn)"}
+    ],
+    m3:{
+      title:"日本の食文化",
+      text:"日本の食文化は世界的に[51]評価されている。日本料理の特徴の一つは、食材の[52]を大切にすることだ。例えば、刺身は新鮮な魚を[53]切って食べる料理だ。また、日本では食事の前に「[54]」と言う習慣がある。食事のマナーも重要で、箸を[55]使うことが礼儀とされている。",
+      qs:[
+        {n:51,opts:["高く","よく","広く","大きく"],ans:2,exp:"世界的に広く評価される = được đánh giá rộng rãi trên thế giới (広く: rộng rãi)"},
+        {n:52,opts:["新鮮さ","質","素材感","旬"],ans:3,exp:"食材の旬を大切にする = trân trọng mùa vụ của nguyên liệu (旬: mùa thu hoạch đỉnh)"},
+        {n:53,opts:["そのまま","生で","新鮮に","ちょうど"],ans:1,exp:"新鮮な魚を生で切って食べる = ăn cá tươi thái sống (生で: sống/tươi sống)"},
+        {n:54,opts:["いただきます","ごちそうさま","おつかれさま","ただいま"],ans:0,exp:"食事の前に「いただきます」 = trước bữa ăn nói 「いただきます」(食事の挨拶)"},
+        {n:55,opts:["上手に","正しく","きちんと","丁寧に"],ans:1,exp:"箸を正しく使う = dùng đũa đúng cách (正しく: đúng cách/đúng quy tắc)"}
+      ]
+    }
+  },
+  "7-2017": {
+    m2:[
+      {pre:"彼は",post:"健康を維持している。",opts:["欠かさず","毎朝","ジョギングを","することで"],order:[1,0,2,3],starPos:2,ans:2,exp:"毎朝欠かさずジョギングをすることで = nhờ không bỏ chạy bộ sáng nào (欠かさず: không bỏ lỡ)"},
+      {pre:"日本語の試験に",post:"頑張った。",opts:["向けて","合格する","ために","一生懸命"],order:[0,1,2,3],starPos:2,ans:2,exp:"試験に向けて合格するために = hướng tới kỳ thi để đạt điểm (〜ために: mục đích)"},
+      {pre:"山田さんは",post:"信頼される人だ。",opts:["誰からも","正直で","責任感があり","いつも"],order:[1,2,0,3],starPos:2,ans:0,exp:"正直で責任感があり誰からも = trung thực, có trách nhiệm nên được ai cũng (誰からも)"},
+      {pre:"授業が終わった",post:"カフェに行った。",opts:["あとで","すぐに","友達と","一緒に"],order:[0,1,2,3],starPos:2,ans:2,exp:"終わったあとですぐに友達と = ngay sau khi xong cùng bạn (〜たあとで)"},
+      {pre:"このルールは",post:"ことが必要だ。",opts:["全員","が","しっかりと","守る"],order:[0,1,2,3],starPos:2,ans:2,exp:"全員がしっかりと守る = tất cả mọi người nghiêm túc tuân thủ (しっかりと: nghiêm túc)"}
+    ],
+    m3:{
+      title:"町の変化",
+      text:"私が子供の頃に[51]町は、今ではすっかり変わってしまった。昔は田んぼや畑が広がっていた場所に、今は[52]が立ち並んでいる。交通の便も[53]、電車やバスの本数が増えた。人口も年々[54]、活気があふれる町になってきた。町の変化は便利になった[55]、昔ながらの風景が失われていくのは少し寂しい気がする。",
+      qs:[
+        {n:51,opts:["住んでいた","知っていた","あった","育った"],ans:0,exp:"子供の頃に住んでいた町 = ngôi làng tôi đã sống thuở thơ ấu (住む: sinh sống)"},
+        {n:52,opts:["マンション","学校","工場","ビル群"],ans:3,exp:"ビル群が立ち並んでいる = tòa nhà san sát nhau (ビル群: các tòa nhà cao tầng)"},
+        {n:53,opts:["よくなり","悪くなり","変わらず","増えず"],ans:0,exp:"交通の便もよくなり = giao thông cũng thuận tiện hơn (よくなり: 連用形 nối câu)"},
+        {n:54,opts:["増えて","減って","変わらず","激減し"],ans:0,exp:"人口も増えて = dân số cũng tăng và... (増えて: 連用形 nối câu)"},
+        {n:55,opts:["一方で","のに","という","ものの"],ans:0,exp:"便利になった一方で = trong khi trở nên tiện lợi thì... (〜一方で: mặt khác)"}
+      ]
+    }
+  },
+  "7-2013": {
+    m2:[
+      {pre:"彼は",post:"守った。",opts:["友達との","どんなことがあっても","必ず","約束を"],order:[0,3,1,2],starPos:2,ans:1,exp:"友達との約束をどんなことがあっても必ず = dù có gì cũng nhất định giữ lời hứa (どんなことがあっても)"},
+      {pre:"彼は",post:"と思っている。",opts:["将来","医師に","なりたい","日本で"],order:[0,3,1,2],starPos:2,ans:1,exp:"将来日本で医師になりたい = tương lai muốn trở thành bác sĩ ở Nhật (〜になりたい)"},
+      {pre:"私は毎日",post:"続けている。",opts:["しながら","単語を","音楽を","覚えることを"],order:[2,0,1,3],starPos:2,ans:1,exp:"音楽をしながら単語を覚える = vừa nghe nhạc vừa học từ (〜ながら: đồng thời)"},
+      {pre:"この問題は",post:"解決策を見つけるべきだ。",opts:["早急に","話し合って","みんなで","本気で"],order:[2,1,0,3],starPos:2,ans:0,exp:"みんなで話し合って早急に = cùng nhau thảo luận để sớm tìm ra (早急に: khẩn cấp)"},
+      {pre:"この本を読んで",post:"変わった。",opts:["以来","ものの見方が","大きく","人生が"],order:[0,1,2,3],starPos:2,ans:2,exp:"以来ものの見方が大きく変わった = kể từ đó cách nhìn đời thay đổi lớn (以来: từ đó trở đi)"}
+    ],
+    m3:{
+      title:"旅行の楽しみ",
+      text:"旅行は、日常生活から離れてリフレッシュする[51]の一つだ。旅先では、その土地の食べ物を[52]、文化や歴史にふれることができる。旅行に行く[53]は、事前に計画を立てておくとスムーズに楽しめる。一人旅は自由に[54]ことができるが、友人や家族との旅行は思い出を[55]という点でも楽しい。",
+      qs:[
+        {n:51,opts:["方法","手段","こと","もの"],ans:0,exp:"リフレッシュする方法の一つ = một trong những cách giải tỏa (方法: phương pháp)"},
+        {n:52,opts:["楽しみ","食べて","味わい","堪能し"],ans:1,exp:"食べ物を食べて、文化にふれる = ăn thử rồi tiếp xúc văn hóa (食べて: 連用形 nối câu)"},
+        {n:53,opts:["とき","場合","際","ため"],ans:2,exp:"旅行に行く際は = khi đi du lịch thì... (〜際: dịp/lúc, văn viết)"},
+        {n:54,opts:["動ける","行動する","旅できる","決める"],ans:0,exp:"自由に動けること = có thể di chuyển tự do (動ける: có thể di chuyển)"},
+        {n:55,opts:["作る","共有する","共に作る","残す"],ans:2,exp:"思い出を共に作る = cùng tạo kỷ niệm (共に: cùng nhau)"}
+      ]
+    }
+  },
+  "12-2011": {
+    m2:[
+      {pre:"田中さんは日本",post:"知られている。",opts:["だけでなく","で","世界中で","のみならず"],order:[1,0,2,3],starPos:2,ans:0,exp:"日本でだけでなく世界中でも = không chỉ ở Nhật mà còn toàn thế giới (〜だけでなく)"},
+      {pre:"彼女は",post:"努力した。",opts:["諦めずに","夢を","実現する","ために"],order:[1,2,3,0],starPos:2,ans:3,exp:"夢を実現するために諦めずに = để thực hiện ước mơ không bỏ cuộc (〜ために)"},
+      {pre:"子供の頃から",post:"大切さが分かった。",opts:["良い","習慣を","身に付ける","ことの"],order:[0,1,2,3],starPos:2,ans:2,exp:"良い習慣を身に付けることの = việc xây dựng thói quen tốt (身に付ける: hình thành)"},
+      {pre:"その会議で",post:"変えることが決まった。",opts:["来年から","大幅に","を","方針"],order:[3,0,2,1],starPos:2,ans:2,exp:"方針を来年から大幅に = thay đổi lớn chính sách từ năm sau (大幅に: toàn diện)"},
+      {pre:"健康のためには",post:"大切だ。",opts:["睡眠を","十分な","とることも","また"],order:[1,0,2,3],starPos:2,ans:2,exp:"十分な睡眠をとることも大切 = việc ngủ đủ giấc cũng quan trọng (〜ことも大切)"}
+    ],
+    m3:{
+      title:"健康的な生活",
+      text:"近年、健康に関する意識が[51]高まっている。特に食生活については、バランスのとれた食事を[52]ことが大切だと言われている。また、運動も欠かせない要素で、毎日少し[53]だけでも体を動かすことが勧められている。睡眠も同様に大切で、毎晩同じ時間に[54]ことで、体のリズムが整う。健康的な生活は、今日[55]始めることが重要だ。",
+      qs:[
+        {n:51,opts:["とても","非常に","ますます","大変"],ans:2,exp:"ますます高まっている = ngày càng tăng cao (ますます: ngày càng)"},
+        {n:52,opts:["作る","とる","する","選ぶ"],ans:1,exp:"バランスのとれた食事をとる = ăn uống cân bằng (食事をとる: ăn, cố định)"},
+        {n:53,opts:["ずつ","でも","ほど","くらい"],ans:0,exp:"少しずつだけでも体を動かす = từng chút một dù ít cũng vận động (ずつ: từng chút)"},
+        {n:54,opts:["寝る","起きる","眠る","休む"],ans:0,exp:"同じ時間に寝ることで = bằng cách ngủ đúng giờ (寝ることで: phương tiện)"},
+        {n:55,opts:["から","ごとに","しか","でも"],ans:0,exp:"今日から始める = bắt đầu từ hôm nay (から: từ, xuất phát điểm)"}
+      ]
+    }
+  },
+  "7-2010": {
+    m2:[
+      {pre:"将来の夢を",post:"大切にしている。",opts:["持ち","信じて","諦めずに","いつも"],order:[0,1,2,3],starPos:2,ans:2,exp:"夢を持ち信じて諦めずに = giữ ước mơ, tin tưởng và không bỏ cuộc (諦めずに)"},
+      {pre:"彼は留学から",post:"成長したようだ。",opts:["帰って","ずいぶん","きた","以来"],order:[0,2,3,1],starPos:2,ans:3,exp:"帰ってきた以来ずいぶん = kể từ khi trở về (〜て以来: từ sau khi)"},
+      {pre:"部長の",post:"正しいものだと思った。",opts:["意見が","言葉を","聞いて","という"],order:[1,2,0,3],starPos:2,ans:0,exp:"言葉を聞いて意見が = nghe lời rồi thấy ý kiến (〜を聞いて)"},
+      {pre:"日本で生活する",post:"大変なこともある。",opts:["こと","に","は","なかなか"],order:[0,1,2,3],starPos:2,ans:2,exp:"生活することには大変なことも = trong việc sinh sống thì cũng có điều khó (〜には: nhấn mạnh điều kiện)"},
+      {pre:"彼女の作品は",post:"感動を与えるものだ。",opts:["見る","たびに","人に","大きな"],order:[0,1,2,3],starPos:2,ans:2,exp:"見るたびに人に大きな感動を = mỗi lần xem lại mang đến cảm xúc lớn cho người xem (〜たびに)"}
+    ],
+    m3:{
+      title:"科学技術の進歩",
+      text:"科学技術の急速な発展により、私たちの生活は[51]便利になってきた。インターネットの普及で、情報を[52]手に入れることができるようになった。また、医療の分野でも技術が[53]、多くの病気が治療できるようになった。しかし、技術の進歩には[54]側面もある。プライバシーの問題や人々の[55]などが課題として挙げられる。",
+      qs:[
+        {n:51,opts:["とても","非常に","ますます","大きく"],ans:2,exp:"ますます便利になってきた = ngày càng trở nên tiện lợi (ますます: ngày càng)"},
+        {n:52,opts:["どこでも","すぐに","簡単に","誰でも"],ans:2,exp:"情報を簡単に手に入れる = dễ dàng thu thập thông tin (簡単に: dễ dàng)"},
+        {n:53,opts:["進化し","発展し","進歩し","向上し"],ans:1,exp:"医療の技術が発展し = kỹ thuật y tế phát triển và... (発展し: 連用形 nối câu)"},
+        {n:54,opts:["良い","悪い","危険な","問題のある"],ans:2,exp:"危険な側面もある = cũng có khía cạnh nguy hiểm (〜側面: phương diện)"},
+        {n:55,opts:["コミュニケーション不足","失業","情報漏洩","孤立"],ans:1,exp:"人々の失業などが課題 = thất nghiệp của người dân là vấn đề (失業: thất nghiệp)"}
+      ]
+    }
+  },
+  "12-2010": {
+    m2:[
+      {pre:"彼は",post:"成長した。",opts:["しながら","失敗を","多く経験","繰り返し"],order:[1,3,2,0],starPos:2,ans:2,exp:"失敗を繰り返し多く経験しながら = vừa trải qua nhiều thất bại vừa... (繰り返す: lặp đi lặp lại)"},
+      {pre:"先生のおかげで",post:"ことができた。",opts:["問題を","ようやく","自力で","解決する"],order:[0,1,2,3],starPos:2,ans:2,exp:"問題をようやく自力で解決する = cuối cùng tự mình giải quyết được vấn đề (ようやく: cuối cùng)"},
+      {pre:"友達が",post:"うれしかった。",opts:["言葉が","励まして","くれた","とても"],order:[1,2,0,3],starPos:2,ans:0,exp:"励ましてくれた言葉が = những lời khích lệ mà bạn đã dành cho mình (〜てくれた + N)"},
+      {pre:"この映画は",post:"ことだろう。",opts:["誰でも","見れば","感動させる","という"],order:[0,1,2,3],starPos:2,ans:2,exp:"誰でも見れば感動させる = bất kỳ ai xem cũng sẽ bị cảm động (〜させる: làm cho)"},
+      {pre:"健康を維持する",post:"大切だ。",opts:["ことは","日常生活で","運動が","とても"],order:[0,1,2,3],starPos:2,ans:2,exp:"日常生活で運動が大切 = vận động thể dục trong cuộc sống hằng ngày rất quan trọng"}
+    ],
+    m3:{
+      title:"都市と農村",
+      text:"日本では、都市部への人口集中が[51]進んでいる。一方、農村地域では人口が[52]、過疎化が問題となっている。農村の良さは、自然が豊かで食べ物も[53]点だ。近年、都市の生活に疲れた人が農村に[54]ケースも増えてきた。都市と農村が互い[55]、日本全体の発展につながると期待されている。",
+      qs:[
+        {n:51,opts:["急速に","徐々に","ますます","確実に"],ans:0,exp:"急速に進んでいる = đang tiến triển nhanh chóng (急速に: nhanh chóng)"},
+        {n:52,opts:["増えて","減って","変わらず","集中して"],ans:1,exp:"農村地域では人口が減って = dân số ở vùng nông thôn giảm và (減って: 連用形)"},
+        {n:53,opts:["新鮮な","美味しい","安全な","豊富な"],ans:0,exp:"食べ物も新鮮な点 = điểm thực phẩm cũng tươi ngon (新鮮な: tươi)"},
+        {n:54,opts:["引っ越す","移住する","戻る","定住する"],ans:1,exp:"農村に移住するケース = trường hợp di cư về vùng nông thôn (移住する: di cư)"},
+        {n:55,opts:["に協力し","に競い合い","に助け合い","を支え合い"],ans:2,exp:"互いに助け合い = giúp đỡ lẫn nhau (互いに助け合う: hỗ trợ nhau)"}
+      ]
+    }
+  }
+};
+
+// Merge m2/m3 into GRAMMAR_EXAM_DATA
+GRAMMAR_EXAM_DATA.forEach(e=>{
+  const d=GRAMMAR_M2M3[e.id];
+  if(d){
+    if(d.m2) e.m2=d.m2;
+    if(d.m3) e.m3=d.m3;
+  }
+});
+
+// Scores storage
+const EXAM_SCORES = JSON.parse(localStorage.getItem('n3_exam_scores')||'{}');
+function saveExamScores(){try{localStorage.setItem('n3_exam_scores',JSON.stringify(EXAM_SCORES));}catch(e){}}
+
+// ═══════════════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════════════
+let currentTab = 'mindmap';
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-mindmap').style.display = tab==='mindmap'?'block':'none';
+  document.getElementById('tab-drill').style.display = tab==='drill'?'block':'none';
+  document.getElementById('tab-exam').style.display = tab==='exam'?'block':'none';
+  currentTab = tab;
+  if(tab==='drill') initDrillHome();
+  if(tab==='exam') renderExamGrid();
+}
+
+// ═══════════════════════════════════════════════════
+// ÔN LUYỆN — DRILL MODE
+// ═══════════════════════════════════════════════════
+let drillPool=[], drillIdx=0, drillOk=0, drillNg=0;
+let selectedLessons=new Set(['all']);
+
+function initDrillHome(){
+  const grid=document.getElementById('ls-grid');
+  if(!grid) return;
+  grid.innerHTML='';
+  LESSONS.forEach(l=>{
+    const b=document.createElement('button');
+    b.className='ls-btn'+(selectedLessons.has(String(l.id))?' sel':'');
+    b.id='ls-btn-'+l.id;
+    b.textContent=l.id+'. '+l.title;
+    b.onclick=()=>toggleLesson(String(l.id),b);
+    grid.appendChild(b);
+  });
+}
+
+function toggleLesson(id,btn){
+  if(id==='all'){
+    selectedLessons.clear();
+    selectedLessons.add('all');
+    document.querySelectorAll('#ls-grid .ls-btn').forEach(b=>b.classList.remove('sel'));
+    document.getElementById('ls-all').classList.add('sel');
+  } else {
+    selectedLessons.delete('all');
+    document.getElementById('ls-all').classList.remove('sel');
+    if(btn.classList.contains('sel')){
+      btn.classList.remove('sel');
+      selectedLessons.delete(id);
+      if(selectedLessons.size===0){
+        selectedLessons.add('all');
+        document.getElementById('ls-all').classList.add('sel');
+      }
+    } else {
+      btn.classList.add('sel');
+      selectedLessons.add(id);
+    }
+  }
+}
+
+function buildDrillPool(){
+  const pool=[];
+  LESSONS.forEach(l=>{
+    if(!selectedLessons.has('all') && !selectedLessons.has(String(l.id))) return;
+    l.grammars.forEach((g,gi)=>{
+      // Build 4 options: correct + 3 distractors
+      const correct = g.meaning;
+      const allMeanings = LESSONS.flatMap(ll=>ll.grammars.map(gg=>gg.meaning)).filter(m=>m!==correct);
+      const distractors=[];
+      const shuffled=[...allMeanings].sort(()=>Math.random()-.5);
+      for(const m of shuffled){if(distractors.length>=3)break;distractors.push(m);}
+      const opts=[correct,...distractors].sort(()=>Math.random()-.5);
+      pool.push({pattern:g.pattern,correct,opts,exp:g.tip||g.meaning,lessonId:l.id,gi});
+    });
+  });
+  return pool.sort(()=>Math.random()-.5).slice(0,20);
+}
+
+function startDrillMode(){
+  drillPool=buildDrillPool();
+  drillIdx=0; drillOk=0; drillNg=0;
+  document.getElementById('drill-home').style.display='none';
+  document.getElementById('drill-res').style.display='none';
+  document.getElementById('flashcard-view').style.display='none';
+  document.getElementById('drill-q').style.display='block';
+  showDrillQ();
+}
+
+function showDrillQ(){
+  if(drillIdx>=drillPool.length){showDrillResult();return;}
+  const q=drillPool[drillIdx];
+  document.getElementById('dq-pattern').innerHTML=q.pattern;
+  document.getElementById('dq-prog').textContent=`${drillIdx+1}/${drillPool.length}`;
+  document.getElementById('dq-fb').style.display='none';
+  document.getElementById('dq-next').style.display='none';
+  const opts=document.getElementById('dq-opts');
+  opts.innerHTML='';
+  q.opts.forEach(o=>{
+    const b=document.createElement('button');
+    b.className='drill-opt';
+    b.textContent=o.length>30?o.substring(0,28)+'…':o;
+    b.title=o;
+    b.onclick=()=>answerDrill(b,o===q.correct,q);
+    opts.appendChild(b);
+  });
+}
+
+function answerDrill(btn,correct,q){
+  if(btn.disabled) return;
+  if(correct)drillOk++;else drillNg++;
+  btn.classList.add(correct?'correct':'wrong');
+  document.querySelectorAll('.drill-opt').forEach(b=>{
+    if(b.textContent.trim()===q.correct.substring(0,28).trim()||b.title===q.correct) b.classList.add('correct');
+    b.disabled=true;
+  });
+  const fb=document.getElementById('dq-fb');
+  fb.className='drill-fb '+(correct?'ok':'ng');
+  fb.innerHTML=(correct?'✅ Chính xác!':'❌ Sai rồi! Đáp án: <b>'+q.correct.substring(0,60)+'</b>')+(q.exp?'<br><span style="font-weight:400">💡 '+q.exp+'</span>':'');
+  fb.style.display='block';
+  document.getElementById('dq-next').style.display='block';
+}
+
+function drillNext(){
+  drillIdx++;
+  showDrillQ();
+}
+
+function showDrillResult(){
+  document.getElementById('drill-q').style.display='none';
+  document.getElementById('drill-res').style.display='block';
+  const total=drillOk+drillNg,pct=total>0?Math.round(drillOk/total*100):0;
+  document.getElementById('dr-score').textContent=drillOk+'/'+total;
+  document.getElementById('dr-sub').textContent=pct+'% chính xác';
+}
+
+function showDrillHome(){
+  document.getElementById('drill-home').style.display='block';
+  document.getElementById('drill-q').style.display='none';
+  document.getElementById('drill-res').style.display='none';
+  document.getElementById('flashcard-view').style.display='none';
+  window.scrollTo(0,0);
+  initDrillHome();
+}
+
+// ═══════════════════════════════════════════════════
+// FLASHCARD
+// ═══════════════════════════════════════════════════
+let fcPool=[], fcIdx=0;
+
+function startFlashcardMode(){
+  fcPool=[];
+  LESSONS.forEach(l=>{
+    if(!selectedLessons.has('all') && !selectedLessons.has(String(l.id))) return;
+    l.grammars.forEach(g=>fcPool.push(g));
+  });
+  fcPool.sort(()=>Math.random()-.5);
+  fcIdx=0;
+  document.getElementById('drill-home').style.display='none';
+  document.getElementById('flashcard-view').style.display='block';
+  showFC();
+}
+
+function showFC(){
+  if(fcIdx>=fcPool.length){showDrillHome();return;}
+  const g=fcPool[fcIdx];
+  document.getElementById('fc-pattern').innerHTML=g.pattern;
+  document.getElementById('fc-struct').textContent=g.structure||'';
+  document.getElementById('fc-meaning').textContent=g.meaning;
+  document.getElementById('fc-struct-back').textContent=g.structure?'📐 '+g.structure:'';
+  document.getElementById('fc-tip').textContent=g.tip?'💡 '+g.tip:'';
+  document.getElementById('fc-prog').textContent=(fcIdx+1)+'/'+fcPool.length;
+  document.getElementById('fc-scene').classList.remove('flipped');
+}
+
+function flipCard(){document.getElementById('fc-scene').classList.toggle('flipped');}
+
+function fcSkip(){fcIdx++;showFC();}
+
+function fcMastered(){
+  const g=fcPool[fcIdx];
+  const nid=findNodeId(g.pattern);
+  if(nid){masteredSet.add(nid);saveMastered();updateProgress();}
+  fcIdx++;showFC();
+}
+
+function findNodeId(pattern){
+  for(const l of LESSONS){
+    for(let i=0;i<l.grammars.length;i++){
+      if(l.grammars[i].pattern===pattern) return l.id+'-'+i;
+    }
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════════════
+// LUYỆN ĐỀ — EXAM
+// ═══════════════════════════════════════════════════
+let examCur=null, examPool=[], examIdx=0, examAnswers=[], curExamFilter='m1';
+
+function setExamFilter(type, btn){
+  curExamFilter=type;
+  document.querySelectorAll('.ef-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderExamGrid();
+}
+
+function renderExamGrid(){
+  const grid=document.getElementById('exam-grid');
+  if(!grid) return;
+  grid.innerHTML='';
+  let curYear='';
+  GRAMMAR_EXAM_DATA.forEach(e=>{
+    const hasData=curExamFilter==='m1'?(e.m1&&e.m1.length>0):
+                  curExamFilter==='m2'?(e.m2&&e.m2.length>0):
+                  (e.m3&&e.m3.qs&&e.m3.qs.length>0);
+    if(!hasData) return;
+    const yr=e.id.split('-')[1];
+    if(yr!==curYear){
+      curYear=yr;
+      const sep=document.createElement('div');
+      sep.className='year-sep';
+      sep.textContent='── '+yr+' ──';
+      grid.appendChild(sep);
+    }
+    const sc=EXAM_SCORES[e.id+'_'+curExamFilter];
+    const cnt=curExamFilter==='m1'?e.m1.length:curExamFilter==='m2'?e.m2.length:e.m3.qs.length;
+    const lbl=curExamFilter==='m1'?'問題1 · Điền ngữ pháp':curExamFilter==='m2'?'問題2 · Sắp xếp câu':'問題3 · Ngữ pháp đoạn văn';
+    const btn=document.createElement('button');
+    btn.className='exam-btn';
+    btn.innerHTML=
+      '<div class="exam-yr">📋 Đề '+e.label+'</div>'+
+      '<div class="exam-cnt">'+cnt+' câu · '+lbl+'</div>'+
+      '<div class="exam-sc" style="color:'+(sc!=null?'#16a34a':'#888')+'">'+
+        (sc!=null?'✅ '+sc+'%':'Chưa làm')+
+      '</div>';
+    btn.onclick=()=>examStart(e.id);
+    grid.appendChild(btn);
+  });
+  if(!grid.children.length){
+    grid.innerHTML='<div style="text-align:center;padding:30px 20px;color:#94a3b8;font-size:.82rem">Chưa có dữ liệu cho loại đề này</div>';
+  }
+}
+
+function examStart(id){
+  examCur=GRAMMAR_EXAM_DATA.find(e=>e.id===id);
+  if(!examCur) return;
+  if(curExamFilter==='m1'){
+    examPool=examCur.m1.map(q=>Object.assign({},q,{type:'m1'}));
+  } else if(curExamFilter==='m2'){
+    examPool=(examCur.m2||[]).map(q=>Object.assign({},q,{type:'m2'}));
+  } else {
+    const m3=examCur.m3||{title:'',text:'',qs:[]};
+    examPool=m3.qs.map(q=>Object.assign({},q,{type:'m3',passTitle:m3.title,passText:m3.text}));
+  }
+  if(!examPool.length) return;
+  examAnswers=new Array(examPool.length).fill(-1);
+  examIdx=0;
+  document.getElementById('exam-list').style.display='none';
+  document.getElementById('exam-res').style.display='none';
+  document.getElementById('exam-take').style.display='block';
+  document.getElementById('eq-title').textContent='Đề '+examCur.label;
+  window.scrollTo(0,0);
+  showExamQ();
+}
+
+function showExamQ(){
+  const q=examPool[examIdx];
+  const total=examPool.length;
+  document.getElementById('eq-prog').textContent=(examIdx+1)+'/'+total;
+
+  // M3: show/update passage panel
+  const passPanel=document.getElementById('m3-passage-panel');
+  if(q.type==='m3'){
+    passPanel.style.display='block';
+    document.getElementById('m3-ptitle').textContent=q.passTitle||'文章';
+    let html=(q.passText||'').replace(/\n/g,'<br>');
+    for(let n=51;n<=55;n++){
+      const cls='m3-bl'+(n===q.n?' cur':'');
+      html=html.replace(new RegExp('\\['+n+'\\]','g'),'<span class="'+cls+'">['+n+']</span>');
+    }
+    document.getElementById('m3-ptext').innerHTML=html;
+  } else {
+    passPanel.style.display='none';
+  }
+
+  // Type label
+  const numLabel=q.type==='m1'?'問題1 · Câu '+(examIdx+1):
+                 q.type==='m2'?'問題2 · Câu '+(examIdx+1):
+                 '問題3 · Blank ['+(q.n||examIdx+51)+']';
+  document.getElementById('eq-num').textContent=numLabel;
+
+  // Sentence / question display
+  const sent=document.getElementById('eq-sent');
+  if(q.type==='m1'){
+    sent.innerHTML=q.q.replace('（　）','<span style="border-bottom:2.5px solid #2563eb;padding:0 8px;font-weight:800;letter-spacing:.04em;">　　　</span>');
+  } else if(q.type==='m2'){
+    const blanksHtml=['①','②','③','④'].map((num,i)=>{
+      const isStar=(i===q.starPos);
+      return '<span class="m2-blank'+(isStar?' star':'')+'">'+(isStar?'★':num)+'</span>';
+    }).join('');
+    sent.innerHTML=
+      '<div class="m2-sent-wrap">'+
+        '<div class="m2-pre-post">'+(q.pre||'')+'</div>'+
+        '<div class="m2-blanks-row">'+blanksHtml+'</div>'+
+        '<div class="m2-pre-post">'+(q.post||'')+'</div>'+
+        '<div class="m2-hint">Chọn từ đặt vào vị trí ★ để câu có nghĩa đúng</div>'+
+      '</div>';
+  } else {
+    sent.innerHTML='<div style="font-size:.82rem;color:#64748b;font-style:italic">Xem đoạn văn phía trên → Chọn từ phù hợp cho ô ['+q.n+']</div>';
+  }
+
+  // Options
+  const opts=document.getElementById('eq-opts');
+  opts.innerHTML='';
+  (q.opts||[]).forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='eq-opt'+(examAnswers[examIdx]===i?' chosen':'');
+    const pfx=q.type==='m1'?'<span style="font-size:.65rem;color:#94a3b8;margin-right:4px;">'+(i+1)+'</span>':
+              ['①','②','③','④'][i]+' ';
+    b.innerHTML=pfx+o;
+    b.onclick=()=>examSelect(i);
+    opts.appendChild(b);
+  });
+
+  const nxt=document.getElementById('eq-nxt');
+  nxt.textContent=(examIdx===total-1)?'Câu cuối — Xem lại ✓':'次へ →';
+  nxt.style.display='block';
+}
+
+function examSelect(chosenIdx){
+  examAnswers[examIdx]=chosenIdx;
+  document.querySelectorAll('.eq-opt').forEach((b,i)=>{
+    b.classList.toggle('chosen',i===chosenIdx);
+  });
+}
+
+function examNext(){
+  if(examIdx<examPool.length-1){examIdx++;}
+  else{examIdx=0;}
+  showExamQ();
+  window.scrollTo(0,0);
+}
+
+function examConfirmSubmit(){
+  const answered=examAnswers.filter(a=>a!==-1).length;
+  const skipped=examPool.length-answered;
+  if(skipped>0){
+    document.getElementById('modal-sub').textContent='Còn '+skipped+' câu chưa trả lời. Vẫn nộp bài?';
+    document.getElementById('submit-modal').classList.add('show');
+    return;
+  }
+  examShowResult();
+}
+function closeModal(){document.getElementById('submit-modal').classList.remove('show');}
+function confirmSubmit(){closeModal();examShowResult();}
+
+function examShowResult(){
+  document.getElementById('exam-take').style.display='none';
+  document.getElementById('exam-res').style.display='block';
+  document.getElementById('m3-passage-panel').style.display='none';
+  window.scrollTo(0,0);
+
+  let ok=0,ng=0;
+  const history=[];
+  examPool.forEach((q,i)=>{
+    const chosen=examAnswers[i];
+    const correct=(chosen===q.ans);
+    if(chosen===-1||!correct){ng++;} else{ok++;}
+    history.push({q,chosen,correct:chosen!==-1&&correct,
+      chosenText:chosen===-1?'(bỏ qua)':(q.opts?q.opts[chosen]:''),
+      correctText:q.opts?q.opts[q.ans]:''});
+  });
+
+  const total=examPool.length;
+  const pct=Math.round(ok/total*100);
+  EXAM_SCORES[examCur.id+'_'+curExamFilter]=pct; saveExamScores();
+
+  const emoji=pct>=90?'🏆':pct>=70?'🌸':pct>=50?'📚':'💪';
+  document.getElementById('eq-emoji').textContent=emoji;
+  document.getElementById('eq-score').textContent=ok+'/'+total;
+  document.getElementById('eq-pct').textContent=pct+'% chính xác';
+  document.getElementById('eq-ok').textContent=ok;
+  document.getElementById('eq-ng').textContent=ng;
+  document.getElementById('eq-pct2').textContent=pct+'%';
+
+  const rev=document.getElementById('eq-review');
+  rev.innerHTML='';
+  history.forEach((h,idx)=>{
+    const skipped=(examAnswers[idx]===-1);
+    const d=document.createElement('div');
+    d.className='rv-item '+(h.correct?'ok':skipped?'skip':'ng');
+    d.style.borderColor=h.correct?'#16a34a':skipped?'#888':'#dc2626';
+
+    let qdisp='';
+    if(h.q.type==='m1'){
+      qdisp=h.q.q.replace('（　）','<span style="border-bottom:2px solid #2563eb;padding:0 4px;font-weight:800;">___</span>');
+    } else if(h.q.type==='m2'){
+      qdisp='<span style="font-size:.78rem;color:#64748b">'+(h.q.pre||'')+'【★】'+(h.q.post||'')+'</span>';
+    } else {
+      qdisp='<span style="font-size:.78rem;color:#64748b">['+h.q.n+'] trong đoạn văn「'+(h.q.passTitle||'')+'」</span>';
+    }
+
+    d.innerHTML=
+      '<div class="rv-meta"><span class="rv-tag">Câu '+(idx+1)+'</span>'+
+      '<span class="rv-status" style="color:'+(h.correct?'#16a34a':skipped?'#888':'#dc2626')+'">'+(h.correct?'✓ Đúng':skipped?'— Bỏ qua':'✗ Sai')+'</span></div>'+
+      '<div class="rv-q">'+qdisp+'</div>'+
+      (!h.correct&&!skipped?'<div class="rv-wrong">✗ Bạn chọn: '+h.chosenText+'</div>':'')+
+      '<div class="rv-correct">✓ Đáp án: '+h.correctText+'</div>'+
+      (h.q.exp?'<div class="rv-exp">💡 '+h.q.exp+'</div>':'');
+
+    if(h.q.type==='m2'&&h.q.order){
+      const orderStr=(h.q.order||[]).map((oi,pos)=>{
+        const isStar=(pos===h.q.starPos);
+        return (isStar?'<b style="color:#2563eb">':'')+'['+(['①','②','③','④'][pos]||pos+1)+'] '+(h.q.opts?.[oi]||'')+(isStar?'</b>':'');
+      }).join(' → ');
+      const extra=document.createElement('div');
+      extra.className='rv-exp';
+      extra.innerHTML='📐 Thứ tự đúng: '+orderStr;
+      d.appendChild(extra);
+    }
+    rev.appendChild(d);
+  });
+}
+
+function examRedo(){examStart(examCur.id);}
+
+function examBackToList(){
+  document.getElementById('exam-take').style.display='none';
+  document.getElementById('exam-res').style.display='none';
+  document.getElementById('m3-passage-panel').style.display='none';
+  document.getElementById('exam-list').style.display='block';
+  window.scrollTo(0,0);
+  renderExamGrid();
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+render();
+</script>
+<div class="modal-overlay" id="submit-modal">
+  <div class="modal-box">
+    <div class="modal-title">📋 Nộp bài?</div>
+    <div class="modal-sub" id="modal-sub">Còn 5 câu chưa làm.</div>
+    <div class="modal-btns">
+      <button class="modal-btn no" onclick="closeModal()">Làm tiếp</button>
+      <button class="modal-btn yes" onclick="confirmSubmit()">Nộp bài</button>
+    </div>
+  </div>
+</div>
+
+<nav class="bnav">
+  <button class="bnav-item" onclick="location.href='index.html'"><div class="bnav-icon">🏠</div>Home</button>
+  <button class="bnav-item active"><div class="bnav-icon">📝</div>Ngữ Pháp</button>
+  <button class="bnav-item" onclick="location.href='vocab.html'"><div class="bnav-icon">📚</div>Từ Vựng</button>
+  <button class="bnav-item" onclick="location.href='kanji.html'"><div class="bnav-icon">漢</div>Kanji</button>
+  <button class="bnav-item" onclick="location.href='reading.html'"><div class="bnav-icon">📖</div>Đọc</button>
+</nav>
+</body>
+</html>

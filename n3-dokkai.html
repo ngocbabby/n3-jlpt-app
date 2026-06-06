@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luyện Đọc Hiểu N3 | KOSEI</title>
+<style>
+:root{--xanh:#2e7d52;--xanh2:#e8f5ee;--do:#c0392b;--do2:#fdecea;--vang2:#fef9ec;--xam:#6c757d;--nen:#f8f6f1;--vien:#e0d8cc;--bong:rgba(0,0,0,.10)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--nen);color:#222;min-height:100vh;font-size:15px}
+header{background:#1a3a2a;color:#fff;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 6px var(--bong)}
+header h1{font-size:1rem;font-weight:700}
+header h1 small{display:block;font-size:.72rem;color:#a8d5b8;font-weight:400;margin-top:1px}
+#diem-hien{font-size:.85rem;color:#a8d5b8;white-space:nowrap}
+#thanh-tien-do{width:120px;height:5px;background:rgba(255,255,255,.2);border-radius:3px}
+#thanh-fill{height:100%;background:#5dba7d;border-radius:3px;transition:width .3s;width:0}
+main{max-width:780px;margin:0 auto;padding:20px 14px}
+#man-chinh{display:block}
+.tieu-de{text-align:center;margin-bottom:28px}
+.tieu-de h2{font-size:1.7rem;color:var(--xanh);font-weight:800}
+.tieu-de p{color:var(--xam);font-size:.88rem;margin-top:6px}
+.luoi-phan{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+.the-phan{background:#fff;border:1.5px solid var(--vien);border-radius:14px;padding:20px 16px;cursor:pointer;text-align:center;box-shadow:0 2px 6px var(--bong);transition:all .2s}
+.the-phan:hover{transform:translateY(-2px);box-shadow:0 6px 16px var(--bong);border-color:var(--xanh)}
+.the-phan .icon{font-size:2rem;margin-bottom:8px}
+.the-phan h3{font-size:1.05rem;color:#1a3a2a;margin-bottom:3px}
+.the-phan .ten-jp{font-size:.78rem;color:var(--xam);margin-bottom:8px}
+.huy-hieu{display:inline-block;font-size:.72rem;padding:2px 10px;border-radius:99px;background:var(--nen);color:var(--xam);border:1px solid var(--vien)}
+#man-ds{display:none}
+.ds-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.nut-back{background:none;border:1px solid #ccc;border-radius:8px;padding:5px 12px;cursor:pointer;font-size:.83rem;color:var(--xam);transition:all .2s}
+.nut-back:hover{background:#1a3a2a;color:#fff;border-color:#1a3a2a}
+.ds-tieude{font-size:1.1rem;color:var(--xanh);font-weight:700}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}
+.tab{padding:5px 13px;border-radius:99px;border:1.5px solid #ddd;background:#fff;font-size:.78rem;cursor:pointer;transition:all .2s;color:var(--xam)}
+.tab.active{background:var(--xanh);color:#fff;border-color:var(--xanh)}
+.ds-bai{display:flex;flex-direction:column;gap:8px}
+.item-bai{background:#fff;border:1px solid var(--vien);border-radius:10px;padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:11px;box-shadow:0 1px 4px var(--bong);transition:all .2s}
+.item-bai:hover{border-color:var(--xanh);transform:translateX(2px)}
+.so-bai{min-width:30px;height:30px;border-radius:50%;background:var(--nen);border:1px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:var(--xam);flex-shrink:0}
+.so-bai.dung{background:var(--xanh2);border-color:var(--xanh);color:var(--xanh)}
+.so-bai.sai{background:var(--do2);border-color:var(--do);color:var(--do)}
+.item-cau-hoi{font-size:.85rem;color:#444;flex:1;min-width:0}
+.loai-badge{font-size:.68rem;padding:2px 7px;border-radius:99px;background:var(--xanh2);color:var(--xanh);border:1px solid #b2d8c0;white-space:nowrap;margin-left:auto}
+#man-bai{display:none}
+.bai-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.bai-meta{font-size:.8rem;color:var(--xam)}
+.bai-meta strong{color:var(--xanh)}
+.the-bai{background:#fff;border:1px solid var(--vien);border-radius:14px;padding:22px 20px;box-shadow:0 2px 8px var(--bong);margin-bottom:16px}
+.nhan-van{font-size:.7rem;color:#fff;background:var(--xanh);display:inline-block;padding:2px 10px;border-radius:4px;margin-bottom:10px;letter-spacing:.05em}
+.van-ban{font-size:1rem;line-height:1.95;background:#fafaf7;border-left:3px solid #c9a84c;padding:14px 16px;border-radius:0 8px 8px 0;margin-bottom:18px;white-space:pre-wrap;font-family:'Hiragino Mincho ProN','Yu Mincho','MS Mincho',Georgia,serif}
+.so-cau{font-size:.75rem;color:var(--xanh);font-weight:700;margin-bottom:4px}
+.cau-hoi{font-size:.97rem;padding:11px 14px;background:#f0f7f3;border-left:3px solid var(--xanh);border-radius:0 8px 8px 0;margin-bottom:10px;line-height:1.6;font-family:'Hiragino Mincho ProN','Yu Mincho',serif}
+.meo-box{background:var(--vang2);border:1px solid #f0d070;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.82rem;line-height:1.65;color:#5a4000}
+.meo-box b{display:block;margin-bottom:3px;color:#7a5800}
+.dap-an{display:flex;flex-direction:column;gap:9px}
+.nut-dap-an{background:#fff;border:1.5px solid #ddd;border-radius:10px;padding:10px 14px;cursor:pointer;text-align:left;display:flex;align-items:flex-start;gap:11px;transition:all .2s;line-height:1.5}
+.nut-dap-an:hover:not(:disabled){background:var(--xanh2);border-color:var(--xanh)}
+.nut-dap-an:disabled{cursor:default}
+.so-lua-chon{min-width:24px;height:24px;border-radius:50%;background:#eee;color:var(--xam);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0;margin-top:2px}
+.dap-an-noi{flex:1}
+.dap-an-jp{font-family:'Hiragino Mincho ProN','Yu Mincho',serif;font-size:.93rem;color:#222}
+.dap-an-vi{font-size:.78rem;color:#888;margin-top:2px}
+.nut-dap-an.dung{background:var(--xanh2);border-color:var(--xanh)}
+.nut-dap-an.dung .so-lua-chon{background:var(--xanh);color:#fff}
+.nut-dap-an.dung .dap-an-vi{color:#2a6040}
+.nut-dap-an.sai{background:var(--do2);border-color:var(--do)}
+.nut-dap-an.sai .so-lua-chon{background:var(--do);color:#fff}
+.nut-dap-an.sai .dap-an-vi{color:#8a2020}
+.nut-dap-an.lo{background:var(--xanh2);border-color:var(--xanh);opacity:.65}
+.nut-dap-an.lo .so-lua-chon{background:var(--xanh);color:#fff}
+.phan-hoi{display:none;margin-top:14px;padding:14px 16px;border-radius:10px;font-size:.88rem;line-height:1.75}
+.phan-hoi.dung-ph{background:var(--xanh2);border:1px solid #a5d6b8;color:#1a4a2a}
+.phan-hoi.sai-ph{background:var(--do2);border:1px solid #ef9a9a;color:#6a0000}
+.phan-hoi b{font-size:1rem}
+.dieu-huong{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
+.nut-nav{background:var(--xanh);color:#fff;border:none;border-radius:10px;padding:11px 22px;cursor:pointer;font-size:.9rem;transition:background .2s}
+.nut-nav:hover{background:#235c3a}
+.nut-nav:disabled{background:#ccc;cursor:default}
+.nut-nav.truoc{background:#fff;color:var(--xam);border:1px solid #ccc}
+.nut-nav.truoc:hover:not(:disabled){background:#f0f0f0}
+.dem-bai{font-size:.83rem;color:var(--xam)}
+#man-ketqua{display:none;text-align:center}
+.the-ketqua{background:#fff;border-radius:16px;padding:36px 28px;box-shadow:0 4px 16px var(--bong);max-width:440px;margin:0 auto}
+.vong-diem{width:110px;height:110px;border-radius:50%;border:6px solid var(--xanh);background:var(--xanh2);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:16px auto}
+.vong-diem .so{font-size:1.9rem;font-weight:800;color:var(--xanh)}
+.vong-diem .tren{font-size:.78rem;color:var(--xam)}
+.nhan-xet{font-size:1.15rem;margin:10px 0;font-weight:700}
+.loi-nhan{font-size:.88rem;color:var(--xam);margin-top:6px}
+.nut-lam-lai{background:var(--xanh);color:#fff;border:none;border-radius:10px;padding:12px 28px;cursor:pointer;font-size:.95rem;margin-top:18px;margin-right:8px}
+.nut-lam-lai:hover{background:#235c3a}
+.nut-ve-home{background:#fff;color:var(--xam);border:1px solid #ccc;border-radius:10px;padding:12px 20px;cursor:pointer;font-size:.95rem;margin-top:18px}
+.nut-ve-home:hover{background:#1a3a2a;color:#fff}
+@media(max-width:560px){.van-ban{font-size:.93rem}.nut-dap-an{font-size:.84rem}#thanh-tien-do{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
+    <button onclick="location.href='reading.html'" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;padding:4px 10px;font-size:.8rem;cursor:pointer;white-space:nowrap;">← Về Đọc Hiểu</button>
+    <h1 style="font-size:.95rem;">📖 Luyện Đọc Hiểu N3<small style="display:block;font-size:.68rem;color:#a8d5b8;font-weight:400;margin-top:1px;">短文・中文・長文・情報検索</small></h1>
+  </div>
+  <div id="thanh-tien-do"><div id="thanh-fill"></div></div>
+  <div id="diem-hien">0 / 0 đúng</div>
+</header>
+<main>
+
+<div id="man-chinh">
+  <div class="tieu-de">
+    <h2>🎌 Luyện Đọc Hiểu N3</h2>
+    <p>Mỗi bài: đoạn văn tiếng Nhật → chọn đáp án → xem bản dịch + mẹo làm đề + giải thích tiếng Việt.</p>
+  </div>
+  <div class="luoi-phan">
+    <div class="the-phan" onclick="xemDanhSach('tanbun')"><div class="icon">📄</div><h3>Đọc đoạn ngắn</h3><div class="ten-jp">短文</div><span class="huy-hieu" id="hh-tanbun">24 bài</span></div>
+    <div class="the-phan" onclick="xemDanhSach('chubun')"><div class="icon">📑</div><h3>Đọc đoạn vừa</h3><div class="ten-jp">中文</div><span class="huy-hieu" id="hh-chubun">4 bài</span></div>
+    <div class="the-phan" onclick="xemDanhSach('chobun')"><div class="icon">📖</div><h3>Đọc đoạn dài</h3><div class="ten-jp">長文</div><span class="huy-hieu" id="hh-chobun">5 bài</span></div>
+    <div class="the-phan" onclick="xemDanhSach('joho')"><div class="icon">🔍</div><h3>Tìm kiếm thông tin</h3><div class="ten-jp">情報検索</div><span class="huy-hieu" id="hh-joho">4 bài</span></div>
+  </div>
+  <p style="text-align:center;margin-top:28px;font-size:.8rem;color:var(--xam)">💡 Mỗi đáp án có bản dịch tiếng Việt • Kèm mẹo làm đề cho từng câu</p>
+</div>
+
+<div id="man-ds">
+  <div class="ds-header">
+    <button class="nut-back" onclick="veHome()">← Trang chủ</button>
+    <div class="ds-tieude" id="ds-tieude"></div>
+  </div>
+  <div class="tabs" id="tabs"></div>
+  <div class="ds-bai" id="ds-bai"></div>
+</div>
+
+<div id="man-bai">
+  <div class="bai-header">
+    <button class="nut-back" onclick="veDanhSach()">← Danh sách</button>
+    <div class="bai-meta"><span id="nhan-phan"></span> / <strong id="nhan-loai"></strong></div>
+  </div>
+  <div class="the-bai">
+    <div class="nhan-van">📖 Bài đọc tiếng Nhật</div>
+    <div class="van-ban" id="van-ban"></div>
+    <div class="so-cau" id="so-cau"></div>
+    <div class="cau-hoi" id="cau-hoi"></div>
+    <div class="meo-box" id="meo-box"></div>
+    <div class="dap-an" id="dap-an"></div>
+    <div class="phan-hoi" id="phan-hoi"></div>
+  </div>
+  <div class="dieu-huong">
+    <button class="nut-nav truoc" id="nut-truoc" onclick="diChuyen(-1)">← Bài trước</button>
+    <div class="dem-bai" id="dem-bai"></div>
+    <button class="nut-nav" id="nut-sau" onclick="diChuyen(1)">Bài sau →</button>
+  </div>
+</div>
+
+<div id="man-ketqua">
+  <div class="the-ketqua">
+    <div style="font-size:2.5rem">🏆</div>
+    <h2 style="color:var(--xanh);margin-top:10px">Kết quả</h2>
+    <div class="vong-diem"><div class="so" id="kq-so">0</div><div class="tren" id="kq-tren">/ 0 câu</div></div>
+    <div class="nhan-xet" id="kq-nhanxet"></div>
+    <div class="loi-nhan" id="kq-loinhan"></div>
+    <div>
+      <button class="nut-lam-lai" onclick="lamLai()">🔄 Làm lại</button>
+      <button class="nut-ve-home" onclick="veHome()">🏠 Trang chủ</button>
+    </div>
+  </div>
+</div>
+
+</main>
+<script>
+const BAI=[
+{id:1,phan:'tanbun',loai:'dung',tenLoai:'Chọn nội dung đúng',
+van:`ここは古くから人々に愛されてきた桜の名所です。7世紀ごろに、この山の神社に来る人々によって桜の木が植えられ、それからずっと神の木として大切に守られてきました。春になると山が三万本の桜の花でいっぱいになる美しさは、言葉では表すことができません。また、花の咲く時期に差があるのが、ここの桜の特徴です。毎年4月はじめごろに山の下から順番に咲き始め、4月半ばに最も美しい時期になります。一番高いところの花は満開になる20日過ぎには、山の下のほうの木は、もうすっかり花が散って、葉だけになっています。`,
+cau:'ここの桜について正しいものはどれか。',
+dapan:['山全体の桜が一度に咲く','4月20日ごろ桜の花は全部散ってしまう','桜の花が見られる期間が長い','花が咲く時期がはっきりわからない'],
+dapanVi:['Toàn bộ hoa anh đào trên núi nở cùng một lúc','Khoảng ngày 20/4, tất cả hoa anh đào đã rụng hết','Có thể ngắm hoa anh đào trong thời gian dài','Không rõ thời điểm hoa nở'],
+dung:3,
+meo:'💡 Mẹo: Câu hỏi "正しいものはどれか" = chọn đáp án ĐÚNG. Từ khóa cần chú ý: 「順番に咲き始め」(nở theo thứ tự từ dưới lên trên). Khi hoa nở theo thứ tự → thời gian ngắm hoa kéo dài.',
+giaithich:'Hoa nở từ chân núi lên đỉnh theo thứ tự (đầu → cuối tháng 4) → thời gian ngắm hoa dài. ❌①không nở cùng lúc. ❌②ngày 20/4 chỉ cây dưới chân rụng, cây đỉnh núi vẫn nở. ❌④bài nêu rõ ngày tháng.'},
+
+{id:2,phan:'tanbun',loai:'dung',tenLoai:'Chọn nội dung đúng',
+van:`私が結婚したばかりのころの話である。仕事の後で同僚と飲みに行ったが、遅くなり、帰りの電車がなくなってしまった。しかたなくタクシーに乗って帰ることにした。行き先を言うと、運転手は私が急いでいると見たのか「高速道路で行きましょうか」と聞いた。かなり酔っていた私はよく考えずに「そうしてくれ」と答えた。いつの間にかタクシーの中で寝てしまったようで、気がつくと家の中にいて、目の前に怒った妻の顔があった。妻が払ったタクシー料金は、長距離のうえに高速道路代まで加わって、とんでもない額だったらしい。妻はその後も「安月給なのに…」と文句を言い続けた。`,
+cau:'この文章を書いた人の妻が怒ったのはどうしてか。',
+dapan:['高いタクシー料金を払ったから','同僚とお酒を飲みに行ったから','タクシーの中で寝てしまったから','給料が安いから'],
+dapanVi:['Vì phải trả tiền taxi rất đắt','Vì chồng đi uống rượu với đồng nghiệp','Vì chồng ngủ quên trong taxi','Vì lương thấp'],
+dung:1,
+meo:'💡 Mẹo: Tìm lý do TRỰC TIẾP khiến vợ tức. Câu quan trọng: 「妻が払ったタクシー料金は…とんでもない額だった」= số tiền cực lớn. "安月給" (lương thấp) là câu cằn nhằn sau đó, không phải nguyên nhân chính.',
+giaithich:'Vợ phải trả tiền taxi rất đắt (xa lộ + đường dài). ❌②đi uống là bình thường, không phải nguyên nhân. ❌③ngủ trong taxi không liên quan trực tiếp. ❌④"lương thấp" là câu cằn nhằn thêm.'},
+
+{id:3,phan:'tanbun',loai:'dung',tenLoai:'Chọn nội dung đúng',
+van:`最近市内で、夜遅い時間に歩いて帰る女性がかばんをとられるという事件が増えています。犯人は車ではなくて、自転車に乗ってとっていくことが多いようです。かばんを肩にかけるときは、後ろから来た自転車にとられにくいように、車道側ではないほうの肩にかけましょう。家のかぎやケータイはかばんの中に入れておかないことも大切です。銀行のカードをとられてしまった場合は、すぐに銀行に連絡してください。できるだけ、遅い時間に一人で歩かないようにしましょう。`,
+cau:'かばんをとられないようにするには、どうすればいいと言っているか。',
+dapan:['かばんを肩にかけてはいけない','車ではなくて自転車に乗ったほうがいい','家のかぎやケータイをかばんの中に入れない','かばんを車道と反対のほうの肩にかける'],
+dapanVi:['Không được đeo túi lên vai','Nên đi xe đạp thay vì ô tô','Không để chìa khóa nhà và điện thoại vào túi','Đeo túi ở vai phía không có đường xe chạy'],
+dung:4,
+meo:'💡 Mẹo: Tìm biện pháp cụ thể trong bài. Câu đề xuất chính: 「車道側ではないほうの肩にかけましょう」(hãy đeo ở vai phía không có đường xe). 「～ましょう」= lời khuyên/đề xuất.',
+giaithich:'Đeo túi ở vai phía không có làn xe → kẻ trộm xe đạp từ phía sau khó giật. ❌①vẫn được đeo, chỉ cần đúng cách. ❌②không liên quan đến phòng tránh. ❌③đúng nhưng không phải trả lời cho câu hỏi này.'},
+
+{id:4,phan:'tanbun',loai:'dung',tenLoai:'Chọn nội dung đúng',
+van:`今韓国で人気が高い女性４人のグループ「BLACKPINK」が来週、日本にやって来ます。昨年発売されたCDは全世界で1000万枚売り上げました。来月また新しいCDが発売される予定で、その宣伝がこの来日の主な目的です。来月から半年かけて韓国各地でコンサートを行う予定ですが、その前にしっかり宣伝しておこうということのようです。彼女たちは空いた時間に観光や買い物を楽しみたいと言っているそうです。日本にいるのは1週間と短いのですが、テレビ番組にも出演する予定です。`,
+cau:'「BLACKPINK」が日本に来る目的は何か。',
+dapan:['CDの販売','コンサートの宣伝','CDの宣伝','観光と買い物'],
+dapanVi:['Bán CD','Quảng cáo concert','Quảng cáo CD mới','Du lịch và mua sắm'],
+dung:3,
+meo:'💡 Mẹo: Tìm từ「主な目的」(mục đích chính) trong bài. Bài ghi rõ: "来月新しいCDが発売→その宣伝がこの来日の主な目的". Concert tổ chức ở Hàn Quốc (韓国各地), không phải Nhật.',
+giaithich:'Bài ghi rõ "quảng cáo CD mới là MỤC ĐÍCH CHÍNH của chuyến đến Nhật". ❌①bán CD ≠ quảng cáo. ❌②concert ở Hàn Quốc. ❌④du lịch chỉ là hoạt động phụ.'},
+
+{id:5,phan:'tanbun',loai:'dung',tenLoai:'Chọn nội dung đúng',
+van:`現代の生活は、パソコンやケータイ、テレビなどの画面を毎日見るために、多くの人が目の疲れを感じていると言います。パソコンを使った後や読書をした後に目が疲れるのは、近くの物を見続けることによって、目のまわりの緊張が続くからです。このようなときは、目を閉じたり開いたり、また目を上下左右に動かす体操を２〜３回くりかえしてみましょう。目のまわりの筋肉がやわらかくなって、疲れがかなりとれるでしょう。`,
+cau:'目の疲れをとるのに必要なことは何か。',
+dapan:['近くにある物を見続ける','目の筋肉を強くする','目を使う前に体操をする','目のまわりの緊張をとる'],
+dapanVi:['Tiếp tục nhìn vào vật gần','Làm cho cơ mắt mạnh hơn','Tập thể dục mắt TRƯỚC khi dùng mắt','Giải tỏa sự căng thẳng quanh mắt'],
+dung:4,
+meo:'💡 Mẹo: Đọc quan hệ nhân quả. Nguyên nhân mỏi:「目のまわりの緊張が続く」→ Cách trị: bài tập →「筋肉がやわらかく」. Đáp án = điều cần làm để hết mỏi = giải tỏa căng thẳng.',
+giaithich:'Nguyên nhân mỏi: căng thẳng quanh mắt → cần GIẢI TỎA căng thẳng. ❌①là nguyên nhân GÂY mỏi. ❌②làm "mạnh" ≠ "mềm ra" (やわらかく). ❌③bài tập làm SAU khi mỏi, không phải trước.'},
+
+{id:6,phan:'tanbun',loai:'dung',tenLoai:'Chọn nội dung đúng',
+van:`「旅は人を大きくする」と言います。旅は私にいつも新しい発見をくれます。美しい景色、人との出会い、美味しい料理……その中には悪いものもあるかもしれません。しかし、いいものも悪いものも、様々なものを見て、聞いて、食べて、感じて、考えることが、人が「大きくなる」ということなのでしょう。旅に出るといつも、戻るときの荷物のほうが重く感じます。それはきっと「大きくなった」私の、経験の重さだろうと思っています。`,
+cau:'「旅は人を大きくする」とあるが、どのようなことか。',
+dapan:['旅をするといろいろなものを食べて体が大きくなる','旅をするといい発見だけではなく悪い発見も増える','旅をすると帰りはいろいろ荷物が増えて重くなる','旅をするといろいろな経験をすることができる'],
+dapanVi:['Du lịch ăn nhiều nên người to ra','Du lịch không chỉ có khám phá tốt mà còn có xấu nữa','Khi về sau chuyến đi hành lý nặng hơn vì mua nhiều đồ','Du lịch giúp tích lũy được nhiều trải nghiệm'],
+dung:4,
+meo:'💡 Mẹo: Đây là câu hỏi về NGHĨA BÓNG (比喩). "大きくなる" không phải thân thể to ra mà là trưởng thành. "荷物が重い" là ẩn dụ cho "sức nặng của trải nghiệm", không phải hành lý thực tế.',
+giaithich:'"Lớn lên" = trưởng thành qua trải nghiệm. ❌①hiểu sai nghĩa bóng thành nghĩa đen. ❌②đúng một phần nhưng không phải ý chính. ❌③hiểu sai "hành lý nặng" là ẩn dụ.'},
+
+{id:7,phan:'tanbun',loai:'dung',tenLoai:'Chọn nội dung đúng',
+van:`買い物のしかたについてアンケートを取るとき、年代別に取ることが多かったが、今、少し変わってきている。ライフコース別に取ることが増えてきたのだ。ライフコースとは人生の道、つまり個人が生まれてからどんな道を歩いてきたか、ということである。例えば、40代女性といってもライフコースは様々で、①就職→独身→仕事継続、②就職→結婚→退職、③就職→結婚→仕事継続、④就職→結婚→仕事継続→出産→退職などがある。このようにして調査をすると、買い物のしかたや考え方などがよりはっきりと分かるようになった。`,
+cau:'なぜライフコース別にアンケートを取るのか。',
+dapan:['最近は以前よりも女性の一生が長くなったから','女性が人によって違う道を歩いているから','女性が就職することが当たり前になったから','女性が仕事を続けることが難しくなったから'],
+dapanVi:['Gần đây tuổi thọ phụ nữ dài hơn trước','Phụ nữ mỗi người đi một con đường cuộc đời khác nhau','Phụ nữ đi làm đã trở thành điều bình thường','Phụ nữ ngày càng khó duy trì công việc'],
+dung:2,
+meo:'💡 Mẹo: Câu hỏi "なぜ～か" → tìm lý do. Bài đưa ra 4 "life course" khác nhau cho phụ nữ 40 tuổi → cùng tuổi nhưng con đường khác nhau → phân tích theo life course sẽ rõ hơn.',
+giaithich:'Cùng 40 tuổi nhưng "con đường cuộc đời" rất khác → phân tích theo life course cho kết quả khảo sát rõ hơn. ❌①③④không liên quan đến lý do thay đổi phương pháp khảo sát.'},
+
+{id:8,phan:'tanbun',loai:'dung',tenLoai:'Chọn nội dung đúng',
+van:`体重をコントロールするためには食事と運動のバランスを考える必要があります。カロリーを取りすぎないだけでなく、適度な運動をすることが大切です。しかし、わざわざ運動をするために時間を作るのが難しい人も少なくないでしょう。このような人でも、適度な運動を生活の中に取り入れることは可能です。例えば、エレベーターを使わずに階段を使ったり、歩くときにいつもより大きな歩幅にするなど、できることはたくさんあると思います。`,
+cau:'この文章で一番言いたいことは何か。',
+dapan:['体重を管理するためには、特別な運動をしなければならない','体重を減らすためには、運動より食事に気を付けなければならない','特別な時間を作らなくても、運動する方法はたくさんある','生活の中で運動するためには、特別に時間を取る必要がある'],
+dapanVi:['Để kiểm soát cân nặng phải tập thể dục đặc biệt','Để giảm cân cần chú ý ăn uống hơn là tập thể dục','Không cần dành thời gian riêng, vẫn có nhiều cách vận động','Để vận động trong sinh hoạt cần phải dành thời gian riêng'],
+dung:3,
+meo:'💡 Mẹo: "一番言いたいこと" = ý chính. Để tìm ý chính, đọc phần cuối bài và các ví dụ. Bài đưa ví dụ: dùng cầu thang, bước dài hơn → không cần dành thời gian riêng.',
+giaithich:'Thông điệp chính: dù bận cũng có thể vận động trong sinh hoạt hàng ngày. ❌①không cần "đặc biệt". ❌②bài nói cả ăn lẫn vận động quan trọng. ❌④đối lập với ý chính.'},
+
+{id:9,phan:'tanbun',loai:'dung',tenLoai:'Chọn nội dung đúng',
+van:`茶道教室に参加する方へ
+
+茶道の楽しさは、ゆっくりした時間が味わえることです。いっしょにお茶をいただく人たちを「客」と言いますが、身分、職業、年齢、性別などの制限はありません。そこでは、政治・経済や社会の問題などは話さないという約束があります。話題は、茶道のこと、花や芸術のことなどを選びます。毎日忙しい人でも、心が落ち着いて、静かな雰囲気を楽しむことができます。
+○○市茶道を楽しむ会`,
+cau:'「○○市茶道を楽しむ会」が、参加する人に伝えたいことはどれか。',
+dapan:['茶道は、いろいろな職業の人とどんなことでも話せて楽しい','茶道は、社長、社員、年寄り、子供、だれでも一緒に楽しめる','「客」がみんな同じ会社の人なら、仕事の話をしても大丈夫だ','茶道はゆっくり行うので、忙しい人は楽しむことができない'],
+dapanVi:['Trà đạo vui vì nói chuyện gì cũng được với mọi người','Trà đạo ai cũng chơi được: giám đốc, nhân viên, người già, trẻ em','Nếu khách cùng công ty thì được nói chuyện công việc','Trà đạo thực hiện chậm nên người bận không tham gia được'],
+dung:2,
+meo:'💡 Mẹo: Đây là thông báo → đọc kỹ từng điều kiện. Câu chính:「身分、職業、年齢、性別などの制限はありません」= KHÔNG giới hạn. Nhưng CÓ giới hạn chủ đề nói chuyện.',
+giaithich:'Không có giới hạn về địa vị/nghề nghiệp/tuổi/giới → ai cũng tham gia được. ❌①sai: CÓ giới hạn chủ đề (không nói chính trị, kinh tế). ❌③sai: cũng không được nói chuyện công việc. ❌④sai: người bận vẫn tham gia được.'},
+
+{id:10,phan:'tanbun',loai:'dung',tenLoai:'Chọn nội dung đúng',
+van:`日本には昔から、「虫干し」という習慣があります。着物の湿気を取り、虫やカビなどを防ぐためのものです。梅雨が終わった7月下旬から8月上旬に行うことが多いです。梅雨の間に着物が湿気を含んでしまうからです。2、3日晴れて乾燥した日が続いたあと、午前10時から3時ごろまで、風がよく通る部屋で、着物が風に当たるようにします。最近あまり見られなくなった習慣ですが、日本の気候に合った生活の工夫として、現代の洋服にも役に立つのではないかと思います。`,
+cau:'虫干しをする理由は何か。',
+dapan:['昔からの習慣だから','着物の色が変わらないようにするため','着物を乾燥させるため','風を通して部屋を乾燥させるため'],
+dapanVi:['Vì đây là phong tục từ ngày xưa','Để giữ màu sắc kimono không bị phai','Để làm khô kimono (lấy độ ẩm ra)','Để thông gió làm khô phòng'],
+dung:3,
+meo:'💡 Mẹo: Câu hỏi hỏi LÝ DO → tìm câu có「ため」(mục đích/lý do). Câu đầu bài:「着物の湿気を取り、虫やカビなどを防ぐため」= lý do rõ ràng nhất.',
+giaithich:'Mục đích: lấy độ ẩm ra, ngăn côn trùng và nấm mốc. ❌①là sự thật nhưng không phải lý do làm. ❌②không có trong bài. ❌④làm khô kimono, không phải phòng.'},
+
+{id:11,phan:'tanbun',loai:'dung',tenLoai:'Chọn nội dung đúng',
+van:`「家紋」を知っていますか。それぞれの家が持っている印のことです。最初は1500年代の終わりごろ、戦争で旗に描かれ、目印として使われました。それが江戸時代（1603年〜1868年）になると、武士の家の印として、衣服につけるようになりました。その後、商人など武士以外の人の間でも、冠婚葬祭に着る着物につける習慣ができたと言われています。現代でも、結婚式や葬式などでは、家紋のついた着物をよく見ます。`,
+cau:'家紋について、正しいのはどれか。',
+dapan:['武士の家にはふつう家紋が二つある','江戸時代より以前にも、使われていた','最初に使ったのは商人である','昔は、結婚式と葬式にだけ使われた'],
+dapanVi:['Nhà võ sĩ thường có hai gia huy','Trước thời Edo đã được sử dụng rồi','Người đầu tiên dùng gia huy là thương nhân','Ngày xưa chỉ dùng trong đám cưới và đám tang'],
+dung:2,
+meo:'💡 Mẹo: Bài có nhiều mốc thời gian → vẽ dòng thời gian trong đầu: 1500年代末 (cuối thế kỷ 16) → Thời Edo bắt đầu 1603. Gia huy xuất hiện trước 1603 → đã có trước thời Edo.',
+giaithich:'Gia huy xuất hiện cuối thế kỷ 16 (trước 1603 = trước thời Edo). ❌①không có thông tin số lượng. ❌③đầu tiên là quân nhân dùng trên cờ chiến tranh. ❌④冠婚葬祭 gồm nhiều dịp lễ.'},
+
+{id:12,phan:'tanbun',loai:'dung',tenLoai:'Chọn nội dung đúng',
+van:`商品のご注文は、ハガキまたは電話でお願いいたします。商品は宅配便でお送りいたしますので、商品をお受け取りになるときに代金をお支払いください。代金は、商品の値段にそれぞれの地域までの送料と手数料525円を加えた金額になります。なお、お買い上げの商品が合計で1万5000円以上になる場合は、送料と手数料は無料となります。`,
+cau:'この文の内容について、正しいのはどれか。',
+dapan:['商品の注文は、電話のほかに、ハガキやメールでもできる','商品の代金は、銀行から送るか、郵便局から現金書留で送る','送料と手数料が無料になるのは、注文が1万5000円以上のときである','商品を受け取るときに支払う金額は、商品の値段と送料である'],
+dapanVi:['Đặt hàng được bằng điện thoại, bưu thiếp hoặc email','Thanh toán bằng chuyển khoản ngân hàng hoặc bưu điện','Phí vận chuyển và phí dịch vụ miễn phí khi đặt hàng từ 15.000 yên trở lên','Khi nhận hàng phải trả: giá hàng + phí vận chuyển'],
+dung:3,
+meo:'💡 Mẹo: Đây là thông báo dịch vụ → đọc kỹ từng điều kiện. Chú ý「以上」(từ X trở lên) và「無料」(miễn phí). 525 yên là phí DỊCH VỤ (手数料), không chỉ là phí vận chuyển.',
+giaithich:'Từ 15.000 yên trở lên → phí vận chuyển + phí dịch vụ đều miễn phí. ❌①không có email, chỉ bưu thiếp và điện thoại. ❌④còn phải cộng thêm phí dịch vụ 525 yên nữa.'},
+
+{id:13,phan:'tanbun',loai:'dung',tenLoai:'Chọn nội dung đúng',
+van:`はがきに質問の答えを書いて、送ってください。
+１．今月号で面白かった作品は何ですか。３つ書いてください。
+２．毎月読みますか。　①はい　②＿＿か月に１度　③初めて読んだ
+＊あなたの住所（郵便番号も）、名前、学年を書いて、6月10日までに送ってください。
+
+【Bưu thiếp A】3 tác phẩm✓ / 2か月に1度✓ / địa chỉ✓ / ghi "10才" (tuổi, không phải lớp) ✗
+【Bưu thiếp B】3 tác phẩm✓ / ①はい✓ / địa chỉ✓ / しょうがく1年生✓
+【Bưu thiếp C】3 tác phẩm✓ / 3か月に1度✓ / địa chỉ✓ / 小学2年✓
+【Bưu thiếp D】4 tác phẩm✗ / ③初めて✓ / địa chỉ✓ / 小学4年✓`,
+cau:'はがきの書き方として、正しいのはどれか。',
+dapan:['ＡとＢ','ＢとＣ','ＣとＤ','ＡとＤ'],
+dapanVi:['A và B','B và C','C và D','A và D'],
+dung:2,
+meo:'💡 Mẹo: Dạng "checklist" → lập danh sách điều kiện: ①3 tác phẩm, ②chọn tần suất đọc, ③địa chỉ có mã bưu chính, ④tên, ⑤学年(lớp học, không phải tuổi). Kiểm tra từng bưu thiếp.',
+giaithich:'A ghi "10 tuổi" thay vì "lớp học" → sai. D ghi 4 tác phẩm thay vì 3 → sai. B và C đáp ứng đủ tất cả điều kiện → đúng.'},
+
+{id:14,phan:'tanbun',loai:'dung',tenLoai:'Chọn nội dung đúng',
+van:`お客様へ
+この機械で使用している電池は、リサイクルが可能です。使い終わった電池は捨てずに、お住いの区・市・町・村の回収方法にしたがってリサイクルに回してください。なお、当社でも回収してリサイクルをするサービスを行っております。リサイクル方法がわからない方は、当社の電池回収係まで使用済み電池をお送りください。ただし、送料はお客様のご負担になります。`,
+cau:'この機械の電池について、正しいのはどれか。',
+dapan:['この会社の電池回収係に送らなければならない','必ず区や市町村の回収方法にしたがわなければならない','この会社では、使用済み電池のリサイクルサービスは行っていない','送料を払えば、この会社でも使用済み電池のリサイクルをしてくれる'],
+dapanVi:['Bắt buộc phải gửi cho bộ phận thu hồi pin của công ty này','Bắt buộc phải theo phương pháp thu gom của khu/thành phố','Công ty này không có dịch vụ tái chế pin đã qua sử dụng','Nếu trả phí vận chuyển, công ty này cũng tái chế pin cho bạn'],
+dung:4,
+meo:'💡 Mẹo: Chú ý「ただし」(nhưng/tuy nhiên) = điều kiện kèm theo quan trọng.「送料はお客様のご負担」= khách tự trả phí vận chuyển. Đây là điều kiện để công ty thu hồi.',
+giaithich:'Công ty có dịch vụ tái chế, nhưng khách tự trả phí vận chuyển. ❌①②chỉ là lựa chọn, không bắt buộc. ❌③công ty VẪN CÓ dịch vụ này.'},
+
+{id:15,phan:'tanbun',loai:'dung',tenLoai:'Chọn nội dung đúng',
+van:`このコンテストに応募できる方は、18歳以上の結婚していない女性で、観光行事などに参加できる人です。20歳未満の人は親の許可が必要です。現在、他のミスを務めている人や高校生は応募することができません。応募用紙に記入して、3か月以内に撮った全身写真と一緒に、ミス日本酒係までお送りください。締め切りは4月10日（木）、コンテストは5月10日（土）、ABC会館で行われます。`,
+cau:'このコンテストについて、正しいのはどれか。',
+dapan:['18歳以上の結婚していない女性であれば、高校生でも応募できる','結婚していない女性で観光行事に参加できる人であれば、応募できる','20歳になっていない人は、親から許可をもらわなければ応募できない','応募用紙と一緒には、顔写真を送らなければならない'],
+dapanVi:['Nữ từ 18 tuổi chưa kết hôn thì học sinh cấp 3 cũng được đăng ký','Nữ chưa kết hôn có thể tham gia sự kiện du lịch là đăng ký được','Người chưa đủ 20 tuổi phải có sự cho phép của bố mẹ mới đăng ký được','Phải gửi kèm ảnh chân dung cùng đơn đăng ký'],
+dung:3,
+meo:'💡 Mẹo: Bài nhiều điều kiện → gạch chân từng cái: ①từ 18 tuổi, ②chưa kết hôn, ③dưới 20 cần xin phép bố mẹ, ④高校生不可, ⑤全身写真(ảnh TOÀN THÂN, không phải ảnh mặt).',
+giaithich:'Người dưới 20 tuổi cần sự cho phép của bố mẹ. ❌①học sinh cấp 3 bị loại. ❌②cần đủ 18 tuổi. ❌④cần ảnh TOÀN THÂN (全身写真), không phải ảnh mặt (顔写真).'},
+
+{id:16,phan:'tanbun',loai:'dung',tenLoai:'Chọn nội dung đúng',
+van:`寒い冬も終わり、気持ちのよい季節になりました。運動不足の方、お小遣いが欲しい方、ここでアルバイトをしてみませんか。
+
+仕事内容：朝刊の配達
+時給：1200円
+休日：週一日（曜日は相談に応じます）
+時間：午前2：30〜午前5：30までの間で2時間以上
+資格：18歳以上で、オートバイの免許がある
+　　　（免許がない方は相談してください）`,
+cau:'このアルバイトができるのは、次のどの人か。',
+dapan:['新聞配達を希望している中学生','朝4時までのコンビニのアルバイトに、このアルバイトを加えたい人','オートバイの免許は持っていないが、今、仕事を探している18歳の男性','オートバイの免許を持っていて、週に3日アルバイトをしたい19歳の女性'],
+dapanVi:['Học sinh cấp 2 muốn giao báo','Người muốn làm thêm việc này cùng ca tiện lợi (đến 4h sáng)','Nam 18 tuổi chưa có bằng lái xe máy, đang tìm việc','Nữ 19 tuổi có bằng xe máy, muốn làm 3 ngày/tuần'],
+dung:3,
+meo:'💡 Mẹo: Câu hỏi loại trừ → kiểm tra từng người. ①tuổi đủ chưa? ②giờ làm trùng không? ③bằng lái: "相談してください" = vẫn có thể hỏi thêm. ④lịch nghỉ: 1 ngày/tuần = làm 6 ngày/tuần.',
+giaithich:'18 tuổi chưa có bằng → "相談してください" → vẫn ứng tuyển được. ❌①học sinh cấp 2 chưa 18 tuổi. ❌②ca convenience store đến 4h sáng trùng với ca báo (từ 2h30). ❌④muốn 3 ngày/tuần nhưng chỉ nghỉ 1 ngày = phải làm 6 ngày/tuần.'},
+
+{id:17,phan:'tanbun',loai:'sai',tenLoai:'Chọn nội dung sai',
+van:`だれかの家を訪問するときに持って行く手みやげは、どんなものがよいのでしょうか。基本的には、食べたり飲んだりして、後に残らないものがいいでしょう。子供がいるか、お年寄りか、何人家族か、食べられないものはないか、など、相手の事情を考えて選びましょう。ケーキなどであれば、家族の人数より2、3個多めに持って行くと喜ばれます。また、買う店は、訪問する相手の家の近くでないほうがいいです。慌てて用意したとか、よくない印象や疑いを持たれるかもしれないからです。`,
+cau:'上の文章で【正しくない】ことはどれか。',
+dapan:['後で残らないものを選ぶ','訪問する家の近くで、すぐ前に買う','相手の人数や家族の状況を考えて選ぶ','相手の人数より少し多めに買っていく'],
+dapanVi:['Chọn đồ không để lại vật dụng về sau','Mua ở gần nhà người được thăm, ngay trước khi đến','Chọn quà tùy số người và hoàn cảnh gia đình họ','Mua nhiều hơn số người trong nhà một chút'],
+dung:2,
+meo:'💡 Mẹo: Câu hỏi "正しくないものはどれか" = chọn đáp án SAI. Tìm câu phủ định trong bài:「買う店は、近くでないほうがいい」= KHÔNG NÊN mua gần nhà. Đáp án nào trái với điều này → sai.',
+giaithich:'Bài nói KHÔNG NÊN mua ở gần nhà người được thăm (vì trông như mua vội). ②nói "mua ở gần nhà" → trái với bài → đây là đáp án SAI cần chọn. ✅①③④đều đúng với bài.'},
+
+{id:18,phan:'tanbun',loai:'sai',tenLoai:'Chọn nội dung sai',
+van:`学生の皆さんへ
+
+地球環境を守るという社会共通の問題に対して、本学でも日々の生活の中で実行していきたいと思います。そのために、以下の項目の実施に努力してください。
+
+１．教室を最後に出る時は、必ず部屋の電気とエアコンを消す。
+２．トイレや休憩所などは、使用する時に電気をつけて、使用後は必ず消す。
+３．エアコンの温度は、冬22度、夏28度の基準を守る。
+４．通学に自動車・オートバイを使わない。`,
+cau:'学生が【してはいけない】のはどれか。',
+dapan:['大学へは、歩いて通学しなければならない','教室もトイレも、使う時だけ電気をつける','冬、教室が23度の時は、エアコンをつけない','エアコンは使用後、必ず消す'],
+dapanVi:['Đến trường phải đi bộ','Cả lớp học lẫn nhà vệ sinh chỉ bật đèn khi sử dụng','Mùa đông nếu phòng đã 23°C thì không bật điều hòa','Điều hòa sau khi dùng phải tắt'],
+dung:2,
+meo:'💡 Mẹo: Đọc kỹ sự KHÁC BIỆT giữa 2 quy tắc. Lớp học (①): người CUỐI CÙNG ra thì tắt. Nhà vệ sinh (②): tắt ngay sau khi xong. Đáp án nào trộn lẫn 2 quy tắc này = sai.',
+giaithich:'Quy tắc lớp học: người CUỐI CÙNG mới tắt (không phải mỗi người ra là tắt). Nói "lớp học cũng chỉ bật khi dùng" là SAI với quy tắc. ❌①chỉ không được dùng xe, không cần phải đi bộ. ✅③đúng (22°C là chuẩn, phòng 23°C đã đủ ấm).'},
+
+{id:19,phan:'tanbun',loai:'sai',tenLoai:'Chọn nội dung sai',
+van:`バーベキュー用のカセットボンベをごみとして捨てるときは、ごみ収集車やごみ処理場で事故が起きないように、中身を使いきってから、穴を開けて、資源ごみの日に缶として出してください。穴が開けられない場合は、中が見える袋に入れて、特別ごみの日に危険物として、他のごみと分けて出してください。ごみ処理場に直接持ち込むこともできます。その場合も、同じように袋に入れて、危険物だとわかるようにしてください。どの方法で出す場合も無料です。`,
+cau:'この文章の内容について、【正しくない】ものはどれか。',
+dapan:['出すときは穴を開けなくてもいいです','ごみ処理場に持って行けば穴を開けてくれます','穴を開けないで処理場に持って行くときは透明な袋に入れます','ごみ処理場に持って行くと無料です'],
+dapanVi:['Khi bỏ không nhất thiết phải đục lỗ','Mang đến trung tâm xử lý rác thì họ sẽ đục lỗ cho','Nếu không tự đục lỗ được thì cho vào túi trong suốt rồi mang đến','Mang đến trung tâm xử lý rác thì miễn phí'],
+dung:2,
+meo:'💡 Mẹo: Tìm đáp án có thông tin KHÔNG CÓ trong bài (thêm vào hoặc bịa ra). Bài không hề nói "trung tâm rác sẽ đục lỗ cho bạn" → đó là thông tin bịa ra = sai.',
+giaithich:'Bài KHÔNG nói "trung tâm xử lý rác sẽ đục lỗ". Nếu không đục được → cho vào túi trong suốt. ✅①đúng (có cách khác nếu không đục được). ✅③④đúng với bài.'},
+
+{id:20,phan:'tanbun',loai:'sai',tenLoai:'Chọn nội dung sai',
+van:`日本の正月料理「おせち」は、重箱という箱に入れて食べる伝統的な料理です。おせちの料理には、一つ一つに意味があります。例えば、黒豆は「まめに働く」という意味で、健康を願う料理です。昆布は「よろこぶ」という言葉と音が似ているため、喜びを表しています。えびは背中が曲がっているので、「腰が曲がるまで長生きできますように」という長寿を願う意味があります。おせちは、お正月の三が日（1月1日〜3日）の間、食べられます。最近は、デパートや通販で購入する人が増えています。`,
+cau:'おせちについて、【正しくない】のはどれか。',
+dapan:['黒豆は健康に関係する意味がある','昆布は「よろこぶ」という言葉から来ている','えびは「長生き」を願う意味がある','おせちは重箱に入れるのが決まりで、購入はできない'],
+dapanVi:['Đậu đen mang ý nghĩa liên quan đến sức khỏe','Rong biển đến từ từ "yorokobu" (vui mừng)','Tôm mang ý nghĩa cầu mong sống lâu','Osechi bắt buộc đựng trong hộp jūbako và không thể mua sẵn'],
+dung:4,
+meo:'💡 Mẹo: Câu cuối bài:「デパートや通販で購入する人が増えています」= ngày càng nhiều người mua sẵn. Đáp án nào nói "không thể mua" = SAI.',
+giaithich:'Bài ghi rõ nhiều người mua ở bách hóa hoặc mua online → "không thể mua" là SAI. ✅①②③đều có trong bài và đúng.'},
+
+{id:21,phan:'tanbun',loai:'mail',tenLoai:'Thư / Email',
+van:`2022年12月2日
+マツダ自動車販売部　御中
+（株）ソニー　営業部　山田　力
+
+いつもお世話になっております。
+先日は新しく発売された車のパンフレットと価格表を送っていただき、ありがとうございました。
+部長の石井と検討いたしましたが、しばらくの間は、新しいものを買うより現在のものを修理しながら使うほうがいい、ということになりました。ご理解いただければありがたいです。
+今後もよろしくお願いいたします。`,
+cau:'手紙の内容で正しいのはどれか。',
+dapan:['マツダ自動車は、新しく車を買おうと考えている','マツダ自動車の仕事は、車の修理や管理である','ソニーは、マツダ自動車から車を買わない','ソニーは、また新しい車の情報を送ってほしいと頼んでいる'],
+dapanVi:['Mazda đang nghĩ đến việc mua xe mới','Công việc của Mazda là sửa chữa và quản lý xe','Sony sẽ không mua xe từ Mazda','Sony nhờ Mazda tiếp tục gửi thông tin xe mới'],
+dung:3,
+meo:'💡 Mẹo: Xác định AI viết thư cho AI: Sony (山田) → Mazda (マツダ自動車販売部). Ai là bên mua? Quyết định của bên mua là gì?「現在のものを修理しながら使うほうがいい」= tiếp tục dùng cũ.',
+giaithich:'Sony (người viết) từ chối mua xe mới của Mazda → sẽ không mua. ❌①nhầm chủ thể. ❌②không có thông tin về công việc Mazda. ❌④không có yêu cầu thêm thông tin.'},
+
+{id:22,phan:'tanbun',loai:'mail',tenLoai:'Thư / Email',
+van:`山田まりこ先生
+
+お借りしていた先生のご本のことで、先生からお手紙をいただき、初めてお返ししていないことに気づきました。本当に申し訳ありませんでした。
+先生のご本は、汚さないように本棚に置いていたのですが、見つかりませんでした。調べたところ、お借りした本は絶版ではないことがわかりましたので、必ず同じものを送らせていただきます。勝手なお願いで誠に恐縮ですが、今しばらくお待ちください。
+まずは、お詫びまで。
+
+10月31日　田中一郎`,
+cau:'この手紙では、先生に対して、特に何を謝っているのか。',
+dapan:['先生から借りた本を返すのが遅くなってしまったこと','先生から借りた本を返すのを忘れていたこと','先生から借りた本をなくしてしまったこと','先生から借りた本と同じ本を買って送ること'],
+dapanVi:['Trả sách muộn hơn dự kiến','Đã quên không trả sách','Đã làm mất sách mượn','Sẽ mua sách giống vậy gửi lại'],
+dung:2,
+meo:'💡 Mẹo: Câu then chốt:「先生からお手紙をいただき、初めてお返ししていないことに気づきました」= nhận thư thầy/cô MỚI BIẾT là chưa trả → tức là QUÊN HẲN, không phải trả muộn.',
+giaithich:'Nhận thư của thầy/cô mới nhớ ra là chưa trả sách = đã QUÊN. ❌①"trả muộn" ngụ ý vẫn nhớ nhưng chậm. ❌③sách bị thất lạc nhưng lý do xin lỗi chính là QUÊN trả. ❌④đó là việc sẽ làm.'},
+
+{id:23,phan:'tanbun',loai:'mail',tenLoai:'Thư / Email',
+van:`田中先生
+
+今週の土曜日（11月15日）に予定していた日本語の授業ですが、私の都合で来週の火曜日（11月18日）に変更させていただけないでしょうか。
+土曜日は父が急に入院することになりまして、病院に行かなければならなくなりました。本当に申し訳ございません。もし火曜日のご都合が悪いようでしたら、またご相談させてください。
+
+山田花子`,
+cau:'山田さんが田中先生にお願いしていることは何か。',
+dapan:['授業の日程を変更してほしい','授業を休んでもいいか確認したい','父の入院について相談したい','次の授業の内容について確認したい'],
+dapanVi:['Muốn đổi ngày học','Muốn xác nhận có thể vắng học không','Muốn trao đổi về việc bố nhập viện','Muốn xác nhận nội dung buổi học tiếp theo'],
+dung:1,
+meo:'💡 Mẹo: Câu đề nghị có cấu trúc「〜させていただけないでしょうか」= "xin phép được làm〜". Ở đây:「変更させていただけないでしょうか」= xin phép THAY ĐỔI ngày học.',
+giaithich:'Yamada xin đổi ngày học (thứ 7→thứ 3). ❌②muốn đổi ngày chứ không phải xin nghỉ. ❌③bố nhập viện chỉ là lý do, không phải nội dung đề nghị. ❌④không có trong thư.'},
+
+{id:24,phan:'tanbun',loai:'mail',tenLoai:'Thư / Email',
+van:`件名：サークル活動について
+
+田中さん
+
+先週の会議でお話ししたサークルの合宿ですが、場所が決まりました。山田市の「もみじ荘」という旅館です。日程は来月の20日から22日（2泊3日）です。参加希望の方は今月15日までに私にメールで知らせてください。参加費は1人3万円（食事代・宿泊費込み）の予定です。詳しい案内は来週中にまた送ります。
+
+鈴木`,
+cau:'このメールで一番大切な連絡は何か。',
+dapan:['合宿の詳しい案内はまだ決まっていない','参加希望は今月15日までにメールで連絡する','合宿の費用は食事代が別にかかる','合宿は来月21日から2泊する'],
+dapanVi:['Thông tin chi tiết về chuyến trại chưa được quyết định','Đăng ký tham gia: báo qua email trước ngày 15 tháng này','Chi phí chuyến trại chưa bao gồm tiền ăn','Chuyến trại bắt đầu từ ngày 21 tháng tới, 2 đêm'],
+dung:2,
+meo:'💡 Mẹo: "一番大切な連絡" = thông tin nào người đọc cần HÀNH ĐỘNG ngay. Thông tin có DEADLINE (hạn chót) = quan trọng nhất.「今月15日まで」= cần làm ngay.',
+giaithich:'Hạn đăng ký ngày 15 tháng này qua email = cần hành động ngay. ❌①sai (thông tin chi tiết sẽ gửi tuần sau = đã quyết định rồi). ❌③sai (3 vạn đã gồm ăn+ở). ❌④sai (từ ngày 20, không phải 21).'},
+
+{id:25,phan:'chubun',loai:'tadashii',tenLoai:'Đọc đoạn vừa',
+van:`電車の中で席をゆずった経験がある。混んだ電車に乗っていたとき、前に女性が来た。私はこの人に席をゆずろうと立ち上がった。すると女性は「ありがとう。でも、いいわよ」と言って、ゆずられた席に座らなかった。少し恥ずかしい思いをした。しかし、少し安心した気持ちもあった。
+
+その後、同じ電車に小学生ぐらいの女の子が乗ってきた。女の子はその女性のところへ行って「おばあさん、どうぞ」と席をゆずった。女性は笑いながら「ありがとう。でも大丈夫よ」と言ってやはり座らなかった。女の子はちょっとがっかりした様子だったが、次の駅で降りて行った。`,
+cau:'①この文章を書いた人は、女性がしたことについてどう思ったか。',
+dapan:['「ありがとう」と言ったのはよかった','「いいわよ」と言った理由が理解できない','女性が座ったので安心した','女性が座らなかったのは残念だ'],
+dapanVi:['Tốt là người phụ nữ đã nói "cảm ơn"','Không hiểu tại sao người phụ nữ nói "không cần đâu"','Cảm thấy yên tâm vì người phụ nữ đã ngồi xuống','Tiếc vì người phụ nữ không chịu ngồi'],
+dung:1,
+meo:'💡 Mẹo: Đọc cảm xúc của tác giả:「少し恥ずかしい」(xấu hổ) NHƯNG「少し安心した」(nhẹ nhõm). Câu hỏi hỏi về cảm nghĩ với HÀNH ĐỘNG của người phụ nữ → người phụ nữ đã làm gì? (nói "cảm ơn" + từ chối lịch sự).',
+giaithich:'Dù bị từ chối nhưng người phụ nữ lịch sự nói "cảm ơn" → tác giả đánh giá cao điều đó. ❌③sai: người phụ nữ KHÔNG ngồi. ❌④tác giả cũng "nhẹ nhõm" nên không hẳn là tiếc.'},
+
+{id:26,phan:'chubun',loai:'tadashii',tenLoai:'Đọc đoạn vừa',
+van:`（Tiếp theo đoạn văn câu chuyện nhường ghế trên tàu điện)`,
+cau:'②「少し安心した」とあるが、それはどうしてだと考えられるか。',
+dapan:['女の子ががっかりしていないようだったから','女の子が電車を降りたから','女の子が傘を持っていたから','女の子が教えられたことを守ったから'],
+dapanVi:['Vì cô bé có vẻ không thất vọng','Vì cô bé đã xuống tàu','Vì cô bé có mang ô','Vì cô bé đã làm đúng điều được dạy'],
+dung:4,
+meo:'💡 Mẹo: Tác giả "nhẹ nhõm" NGAY SAU KHI bị từ chối → lý do không liên quan đến cô bé (xuất hiện sau đó). Hỏi bản thân: tại sao nhường ghế bị từ chối mà lại nhẹ nhõm?',
+giaithich:'Tác giả nhẹ nhõm vì bản thân đã làm đúng điều được dạy (nhường chỗ). Cô bé sau đó cũng làm vậy → xác nhận hành động đó là đúng. ❌①②③không liên quan đến lý do nhẹ nhõm của tác giả.'},
+
+{id:27,phan:'chubun',loai:'tadashii',tenLoai:'Đọc đoạn vừa',
+van:`スーパーのレジで「ノー・レジ袋カード」というカードを見ることがある。自分の買い物袋を持っている客はお金を払う前に、このカードを自分のかごに入れておく。カードを見た店員は、この客にはレジ袋を渡さなくていいとわかる。便利だからと、レジにこのカードを置くスーパーが増えているようだ。
+
+これについて、ある新聞に「私はノー・レジ袋カードを使いたくない」という投書があった。投書をした人は、「言葉で直接伝えるのは簡単なことなのに、なぜカードを使うのかわからない」と言っている。そして、「カードのせいで人と人のコミュニケーションの機会が減ってしまうのは残念だ」と書いている。
+
+しかし、私は、このカードの使用が特に残念なことだとは思わない。レジ袋の会話は大した内容がない。それよりも、例えば小さい商店で商品について相談したりするようなコミュニケーションが、今のスーパーではできないことのほうが残念だと私は思う。`,
+cau:'①「ノー・レジ袋カード」を使うとどうなるか。',
+dapan:['レジで袋についての会話をしなくて済む','客が店員に袋が必要かどうか教えてもらえる','スーパーの数が増える','袋代を払わなくてよくなる'],
+dapanVi:['Không cần nói chuyện về túi nylon ở quầy thanh toán','Khách được nhân viên cho biết có cần túi không','Số lượng siêu thị tăng lên','Không cần trả tiền túi'],
+dung:1,
+meo:'💡 Mẹo: Câu hỏi hỏi "kết quả khi dùng thẻ". Đọc đoạn 1: khách bỏ thẻ vào giỏ → nhân viên nhìn thấy → biết không cần đưa túi → không cần NÓI. Chiều thông tin: khách → nhân viên.',
+giaithich:'Thẻ giúp không cần nói chuyện về túi. ❌②chiều ngược lại (nhân viên được khách báo, không phải ngược lại). ❌④bài không đề cập tiền túi.'},
+
+{id:28,phan:'chubun',loai:'tadashii',tenLoai:'Đọc đoạn vừa',
+van:`（Tiếp theo — về "thẻ không lấy túi nylon" tại siêu thị)`,
+cau:'②「私」はレジ袋カードについてどう思っているか。',
+dapan:['レジ袋カードのせいでコミュニケーションが減るのは残念だ','レジ袋の話は内容がないので、カードでもいい','スーパーでは商品について相談できるようにすべきだ','言葉で伝えることは難しくないので、カードは不要だ'],
+dapanVi:['Tiếc vì dùng thẻ làm giảm giao tiếp','Chuyện túi nylon không quan trọng nên dùng thẻ cũng được','Siêu thị nên cho khách tư vấn về sản phẩm','Nói bằng lời không khó nên không cần thẻ'],
+dung:2,
+meo:'💡 Mẹo: Phân biệt ý kiến của 2 người: 「投書した人」(người gửi thư tòa soạn) = PHẢN ĐỐI thẻ. Còn「私」(tác giả bài) = ĐỒNG Ý với thẻ. Câu:「レジ袋の会話は大した内容がない」= không có gì quan trọng → thẻ cũng ổn.',
+giaithich:'"Tôi" cho rằng cuộc nói chuyện về túi không quan trọng → dùng thẻ cũng ổn. ❌①là ý kiến của người gửi thư tòa soạn, không phải "tôi". ❌③điều tác giả TIẾC, không phải ý kiến về thẻ.'},
+
+{id:29,phan:'chobun',loai:'tadashii',tenLoai:'Đọc đoạn dài',
+van:`日本語には「言葉遊び」というものがある。言葉遊びとは、言葉の音や意味を使って楽しむ遊びのことである。
+
+代表的なものに「しゃれ」がある。しゃれとは、音が同じか似ている言葉を使って笑いを取るものだ。「スキー、大好き。」という文は、「スキー」と「好き」の音が似ていることを使ったしゃれである。
+
+また「回文」という遊びもある。回文とは、前から読んでも後ろから読んでも同じになる文のことである。「竹やぶ、やけた」などが例として挙げられる。
+
+「なぞなぞ」は、問題文から答えを考えるものである。「どんな泥棒でも1年に1回しかとれないものは何？」という問いに対して「歳（とし）」が答えになる。
+
+これらの言葉遊びは、言葉が持つ「考えを伝えること」以外の楽しい働きを示している。`,
+cau:'①「しゃれ」とはどのようなものか。',
+dapan:['前から読んでも後ろから読んでも同じ文','音が似た言葉を使って笑いをとるもの','問題を出して答えを考えるもの','難しい漢字の意味を楽しむもの'],
+dapanVi:['Câu đọc xuôi hay ngược đều giống nhau','Dùng những từ có âm tương tự nhau để gây tiếng cười','Ra câu đố và suy nghĩ đáp án','Thưởng thức ý nghĩa các chữ Hán khó'],
+dung:2,
+meo:'💡 Mẹo: Câu hỏi định nghĩa → đọc ngay câu sau khi giới thiệu từ đó.「しゃれとは、音が同じか似ている言葉を使って笑いを取るものだ」= định nghĩa trực tiếp. Ghi nhớ: 3 loại trò chơi = 3 định nghĩa khác nhau.',
+giaithich:'Định nghĩa trong bài: "dùng từ có âm giống/tương tự để tạo tiếng cười". ❌①là định nghĩa 回文. ❌③là định nghĩa なぞなぞ. ❌④không có trong bài.'},
+
+{id:30,phan:'chobun',loai:'tadashii',tenLoai:'Đọc đoạn dài',
+van:`（Tiếp theo — về các trò chơi ngôn ngữ tiếng Nhật: しゃれ, 回文, なぞなぞ)`,
+cau:'②この文章で言っていることに合っているものはどれか。',
+dapan:['意味が同じでも音が違う言葉が日本語に多い','「言葉遊び」は人の考えを伝えるために必要だ','言葉には考えを伝える以外の楽しい使い方もある','良い言葉遊びの文はいつも短い'],
+dapanVi:['Tiếng Nhật có nhiều từ cùng nghĩa nhưng khác âm','Trò chơi ngôn ngữ cần thiết để truyền đạt suy nghĩ','Ngôn ngữ còn có cách sử dụng thú vị ngoài việc truyền đạt suy nghĩ','Câu trò chơi ngôn ngữ hay luôn luôn ngắn'],
+dung:3,
+meo:'💡 Mẹo: Câu hỏi ý chính → đọc câu KẾT BÀI. Câu kết:「言葉が持つ「考えを伝えること」以外の楽しい働きを示している」= đây là kết luận của toàn bài.',
+giaithich:'Câu kết: ngôn ngữ có vai trò thú vị NGOÀI việc truyền đạt suy nghĩ. ❌①②④không có trong bài.'},
+
+{id:31,phan:'chobun',loai:'tadashii',tenLoai:'Đọc đoạn dài',
+van:`最近、電車や町の中で、携帯電話などの小さい機械を持って、ゲームをやっている人が多い。歩きながらやっていて人にぶつかってしまうこともある。
+
+ある会社では、会社にゲームを持ってきて、仕事の後でゲームをやっている人たちがいたという。他の社員からうるさいと文句が出たために、会社にゲームを持ってきてはいけないことになったそうだ。ゲームをしていた人たちは、「仕事中ではなくて仕事が終わった後なのだから何をしてもいい」と思っていたのだろう。しかし、会社は仕事をするところなのだから仕事に関係のないものを持っていくべきではない。他の人の迷惑になることをしてはいけない。それぐらいのことは、大人なら注意されなくてもわかるはずだ。
+
+昔と違って、今のゲーム機は小さくて運ぶのに便利になったため、いつでもどこでもできるようになった。だが、そのために時間や場所を考えないでゲームをする人が多くなってしまったのではないか。ゲームをやるやらないは個人の自由だ。しかし、ゲームの画面を見る前に、自分の周りを見てほしい。`,
+cau:'①会社でゲームをしていた人たちはどう思っていたか。',
+dapan:['仕事中でもゲームをしてもいい','仕事が終わった後は何をしてもかまわない','ゲーム機が小さいので会社に持ってきてもわからない','他の社員の迷惑にならなければいい'],
+dapanVi:['Trong giờ làm việc cũng được chơi game','Sau giờ làm việc có thể làm gì cũng được','Máy game nhỏ nên mang vào công ty cũng không ai biết','Chỉ cần không làm phiền đồng nghiệp là được'],
+dung:2,
+meo:'💡 Mẹo: Tìm câu trích dẫn suy nghĩ của nhóm người đó (thường đặt trong dấu「」hoặc bắt đầu bằng～と思っていた).「仕事が終わった後なのだから何をしてもいい」= câu bài mô tả suy nghĩ của họ.',
+giaithich:'Bài mô tả: họ nghĩ "sau giờ làm xong thì làm gì cũng được". ❌①họ chơi SAU giờ làm. ❌③④không có trong bài.'},
+
+{id:32,phan:'chobun',loai:'tadashii',tenLoai:'Đọc đoạn dài',
+van:`（Tiếp theo — bài về chơi game ở công ty và nơi công cộng)`,
+cau:'②筆者がこの文章で一番言いたいことは何か。',
+dapan:['ゲーム機は会社に持ってきてはいけない','ゲームは個人の自由なので好きな場所でやっていい','ゲームをする時間と場所を考えるべきだ','ゲーム機が小さくなったことは問題だ'],
+dapanVi:['Không được mang máy game vào công ty','Game là tự do cá nhân nên chơi ở đâu cũng được','Cần suy nghĩ về thời gian và địa điểm khi chơi game','Việc máy game thu nhỏ là vấn đề'],
+dung:3,
+meo:'💡 Mẹo: Tìm ý chính → câu KẾT.「ゲームの画面を見る前に、自分の周りを見てほしい」= nhìn xung quanh trước khi chơi. Tác giả cũng nói「ゲームをやるやらないは個人の自由」= tự do, nhưng cần suy nghĩ thêm.',
+giaithich:'Kết luận: game là tự do cá nhân nhưng cần nghĩ đến thời gian/địa điểm phù hợp. ❌①quá hẹp (chỉ nói về công ty). ❌②đối lập với ý tác giả. ❌④chỉ là nguyên nhân, không phải ý chính.'},
+
+{id:33,phan:'chobun',loai:'tadashii',tenLoai:'Đọc đoạn dài',
+van:`（Tiếp theo — bài về chơi game ở công ty và nơi công cộng)`,
+cau:'③この文章の内容として合っているものはどれか。',
+dapan:['ゲームをすることは体に悪いので、やめるべきだ','ゲーム機が小さくなったおかげで、生活が便利になった','最近のゲームは昔のゲームより面白い','ゲームをする場所と時間を適切に考えることが大切だ'],
+dapanVi:['Chơi game có hại cho sức khỏe nên phải bỏ','Nhờ máy game thu nhỏ, cuộc sống trở nên tiện lợi','Game gần đây thú vị hơn game ngày xưa','Việc suy nghĩ đúng đắn về địa điểm và thời gian chơi là quan trọng'],
+dung:4,
+meo:'💡 Mẹo: Câu hỏi "nội dung phù hợp" → tìm đáp án khớp với ý chính bài. Bài KHÔNG nói game có hại sức khỏe. Bài KHÔNG nói game thú vị. Bài chỉ nói cần chọn thời gian/địa điểm phù hợp.',
+giaithich:'Ý chính: chơi game là tự do nhưng cần chọn thời gian/địa điểm phù hợp. ❌①tác giả không nói game có hại. ❌②③không liên quan đến ý chính.'},
+
+{id:34,phan:'joho',loai:'koukoku',tenLoai:'Quảng cáo / Thông báo',
+van:`━━ アルバイト募集 ━━
+一緒にすし屋で働きませんか！
+
+仕事内容：調理の手伝い
+　①8:00〜15:00　時給900円
+　②15:00〜24:00　時給1,000円（経験によって相談可）
+
+＊週2日以上、1日5時間以上
+＊曜日・時間は相談に応じます
+＊未経験者歓迎！
+＊主婦・学生歓迎（高校生不可）
+
+応募方法：電話でご連絡の後、写真付き履歴書を持参して面接
+住所：A市山田町2-2-1　よしの寿司`,
+cau:'このアルバイトに応募できない人は誰か。',
+dapan:['料理の経験がない大学生','週に2日だけ働きたい主婦','1日8時間働きたい高校生','1日5時間以上働ける会社員'],
+dapanVi:['Sinh viên đại học không có kinh nghiệm nấu ăn','Người nội trợ chỉ muốn làm 2 ngày/tuần','Học sinh cấp 3 muốn làm 8 tiếng/ngày','Nhân viên công ty có thể làm trên 5 tiếng/ngày'],
+dung:3,
+meo:'💡 Mẹo: Dạng tìm kiếm thông tin → lập bảng điều kiện TRƯỚC khi đọc đáp án: ①đối tượng (ai được/không được), ②số ngày, ③số giờ/ngày, ④bằng/kinh nghiệm. Sau đó đối chiếu.',
+giaithich:'Thông báo ghi「高校生不可」= học sinh cấp 3 KHÔNG được nhận. ❌①未経験歓迎 = chưa có kinh nghiệm cũng được. ❌②2 ngày/tuần đúng điều kiện. ❌④5 tiếng trở lên đúng điều kiện.'},
+
+{id:35,phan:'joho',loai:'koukoku',tenLoai:'Quảng cáo / Thông báo',
+van:`（Tiếp theo thông báo tuyển dụng quán sushi)`,
+cau:'このアルバイトについて正しいのはどれか。',
+dapan:['曜日と時間は自分では選べない','時給は全員同じで変わらない','経験があれば時給が高くなることがある','面接は電話だけで受けられる'],
+dapanVi:['Không thể tự chọn ngày và giờ làm việc','Lương theo giờ giống nhau cho tất cả, không thay đổi','Nếu có kinh nghiệm, lương theo giờ có thể cao hơn','Có thể phỏng vấn chỉ qua điện thoại thôi'],
+dung:3,
+meo:'💡 Mẹo: Đọc từng dòng thông báo và đối chiếu với đáp án. Chú ý chú thích「経験によって相談可」ở ca chiều = tùy kinh nghiệm có thể thương lượng lương → lương có thể cao hơn.',
+giaithich:'Ca chiều có "thương lượng tùy kinh nghiệm" → có kinh nghiệm lương có thể cao hơn. ❌①có thể thương lượng ngày giờ. ❌②2 ca lương khác nhau (900 vs 1,000 yên). ❌④phải điện thoại TRƯỚC rồi mang CV đến phỏng vấn trực tiếp.'},
+
+{id:36,phan:'joho',loai:'oshirase',tenLoai:'Quảng cáo / Thông báo',
+van:`━━ みなと文化カフェ　語学クラス案内 ━━
+
+受講料：1回1,500円（会員は500円引き）
+申込：希望日の3日前までに電話またはカウンターで。当日申込不可。
+
+【クラス一覧】
+・英語　　月曜　10:00〜11:30
+・中国語　火曜　19:00〜20:30
+・アラビア語　水曜　14:00〜15:30
+・京都クラス（日本文化）　木曜　13:00〜14:30
+
+※京都クラスのみ2回分まとめて予約可能。
+※4月は全クラス追加500円割引（4月限定）。`,
+cau:'文化カフェの会員が「京都クラス」に参加する場合、通常月の1回の料金はいくらか。',
+dapan:['500円','1,000円','1,500円','2,000円'],
+dapanVi:['500 yên','1.000 yên','1.500 yên','2.000 yên'],
+dung:2,
+meo:'💡 Mẹo: Bài toán tính tiền → xác định: ①phí gốc (1.500 yên), ②giảm giá nào áp dụng (hội viên -500), ③có phải tháng 4 không (nếu không = không có giảm thêm). "Tháng bình thường" ≠ tháng 4.',
+giaithich:'1.500 (phí gốc) − 500 (giảm giá hội viên) = 1.000 yên. Giảm thêm 500 yên tháng 4 không áp dụng vì đây là "tháng bình thường".'},
+
+{id:37,phan:'joho',loai:'oshirase',tenLoai:'Quảng cáo / Thông báo',
+van:`（Tiếp theo thông báo lớp học ngoại ngữ みなと文化カフェ)`,
+cau:'リーさんは4月9日（水）のアラビア語クラスに参加したい。何をすればよいか。',
+dapan:['4月6日までに電話して予約する','4月6日までにネットで予約する','4月8日までに文化カフェに行って予約する','4月9日に教室に行って申し込む'],
+dapanVi:['Gọi điện đặt chỗ trước ngày 6/4','Đặt chỗ online trước ngày 6/4','Đến văn hóa café đặt chỗ trước ngày 8/4','Đến lớp học đăng ký vào ngày 9/4'],
+dung:1,
+meo:'💡 Mẹo: Tính ngày: 9/4 − 3 ngày = hạn chót là ngày 6/4. Phương thức: điện thoại HOẶC đến quầy (không có online). Quy tắc:「当日申込不可」= không nhận ngày hôm đó.',
+giaithich:'9/4 − 3 ngày = trước ngày 6/4 / gọi điện hoặc đến quầy. ❌②không có hệ thống đăng ký online. ❌③8/4 chỉ là 1 ngày trước, chưa đủ 3 ngày. ❌④không nhận đăng ký trong ngày học.'},
+];
+
+let phanHienTai=null,subHienTai=null,dsBaiHienTai=[],viTriHienTai=0,daLam={};
+const tenPhan={tanbun:'Đọc đoạn ngắn',chubun:'Đọc đoạn vừa',chobun:'Đọc đoạn dài',joho:'Tìm kiếm thông tin'};
+
+function veHome(){anTatCa();document.getElementById('man-chinh').style.display='block';capNhatHuyHieu();capNhatTienDo(0,0)}
+function xemDanhSach(phan){
+  phanHienTai=phan;subHienTai=null;anTatCa();
+  document.getElementById('man-ds').style.display='block';
+  document.getElementById('ds-tieude').textContent=tenPhan[phan];
+  const loaids=[...new Set(BAI.filter(b=>b.phan===phan).map(b=>b.loai))];
+  document.getElementById('tabs').innerHTML=`<button class="tab active" onclick="locBai(null,event)">Tất cả</button>`+
+    loaids.map(l=>`<button class="tab" onclick="locBai('${l}',event)">${BAI.find(b=>b.loai===l)?.tenLoai||l}</button>`).join('');
+  hienDanhSach(BAI.filter(b=>b.phan===phan));
+}
+function locBai(loai,e){
+  subHienTai=loai;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  if(e)e.target.classList.add('active');
+  hienDanhSach(BAI.filter(b=>b.phan===phanHienTai&&(!loai||b.loai===loai)));
+}
+function hienDanhSach(ds){
+  document.getElementById('ds-bai').innerHTML=ds.map(b=>{
+    const kq=daLam[b.id],cls=kq!==undefined?(kq.dung?'dung':'sai'):'',gi=BAI.indexOf(b);
+    return `<div class="item-bai" onclick="batDauBai(${gi})">
+      <div class="so-bai ${cls}">${b.id}</div>
+      <div class="item-cau-hoi">
+        <div style="font-size:.87rem;margin-bottom:2px">${b.cau.substring(0,50)}${b.cau.length>50?'…':''}</div>
+        <div style="font-size:.74rem;color:var(--xam)">${b.van.replace(/\n/g,' ').substring(0,42)}…</div>
+      </div>
+      <div class="loai-badge">${b.tenLoai}</div>
+    </div>`;
+  }).join('');
+}
+function batDauBai(gIdx){
+  const b=BAI[gIdx];
+  dsBaiHienTai=BAI.filter(x=>x.phan===b.phan&&(!subHienTai||x.loai===b.loai));
+  viTriHienTai=dsBaiHienTai.findIndex(x=>x.id===b.id);
+  if(viTriHienTai<0)viTriHienTai=0;
+  hienBai();
+}
+function veDanhSach(){xemDanhSach(phanHienTai)}
+function hienBai(){
+  anTatCa();document.getElementById('man-bai').style.display='block';
+  const b=dsBaiHienTai[viTriHienTai];
+  document.getElementById('nhan-phan').textContent=tenPhan[b.phan];
+  document.getElementById('nhan-loai').textContent=b.tenLoai;
+  document.getElementById('van-ban').textContent=b.van;
+  document.getElementById('so-cau').textContent=`Câu ${b.id}`;
+  document.getElementById('cau-hoi').textContent=b.cau;
+  document.getElementById('meo-box').innerHTML=`<b>🎯 Mẹo làm đề</b>${b.meo}`;
+  document.getElementById('dem-bai').textContent=`${viTriHienTai+1} / ${dsBaiHienTai.length}`;
+  document.getElementById('nut-truoc').disabled=viTriHienTai===0;
+  document.getElementById('nut-sau').textContent=viTriHienTai===dsBaiHienTai.length-1?'Xem kết quả 🏆':'Bài sau →';
+  document.getElementById('dap-an').innerHTML=b.dapan.map((da,i)=>`<button class="nut-dap-an" id="da-${i}" onclick="chonDapAn(${i})">
+    <div class="so-lua-chon">${i+1}</div>
+    <div class="dap-an-noi">
+      <div class="dap-an-jp">${da}</div>
+      <div class="dap-an-vi">→ ${b.dapanVi[i]}</div>
+    </div></button>`).join('');
+  const ph=document.getElementById('phan-hoi');
+  ph.style.display='none';ph.className='phan-hoi';
+  if(daLam[b.id]!==undefined)hienKetQuaBai(b,daLam[b.id].chon);
+  capNhatTienDo(viTriHienTai+1,dsBaiHienTai.length);capNhatDiem();window.scrollTo(0,0);
+}
+function chonDapAn(idx){
+  const b=dsBaiHienTai[viTriHienTai];
+  if(daLam[b.id]!==undefined)return;
+  daLam[b.id]={chon:idx,dung:idx===b.dung-1};
+  hienKetQuaBai(b,idx);capNhatDiem();
+}
+function hienKetQuaBai(b,idx){
+  const dung=idx===b.dung-1;
+  b.dapan.forEach((_,i)=>{
+    const el=document.getElementById(`da-${i}`);if(!el)return;
+    el.disabled=true;
+    if(i===b.dung-1&&!dung)el.className='nut-dap-an lo';
+    else if(i===idx)el.className=dung?'nut-dap-an dung':'nut-dap-an sai';
+  });
+  const ph=document.getElementById('phan-hoi');ph.style.display='block';
+  if(dung){ph.className='phan-hoi dung-ph';ph.innerHTML=`<b>🎉 Chính xác!</b><br>${b.giaithich}`;}
+  else{ph.className='phan-hoi sai-ph';ph.innerHTML=`<b>❌ Chưa đúng. Đáp án đúng là số ${b.dung}.</b><br>${b.giaithich}`;}
+}
+function diChuyen(h){
+  const moi=viTriHienTai+h;
+  if(moi<0)return;
+  if(moi>=dsBaiHienTai.length){hienKetQua();return;}
+  viTriHienTai=moi;hienBai();
+}
+function hienKetQua(){
+  anTatCa();document.getElementById('man-ketqua').style.display='block';
+  const total=dsBaiHienTai.length,dung=dsBaiHienTai.filter(b=>daLam[b.id]?.dung).length,pct=total>0?Math.round(dung/total*100):0;
+  document.getElementById('kq-so').textContent=dung;
+  document.getElementById('kq-tren').textContent=`/ ${total} câu`;
+  let nx,lm;
+  if(pct>=90){nx='🌸 Xuất sắc!';lm='Tuyệt vời! Bạn sẵn sàng cho kỳ thi N3 rồi!';}
+  else if(pct>=70){nx='✨ Tốt lắm!';lm='Kết quả khá tốt! Xem lại những câu sai nhé.';}
+  else if(pct>=50){nx='📚 Cố lên!';lm='Nền tảng ổn rồi. Đọc kỹ giải thích và làm lại!';}
+  else{nx='💪 Tiếp tục cố!';lm='Hãy đọc lại giải thích từng câu và thử lại!';}
+  document.getElementById('kq-nhanxet').textContent=`${pct}%　${nx}`;
+  document.getElementById('kq-loinhan').textContent=lm;
+  capNhatTienDo(total,total);
+}
+function lamLai(){dsBaiHienTai.forEach(b=>delete daLam[b.id]);viTriHienTai=0;hienBai();}
+function anTatCa(){['man-chinh','man-ds','man-bai','man-ketqua'].forEach(id=>document.getElementById(id).style.display='none')}
+function capNhatTienDo(d,t){document.getElementById('thanh-fill').style.width=(t>0?d/t*100:0)+'%'}
+function capNhatDiem(){const t=Object.keys(daLam).length,d=Object.values(daLam).filter(a=>a.dung).length;document.getElementById('diem-hien').textContent=`${d} / ${t} đúng`}
+function capNhatHuyHieu(){['tanbun','chubun','chobun','joho'].forEach(p=>{const ds=BAI.filter(b=>b.phan===p),done=ds.filter(b=>daLam[b.id]).length,el=document.getElementById('hh-'+p);if(el)el.textContent=done>0?`${done}/${ds.length} hoàn thành`:`${ds.length} bài`})}
+veHome();
+</script>
+</body>
+</html>

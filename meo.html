@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>Mẹo Học Cấp Tốc N3</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Baloo+2:wght@400;600;700;800;900&display=swap');
+:root{
+  --bg:#0f0f1a;--card:#1a1a2e;--card2:#16213e;
+  --p:#a78bfa;--p2:#7c3aed;--p3:#4c1d95;
+  --neon:#c4b5fd;--neon2:#818cf8;
+  --green:#34d399;--green2:#059669;
+  --orange:#fb923c;--yellow:#fbbf24;
+  --red:#f87171;--pink:#f472b6;--blue:#60a5fa;
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#475569;
+  --border:#2d2f4e;
+  --r:16px;--r2:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Baloo 2','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(124,58,237,.12) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(56,189,248,.06) 0%,transparent 50%);pointer-events:none;z-index:0;}
+
+/* TOPBAR */
+.topbar{background:linear-gradient(135deg,var(--p3),#1e1b4b);padding:16px 16px 12px;position:sticky;top:0;z-index:200;border-bottom:1px solid var(--border);}
+.topbar-row{display:flex;align-items:center;gap:10px;margin-bottom:2px;}
+.back-btn{background:rgba(167,139,250,.2);border:1px solid rgba(167,139,250,.3);color:var(--neon);border-radius:8px;padding:5px 10px;font-size:.78rem;cursor:pointer;font-family:inherit;font-weight:700;}
+.topbar h1{font-size:.95rem;font-weight:900;color:#fff;}
+.topbar-sub{font-size:.65rem;color:rgba(255,255,255,.55);}
+
+/* TABS */
+.tab-bar{display:flex;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:58px;z-index:100;}
+.tab-btn{flex:1;padding:11px 4px;border:none;background:none;font-family:inherit;font-size:.68rem;font-weight:800;color:var(--text3);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;}
+.tab-btn.active{color:var(--p);border-bottom-color:var(--p);}
+
+.tab-pane{display:none;padding:12px 12px 8px;position:relative;z-index:1;}
+.tab-pane.active{display:block;}
+
+/* ── MINDMAP ACCORDION ── */
+.mn-wrap{margin-bottom:6px;}
+.mn-head{display:flex;align-items:center;gap:8px;padding:10px 13px;background:var(--card);border-radius:var(--r2);cursor:pointer;border:1px solid var(--border);transition:border-color .2s;user-select:none;}
+.mn-head:active{opacity:.85;}
+.mn-head.open{border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom-color:var(--p2);}
+.mn-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.mn-label{flex:1;font-size:.8rem;font-weight:800;color:#fff;}
+.mn-count{font-size:.6rem;color:var(--text3);background:rgba(255,255,255,.06);padding:2px 7px;border-radius:8px;flex-shrink:0;}
+.mn-arr{font-size:.8rem;color:var(--text3);transition:transform .25s;flex-shrink:0;}
+.mn-head.open .mn-arr{transform:rotate(90deg);}
+.mn-body{display:none;background:var(--card);border:1px solid var(--border);border-top:none;border-bottom-left-radius:var(--r2);border-bottom-right-radius:var(--r2);overflow:hidden;}
+.mn-head.open+.mn-body{display:block;}
+
+/* section label above groups */
+.sec-label{font-size:.62rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;padding:14px 2px 6px;opacity:.7;}
+
+/* ── PATTERN TABLE ── */
+.pt{width:100%;border-collapse:collapse;font-size:.71rem;}
+.pt tr{border-bottom:1px solid rgba(45,47,78,.6);}
+.pt tr:last-child{border-bottom:none;}
+.pt td{padding:8px 11px;vertical-align:top;line-height:1.55;}
+.pt td:first-child{width:38%;font-family:'Noto Sans JP',sans-serif;color:var(--neon);font-weight:700;font-size:.75rem;}
+.pt td:nth-child(2){color:var(--text2);}
+.pt td:last-child{width:30px;padding:6px 8px;}
+.pt .eg{display:block;color:var(--text3);font-size:.63rem;margin-top:2px;font-style:italic;}
+.pt .tip{display:block;color:var(--orange);font-size:.62rem;margin-top:2px;}
+.pt-head{font-size:.6rem;font-weight:900;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;padding:7px 11px 4px;background:rgba(255,255,255,.02);}
+
+/* ── KANJI GRID ── */
+.kj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:10px;}
+.kj-cell{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 6px;text-align:center;}
+.kj-char{font-family:'Noto Sans JP',sans-serif;font-size:1.6rem;color:var(--neon);line-height:1.2;display:block;}
+.kj-hv{font-size:.58rem;color:var(--orange);font-weight:800;margin-top:1px;}
+.kj-mean{font-size:.6rem;color:var(--text2);margin-top:2px;}
+.kj-word{font-family:'Noto Sans JP',sans-serif;font-size:.62rem;color:var(--text3);margin-top:3px;}
+
+/* ── RADICAL ROW ── */
+.rad-row{display:flex;align-items:flex-start;gap:10px;padding:9px 11px;border-bottom:1px solid rgba(45,47,78,.5);}
+.rad-row:last-child{border-bottom:none;}
+.rad-char{font-family:'Noto Sans JP',sans-serif;font-size:1.5rem;color:var(--yellow);min-width:36px;text-align:center;line-height:1.2;flex-shrink:0;}
+.rad-body{flex:1;}
+.rad-name{font-size:.65rem;font-weight:800;color:var(--text2);margin-bottom:3px;}
+.rad-words{font-family:'Noto Sans JP',sans-serif;font-size:.75rem;color:var(--neon);line-height:1.8;}
+.rad-vn{font-size:.62rem;color:var(--text3);}
+.snd-btn{width:28px;height:28px;border-radius:7px;border:none;background:var(--p2);color:#fff;font-size:.75rem;cursor:pointer;flex-shrink:0;margin-top:4px;}
+
+/* ── VERB PAIR TABLE ── */
+.vp{width:100%;border-collapse:collapse;font-size:.71rem;}
+.vp tr{border-bottom:1px solid rgba(45,47,78,.5);}
+.vp tr:last-child{border-bottom:none;}
+.vp th{padding:6px 10px;font-size:.6rem;color:var(--text3);font-weight:700;text-align:left;background:rgba(255,255,255,.02);}
+.vp td{padding:7px 10px;vertical-align:middle;}
+.vp .ji{color:var(--green);font-family:'Noto Sans JP',sans-serif;font-weight:700;}
+.vp .ta{color:var(--orange);font-family:'Noto Sans JP',sans-serif;font-weight:700;}
+.vp .mn{color:var(--text2);font-size:.66rem;}
+
+/* ── ON-YOMI MAP ── */
+.oy-row{display:flex;align-items:center;gap:8px;padding:8px 11px;border-bottom:1px solid rgba(45,47,78,.5);}
+.oy-row:last-child{border-bottom:none;}
+.oy-on{font-family:'Noto Sans JP',sans-serif;font-size:.9rem;font-weight:800;color:var(--neon);min-width:44px;}
+.oy-hv{font-size:.62rem;color:var(--orange);font-weight:700;min-width:70px;}
+.oy-ex{font-family:'Noto Sans JP',sans-serif;font-size:.68rem;color:var(--text2);flex:1;line-height:1.7;}
+
+/* ── ADVERB ROW ── */
+.adv-row{display:flex;align-items:flex-start;gap:8px;padding:8px 11px;border-bottom:1px solid rgba(45,47,78,.5);}
+.adv-row:last-child{border-bottom:none;}
+.adv-jp{font-family:'Noto Sans JP',sans-serif;font-size:.82rem;font-weight:800;color:var(--neon);min-width:90px;}
+.adv-body{flex:1;}
+.adv-mean{font-size:.72rem;color:var(--text2);}
+.adv-eg{font-size:.62rem;color:var(--text3);font-style:italic;margin-top:2px;}
+
+/* PLAN */
+.plan-progress{background:var(--card);border-radius:var(--r);padding:13px 15px;margin-bottom:12px;display:flex;align-items:center;gap:13px;border:1px solid var(--border);}
+.ring-wrap{position:relative;width:54px;height:54px;flex-shrink:0;}
+.ring-svg{transform:rotate(-90deg);}
+.ring-bg{fill:none;stroke:var(--border);stroke-width:5;}
+.ring-fill{fill:none;stroke:var(--p);stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .5s;}
+.ring-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:900;color:var(--p);}
+.plan-info h3{font-size:.83rem;font-weight:800;margin-bottom:2px;color:#fff;}
+.plan-info p{font-size:.65rem;color:var(--text3);}
+.day-card{background:var(--card);border-radius:var(--r);margin-bottom:8px;overflow:hidden;border:1px solid var(--border);transition:border-color .2s;}
+.day-card.done{border-color:var(--green2);}
+.day-header{display:flex;align-items:center;gap:10px;padding:11px 13px;cursor:pointer;}
+.day-badge{width:38px;height:38px;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900;flex-shrink:0;font-size:.66rem;line-height:1.3;}
+.day-info{flex:1;min-width:0;}
+.day-title{font-size:.8rem;font-weight:800;margin-bottom:1px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.day-sub{font-size:.6rem;color:var(--text3);}
+.check-btn{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);background:none;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text3);transition:all .15s;}
+.check-btn.done{background:var(--green2);border-color:var(--green2);color:#fff;}
+.day-body{display:none;padding:0 13px 13px;border-top:1px solid var(--border);}
+.day-card.open .day-body{display:block;}
+.task-list{display:flex;flex-direction:column;gap:6px;margin-top:9px;}
+.task-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid var(--border);}
+.task-time{font-size:.58rem;font-weight:800;color:var(--p);background:rgba(167,139,250,.15);padding:2px 6px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-top:1px;}
+.task-text{font-size:.73rem;line-height:1.5;color:var(--text2);}
+.task-text b{color:var(--text);}
+.task-link{display:inline-block;margin-top:4px;font-size:.63rem;font-weight:700;color:var(--p);text-decoration:none;background:rgba(167,139,250,.15);padding:2px 7px;border-radius:20px;}
+
+/* BOTTOM NAV */
+.bnav{display:flex;position:fixed;bottom:0;left:0;right:0;background:rgba(26,26,46,.96);backdrop-filter:blur(12px);border-top:1px solid var(--border);z-index:300;}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 4px 11px;cursor:pointer;font-size:.56rem;font-weight:700;color:var(--text3);border:none;background:none;font-family:inherit;gap:3px;transition:all .2s;}
+.bnav-item.active,.bnav-item:active{color:var(--p);}
+.bnav-icon{font-size:1.15rem;}
+
+/* play button */
+.pb{width:28px;height:28px;border-radius:7px;border:none;background:var(--p2);color:#fff;font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s;}
+.pb:active{transform:scale(.88);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-row">
+    <button class="back-btn" onclick="location.href='index.html'">← Home</button>
+    <h1>💡 Mẹo Học Cấp Tốc N3</h1>
+  </div>
+  <div class="topbar-sub">109 ngữ pháp · 880 từ vựng · 295 kanji — đọc là nhớ</div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="sw('grammar',this)">📝 Ngữ Pháp</button>
+  <button class="tab-btn" onclick="sw('vocab',this)">📚 Từ Vựng</button>
+  <button class="tab-btn" onclick="sw('kanji',this)">漢 Kanji</button>
+  <button class="tab-btn" onclick="sw('plan',this)">📅 7 Ngày</button>
+</div>
+
+<!-- ═══════════════════════════════════════
+     NGỮ PHÁP
+═══════════════════════════════════════ -->
+<div id="tab-grammar" class="tab-pane active">
+
+<div class="sec-label" style="color:var(--p);">🔑 CỐT LÕI — 5 Danh từ mở khóa ~30 mẫu</div>
+
+<div class="mn-wrap">
+  <div class="mn-head open" onclick="tog(this)">
+    <span class="mn-dot" style="background:#a78bfa"></span>
+    <span class="mn-label">こと · もの · はず · わけ · ところ</span>
+    <span class="mn-count">5 danh từ · ~30 mẫu</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <div class="pt-head">Nhớ NGHĨA GỐC → suy ra tất cả mẫu xung quanh</div>
+    <table class="pt">
+      <tr><td>こと <span class="eg">koto</span></td><td>Sự việc trừu tượng — không nhìn thấy được<span class="eg">〜ことがある・〜ことにする・〜ことになる・〜ことができる</span></td><td><button class="pb" onclick="speak('ことがある。ことにする。ことになる。')">🔊</button></td></tr>
+      <tr><td>もの <span class="eg">mono</span></td><td>Lẽ tất nhiên / vật — điều hiển nhiên phải vậy<span class="eg">〜ものだ・〜ものの・〜ものなら・〜というものだ</span></td><td><button class="pb" onclick="speak('そういうものだ。買ったものの使っていない。')">🔊</button></td></tr>
+      <tr><td>はず <span class="eg">hazu</span></td><td>Lẽ ra / đáng ra — kỳ vọng logic nhưng thực tế khác<span class="eg">〜はずだ・〜はずがない・〜はずだったのに</span></td><td><button class="pb" onclick="speak('来るはずだ。そんなはずがない。')">🔊</button></td></tr>
+      <tr><td>わけ <span class="eg">wake</span></td><td>Lý do / nghĩa là — giải thích hoặc phủ nhận logic<span class="eg">〜わけだ・〜わけがない・〜わけにはいかない・〜わけではない</span></td><td><button class="pb" onclick="speak('そういうわけだ。寝るわけにはいかない。')">🔊</button></td></tr>
+      <tr><td>ところ <span class="eg">tokoro</span></td><td>Thời điểm / tình huống — đang làm / vừa xong / sắp<span class="eg">〜ているところだ・〜たところ・〜ところに</span></td><td><button class="pb" onclick="speak('今食べているところだ。来たところです。')">🔊</button></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="sec-label" style="color:var(--neon2);">↩️ NHÓM 逆接 — Tuy… nhưng / Mặc dù</div>
+
+<div class="mn-wrap">
+  <div class="mn-head" onclick="tog(this)">
+    <span class="mn-dot" style="background:#818cf8"></span>
+    <span class="mn-label">逆接・対比 (6 mẫu)</span>
+    <span class="mn-count">ながら・ものの・くせに・反面…</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <div class="pt-head">Phân biệt sắc thái: trung tính / tiếc / trách móc / đối lập</div>
+    <table class="pt">
+      <tr><td>〜ながら（逆接）</td><td>Biết rõ A mà vẫn làm B (cùng chủ ngữ, trái kỳ vọng)<span class="eg">知りながら黙っていた。悪いと思いながら続けた。</span></td><td><button class="pb" onclick="speak('知りながら黙っていた。')">🔊</button></td></tr>
+      <tr><td>〜ものの</td><td>Làm A rồi nhưng kết quả không như mong (tiếc)<span class="eg">買ったものの、一度も使っていない。</span></td><td><button class="pb" onclick="speak('買ったものの、一度も使っていない。')">🔊</button></td></tr>
+      <tr><td>〜にもかかわらず</td><td>Bất chấp A, B vẫn xảy ra (nhấn mạnh mạnh)<span class="eg">雨にもかかわらず、みんな来てくれた。</span></td><td><button class="pb" onclick="speak('雨にもかかわらず、みんな来てくれた。')">🔊</button></td></tr>
+      <tr><td>〜くせに</td><td>Rõ ràng là A, vậy mà B — trách móc, khinh<span class="tip">⚠️ Dùng khi bực bội / khinh thường — không dùng trung tính</span><span class="eg">知っているくせに教えてくれない。</span></td><td><button class="pb" onclick="speak('知っているくせに教えてくれない。')">🔊</button></td></tr>
+      <tr><td>〜反面</td><td>Mặt này A, mặt khác B — hai mặt của cùng sự việc<span class="eg">便利な反面、危険もある。</span></td><td><button class="pb" onclick="speak('便利な反面、危険もある。')">🔊</button></td></tr>
+      <tr><td>〜一方（で）</td><td>Trong khi A thì B — đối lập song song hai đối tượng<span class="eg">兄は明るい一方、弟は内気だ。</span></td><td><button class="pb" onclick="speak('兄は明るい一方、弟は内気だ。')">🔊</button></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="sec-label" style="color:var(--green);">⏱️ NHÓM 時間 — Thời điểm & Chuỗi sự kiện</div>
+
+<div class="mn-wrap">
+  <div class="mn-head" onclick="tog(this)">
+    <span class="mn-dot" style="background:#34d399"></span>
+    <span class="mn-label">時間・タイミング (7 mẫu)</span>
+    <span class="mn-count">うちに・間に・たびに…</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <table class="pt">
+      <tr><td>〜うちに①</td><td>Tranh thủ làm trong khi điều kiện còn tốt (trước khi thay đổi)<span class="eg">若いうちに旅行しよう。熱いうちに食べて。</span></td><td><button class="pb" onclick="speak('若いうちに旅行しよう。')">🔊</button></td></tr>
+      <tr><td>〜うちに②</td><td>Đang làm A thì B tự xảy ra — không chủ ý<span class="eg">話しているうちに仲良くなった。</span></td><td><button class="pb" onclick="speak('話しているうちに仲良くなった。')">🔊</button></td></tr>
+      <tr><td>〜間（に）</td><td>Trong khoảng thời gian A xảy ra, B cũng xảy ra<span class="eg">留守の間に荷物が届いた。</span></td><td><button class="pb" onclick="speak('留守の間に荷物が届いた。')">🔊</button></td></tr>
+      <tr><td>〜たびに</td><td>Mỗi khi A thì luôn B (lặp đi lặp lại đều đặn)<span class="eg">会うたびに背が高くなる。</span></td><td><button class="pb" onclick="speak('会うたびに背が高くなる。')">🔊</button></td></tr>
+      <tr><td>〜とたん（に）</td><td>Ngay khi vừa A thì B xảy ra tức thì — không khoảng cách<span class="eg">外に出たとたん、雨が降った。</span></td><td><button class="pb" onclick="speak('外に出たとたん、雨が降った。')">🔊</button></td></tr>
+      <tr><td>〜ば〜ほど</td><td>Càng A càng B — tỉ lệ thuận tuyệt đối<span class="eg">練習すればするほど上手くなる。</span></td><td><button class="pb" onclick="speak('練習すればするほど上手くなる。')">🔊</button></td></tr>
+      <tr><td>〜をきっかけに</td><td>Nhân dịp A / Bắt đầu từ sự kiện A làm cột mốc<span class="eg">転職をきっかけに上京した。</span></td><td><button class="pb" onclick="speak('転職をきっかけに上京した。')">🔊</button></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="sec-label" style="color:var(--yellow);">🎯 NHÓM 仮定 — Điều kiện & Giả định</div>
+
+<div class="mn-wrap">
+  <div class="mn-head" onclick="tog(this)">
+    <span class="mn-dot" style="background:#fbbf24"></span>
+    <span class="mn-label">たら・なら・ば・と (4 dạng + 2 mẫu)</span>
+    <span class="mn-count">hay nhầm nhất</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <div class="pt-head">Quy tắc 1 câu — đọc 1 lần nhớ mãi</div>
+    <table class="pt">
+      <tr><td>〜たら</td><td>Nếu/khi A xảy ra xong thì B — dùng được hầu hết mọi trường hợp<span class="eg">家に帰ったら、連絡してください。</span></td><td><button class="pb" onclick="speak('家に帰ったら、連絡してください。')">🔊</button></td></tr>
+      <tr><td>〜なら</td><td>B đưa ra trước A thực sự xảy ra — phản hồi điều người kia nói<span class="tip">→ "Nếu anh đã nói vậy thì tôi…"</span><span class="eg">日本に行くなら、京都に寄ってほしい。</span></td><td><button class="pb" onclick="speak('日本に行くなら、京都に寄ってほしい。')">🔊</button></td></tr>
+      <tr><td>〜ば</td><td>Điều kiện lý tưởng / giả định — miễn là A thì B<span class="eg">お金があれば、旅行したい。さえ〜ば も同じ。</span></td><td><button class="pb" onclick="speak('お金があれば、旅行したい。')">🔊</button></td></tr>
+      <tr><td>〜と</td><td>Tự nhiên / tất yếu — A thì luôn luôn B (quy luật, hướng dẫn)<span class="eg">春になると、桜が咲く。ここを押すと、ドアが開く。</span></td><td><button class="pb" onclick="speak('春になると、桜が咲く。')">🔊</button></td></tr>
+      <tr><td>〜さえ〜ば</td><td>Chỉ cần A là đủ / miễn là A thì OK<span class="eg">練習さえすれば合格できる。</span></td><td><button class="pb" onclick="speak('練習さえすれば合格できる。')">🔊</button></td></tr>
+      <tr><td>〜ては・〜では</td><td>Nếu cứ A mãi thì không ổn — phê phán hành vi<span class="eg">毎日遅刻しては困る。そんな態度では失礼だ。</span></td><td><button class="pb" onclick="speak('毎日遅刻しては困る。')">🔊</button></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="sec-label" style="color:var(--red);">😤 NHÓM 受身 — Bị động & Sai khiến</div>
+
+<div class="mn-wrap">
+  <div class="mn-head" onclick="tog(this)">
+    <span class="mn-dot" style="background:#f87171"></span>
+    <span class="mn-label">受身・使役・てもらう (5 mẫu)</span>
+    <span class="mn-count">⚠️ 80% là 迷惑受身</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <div class="pt-head">Người Việt hay dịch bị động Nhật = trung tính như tiếng Anh → SAI! N3 chủ yếu là bị thiệt</div>
+    <table class="pt">
+      <tr><td>〜（ら）れる<br>迷惑受身</td><td>Bị ai làm gì mà mình khổ/thiệt — dù không nhắm vào mình<span class="tip">→ Gặp られた không rõ chủ thể → dịch "bị... làm phiền"</span><span class="eg">雨に降られた。子供に泣かれて眠れなかった。</span></td><td><button class="pb" onclick="speak('雨に降られた。子供に泣かれて眠れなかった。')">🔊</button></td></tr>
+      <tr><td>〜させる</td><td>Bắt / cho phép ai làm gì — sai khiến (chủ động)<span class="eg">子供に野菜を食べさせた。</span></td><td><button class="pb" onclick="speak('子供に野菜を食べさせた。')">🔊</button></td></tr>
+      <tr><td>〜させられる</td><td>Bị bắt phải làm gì — khổ nhất (bị động + sai khiến)<span class="eg">上司に残業させられた。</span></td><td><button class="pb" onclick="speak('上司に残業させられた。')">🔊</button></td></tr>
+      <tr><td>〜てもらう</td><td>Được ai làm cho mình (ân huệ nhận vào)<span class="eg">友達に手伝ってもらった。</span></td><td><button class="pb" onclick="speak('友達に手伝ってもらった。')">🔊</button></td></tr>
+      <tr><td>〜てくれる</td><td>Ai đó làm cho mình (ân huệ từ ngoài vào)<span class="eg">先生が説明してくれた。</span></td><td><button class="pb" onclick="speak('先生が説明してくれた。')">🔊</button></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="sec-label" style="color:var(--orange);">🌀 NHÓM 状態・変化 — Trạng thái & Xu hướng</div>
+
+<div class="mn-wrap">
+  <div class="mn-head" onclick="tog(this)">
+    <span class="mn-dot" style="background:#fb923c"></span>
+    <span class="mn-label">がちだ・だらけ・っぱなし・まま… (8 mẫu)</span>
+    <span class="mn-count">hay ra thi nhất</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <table class="pt">
+      <tr><td>〜がちだ</td><td>Hay có xu hướng... (tiêu cực, không mong muốn)<span class="eg">最近風邪をひきがちだ。忘れがちな人。</span></td><td><button class="pb" onclick="speak('最近風邪をひきがちだ。')">🔊</button></td></tr>
+      <tr><td>〜だらけ</td><td>Đầy / toàn là... (nhiều đến mức tiêu cực, bẩn/tệ)<span class="eg">部屋がゴミだらけだ。傷だらけの体。</span></td><td><button class="pb" onclick="speak('部屋がゴミだらけだ。')">🔊</button></td></tr>
+      <tr><td>〜っぱなし</td><td>Cứ để nguyên không xử lý / làm liên tục không ngừng<span class="eg">電気をつけっぱなしで寝た。一日中立ちっぱなし。</span></td><td><button class="pb" onclick="speak('電気をつけっぱなしで寝た。')">🔊</button></td></tr>
+      <tr><td>〜まま</td><td>Giữ nguyên trạng thái cũ, không thay đổi<span class="eg">靴を履いたまま入った。窓を開けたまま寝た。</span></td><td><button class="pb" onclick="speak('靴を履いたまま入った。')">🔊</button></td></tr>
+      <tr><td>〜かける</td><td>Làm dở dang / bắt đầu chưa xong<span class="eg">食べかけのパン。書きかけの手紙。</span></td><td><button class="pb" onclick="speak('食べかけのパンがある。')">🔊</button></td></tr>
+      <tr><td>〜きる・きれない</td><td>Làm triệt để hoàn toàn / Không thể làm hết được<span class="eg">最後まで走りきった。食べきれないほどある。</span></td><td><button class="pb" onclick="speak('食べきれないほどある。')">🔊</button></td></tr>
+      <tr><td>〜につれて</td><td>Theo đà A, B cũng thay đổi theo (song hành)<span class="eg">年をとるにつれて記憶力が落ちる。</span></td><td><button class="pb" onclick="speak('年をとるにつれて記憶力が落ちる。')">🔊</button></td></tr>
+      <tr><td>〜にともなって</td><td>Cùng với sự thay đổi của A, B cũng thay đổi<span class="eg">経済発展にともなって生活が豊かになった。</span></td><td><button class="pb" onclick="speak('経済発展にともなって生活が豊かになった。')">🔊</button></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="sec-label" style="color:var(--pink);">🔥 NHÓM 強調・比較 — Nhấn mạnh & So sánh</div>
+
+<div class="mn-wrap">
+  <div class="mn-head" onclick="tog(this)">
+    <span class="mn-dot" style="background:#f472b6"></span>
+    <span class="mn-label">こそ・さえ・すら・に対して… (9 mẫu)</span>
+    <span class="mn-count">強調+比較</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <div class="pt-head">Nhóm NHẤN MẠNH</div>
+    <table class="pt">
+      <tr><td>〜こそ</td><td>Chính... là... (nhấn mạnh đặc biệt)<span class="eg">今こそチャンスだ。あなたこそ正しい。</span></td><td><button class="pb" onclick="speak('今こそチャンスだ。')">🔊</button></td></tr>
+      <tr><td>〜さえ（強調）</td><td>Ngay cả... — điều bất ngờ nhất cũng thế<span class="eg">子供さえ知っている。名前さえ知らない。</span></td><td><button class="pb" onclick="speak('子供さえ知っている。')">🔊</button></td></tr>
+      <tr><td>〜すら</td><td>Ngay cả... (văn viết, mạnh hơn さえ)<span class="eg">名前すら覚えていない。食べるすら難しい。</span></td><td><button class="pb" onclick="speak('名前すら覚えていない。')">🔊</button></td></tr>
+      <tr><td>〜まで（強調）</td><td>Đến mức / kể cả... — điều không ai ngờ tới<span class="eg">先生まで間違えた。子供まで知っている。</span></td><td><button class="pb" onclick="speak('先生まで間違えた。')">🔊</button></td></tr>
+      <tr><td>〜はもちろん</td><td>Không chỉ A mà cả B (A đương nhiên + thêm B nữa)<span class="eg">日本語はもちろん、英語も話せる。</span></td><td><button class="pb" onclick="speak('日本語はもちろん、英語も話せる。')">🔊</button></td></tr>
+    </table>
+    <div class="pt-head">Nhóm SO SÁNH</div>
+    <table class="pt">
+      <tr><td>〜に対して</td><td>Đối với / so sánh hai mặt đối lập<span class="eg">兄が明るいのに対して、弟は暗い。</span></td><td><button class="pb" onclick="speak('兄が明るいのに対して、弟は暗い。')">🔊</button></td></tr>
+      <tr><td>〜というより</td><td>Nói đúng hơn là... (sửa lại cách diễn đạt)<span class="eg">嫌いというより、苦手だ。</span></td><td><button class="pb" onclick="speak('嫌いというより、苦手だ。')">🔊</button></td></tr>
+      <tr><td>〜に限る</td><td>Không gì bằng... (cái tốt nhất / lý tưởng nhất)<span class="eg">疲れたときは寝るに限る。</span></td><td><button class="pb" onclick="speak('疲れたときは寝るに限る。')">🔊</button></td></tr>
+      <tr><td>〜を問わず</td><td>Bất kể... / Không phân biệt...<span class="eg">年齢を問わず参加できる。</span></td><td><button class="pb" onclick="speak('年齢を問わず参加できる。')">🔊</button></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="sec-label" style="color:var(--blue);">🙏 NHÓM 敬語 — Kính ngữ N3</div>
+
+<div class="mn-wrap">
+  <div class="mn-head" onclick="tog(this)">
+    <span class="mn-dot" style="background:#60a5fa"></span>
+    <span class="mn-label">尊敬語 + 謙譲語 (10 mẫu)</span>
+    <span class="mn-count">văn phòng Nhật</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <div class="pt-head">尊敬語 — nói VỀ NGƯỜI TRÊN (nâng họ lên)</div>
+    <table class="pt">
+      <tr><td>いらっしゃる</td><td>Có mặt / ở / là (= いる・ある・です của người trên)<span class="eg">先生はいらっしゃいますか。</span></td><td><button class="pb" onclick="speak('先生はいらっしゃいますか。')">🔊</button></td></tr>
+      <tr><td>おっしゃる</td><td>Nói (= 言う của người trên)<span class="eg">先生がおっしゃったとおりです。</span></td><td><button class="pb" onclick="speak('先生がおっしゃったとおりです。')">🔊</button></td></tr>
+      <tr><td>なさる</td><td>Làm (= する của người trên)<span class="eg">何をなさっているんですか。</span></td><td><button class="pb" onclick="speak('何をなさっているんですか。')">🔊</button></td></tr>
+      <tr><td>召し上がる</td><td>Ăn / uống (= 食べる・飲む của người trên)<span class="eg">どうぞ召し上がってください。</span></td><td><button class="pb" onclick="speak('どうぞ召し上がってください。')">🔊</button></td></tr>
+      <tr><td>くださる</td><td>Cho / tặng (= くれる của người trên)<span class="eg">先生が本をくださった。</span></td><td><button class="pb" onclick="speak('先生が本をくださった。')">🔊</button></td></tr>
+    </table>
+    <div class="pt-head">謙譲語 — nói VỀ BẢN THÂN (hạ mình xuống)</div>
+    <table class="pt">
+      <tr><td>おる</td><td>Có mặt / ở (= いる của bản thân)<span class="eg">私はここにおります。</span></td><td><button class="pb" onclick="speak('私はここにおります。')">🔊</button></td></tr>
+      <tr><td>申す</td><td>Nói (= 言う của bản thân)<span class="eg">田中と申します。</span></td><td><button class="pb" onclick="speak('田中と申します。')">🔊</button></td></tr>
+      <tr><td>いたす</td><td>Làm (= する của bản thân)<span class="eg">ご説明いたします。</span></td><td><button class="pb" onclick="speak('ご説明いたします。')">🔊</button></td></tr>
+      <tr><td>いただく</td><td>Nhận / ăn / uống (= もらう・食べる của bản thân)<span class="eg">資料をいただけますか。</span></td><td><button class="pb" onclick="speak('資料をいただけますか。')">🔊</button></td></tr>
+      <tr><td>〜させていただく</td><td>Xin phép được làm... (khiêm tốn nhất)<span class="eg">説明させていただきます。</span></td><td><button class="pb" onclick="speak('説明させていただきます。')">🔊</button></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="sec-label" style="color:var(--text3);">📝 MẸO LÀM ĐỀ THI JLPT N3</div>
+
+<div class="mn-wrap">
+  <div class="mn-head" onclick="tog(this)">
+    <span class="mn-dot" style="background:#475569"></span>
+    <span class="mn-label">Chiến thuật 問題1・2・3</span>
+    <span class="mn-count">thi là dùng ngay</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <table class="pt">
+      <tr><td>問題1<br>Điền chỗ trống</td><td>① Đọc cấu trúc trước/sau ô trống trước<br>② Loại trừ: phủ định thì loại khẳng định, quá khứ thì loại hiện tại<br>③ Cắm đáp án vào đọc lại toàn câu — có tự nhiên không?</td><td></td></tr>
+      <tr><td>問題2<br>Sắp xếp câu</td><td>① Tìm từ ngay sau ★ — đó là trung tâm cụm<br>② Tìm trợ từ (を・が・に・で) → gắn với danh từ trước nó<br>③ Tìm động từ て-form → đứng trước vế sau<br>④ Danh từ hóa (こと・の) → sau đó là が/を/に</td><td></td></tr>
+      <tr><td>問題3<br>Đọc đoạn</td><td>① Đọc câu hỏi TRƯỚC rồi mới đọc đoạn<br>② Chú ý từ kết nối: しかし(nhưng)・だから(nên)・また(thêm nữa)・つまり(tức là)<br>③ Câu trả lời thường nằm ngay sau từ kết nối</td><td></td></tr>
+    </table>
+  </div>
+</div>
+
+</div><!-- end tab-grammar -->
+
+<!-- ═══════════════════════════════════════
+     TỪ VỰNG
+═══════════════════════════════════════ -->
+<div id="tab-vocab" class="tab-pane">
+
+<div class="sec-label" style="color:var(--orange);">🇻🇳 LỢI THẾ NGƯỜI VIỆT — On'yomi = Hán-Việt</div>
+
+<div class="mn-wrap">
+  <div class="mn-head open" onclick="tog(this)">
+    <span class="mn-dot" style="background:#fb923c"></span>
+    <span class="mn-label">Nghe âm On'yomi → đoán nghĩa Hán-Việt ngay</span>
+    <span class="mn-count">8 nhóm âm quan trọng</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <div class="pt-head">Nguyên tắc: On'yomi mượn từ tiếng Hán cổ → rất gần âm Hán-Việt. Người Việt nghe 1 lần đoán ngay nghĩa!</div>
+    <div class="oy-row"><span class="oy-on">けい</span><span class="oy-hv">kinh / kế / hình / hệ</span><span class="oy-ex">経験(kinh nghiệm)・計画(kế hoạch)・形式(hình thức)・関係(quan hệ)</span><button class="snd-btn" onclick="speak('経験、計画、形式、関係。')">🔊</button></div>
+    <div class="oy-row"><span class="oy-on">かん</span><span class="oy-hv">cảm / quan / quản</span><span class="oy-ex">感謝(cảm ơn)・関係(quan hệ)・管理(quản lý)・観光(quan quang)</span><button class="snd-btn" onclick="speak('感謝、関係、管理、観光。')">🔊</button></div>
+    <div class="oy-row"><span class="oy-on">しゃ</span><span class="oy-hv">xã / giả / tạ</span><span class="oy-ex">社会(xã hội)・記者(ký giả)・謝る(tạ lỗi)・写真(ảnh)</span><button class="snd-btn" onclick="speak('社会、記者、謝る、写真。')">🔊</button></div>
+    <div class="oy-row"><span class="oy-on">せい/しょう</span><span class="oy-hv">sinh / thành / chính</span><span class="oy-ex">学生(học sinh)・成功(thành công)・正しい(chính đúng)・生産(sản sinh)</span><button class="snd-btn" onclick="speak('学生、成功、正しい。')">🔊</button></div>
+    <div class="oy-row"><span class="oy-on">こう</span><span class="oy-hv">công / giao</span><span class="oy-ex">工場(công xưởng)・交通(giao thông)・公園(công viên)・行動(hành động)</span><button class="snd-btn" onclick="speak('工場、交通、公園、行動。')">🔊</button></div>
+    <div class="oy-row"><span class="oy-on">どう</span><span class="oy-hv">động / đồng / đạo</span><span class="oy-ex">運動(vận động)・同じ(đồng)・道路(đạo lộ)・働く(lao động)</span><button class="snd-btn" onclick="speak('運動、同じ、道路。')">🔊</button></div>
+    <div class="oy-row"><span class="oy-on">りょく/りき</span><span class="oy-hv">lực</span><span class="oy-ex">努力(nỗ lực)・能力(năng lực)・体力(thể lực)・電力(điện lực)</span><button class="snd-btn" onclick="speak('努力、能力、体力。')">🔊</button></div>
+    <div class="oy-row"><span class="oy-on">しん</span><span class="oy-hv">tâm / tín / thần</span><span class="oy-ex">心配(tâm lo)・信じる(tín)・神社(thần xã)・新しい(tân)</span><button class="snd-btn" onclick="speak('心配、信じる、神社。')">🔊</button></div>
+  </div>
+</div>
+
+<div class="sec-label" style="color:var(--yellow);">🔧 TIỀN/HẬU TỐ — Đọc từ lạ đoán nghĩa ngay</div>
+
+<div class="mn-wrap">
+  <div class="mn-head" onclick="tog(this)">
+    <span class="mn-dot" style="background:#fbbf24"></span>
+    <span class="mn-label">不・〜的・〜化・〜力・再 (5 loại)</span>
+    <span class="mn-count">gặp từ lạ đoán được</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <table class="pt">
+      <tr><td>不〜 (ふ〜)</td><td>Bất / không — phủ nhận hoàn toàn<span class="eg">不満(bất mãn)・不安(bất an)・不便(bất tiện)・不可能(bất khả thi)・不自然(bất tự nhiên)</span></td><td><button class="pb" onclick="speak('不満、不安、不便、不可能。')">🔊</button></td></tr>
+      <tr><td>〜的 (〜てき)</td><td>Tính / mang tính — biến danh từ thành tính từ na<span class="eg">積極的(tích cực)・消極的(tiêu cực)・具体的(cụ thể)・一般的(nói chung)</span></td><td><button class="pb" onclick="speak('積極的、消極的、具体的。')">🔊</button></td></tr>
+      <tr><td>〜化 (〜か)</td><td>Hóa / biến thành — quá trình thay đổi<span class="eg">変化(biến hóa)・近代化(hiện đại hóa)・自動化・高齢化</span></td><td><button class="pb" onclick="speak('変化、近代化、自動化。')">🔊</button></td></tr>
+      <tr><td>〜力 (〜りょく)</td><td>Lực / khả năng — năng lực thực hiện<span class="eg">努力(nỗ lực)・能力(năng lực)・体力・影響力・判断力</span></td><td><button class="pb" onclick="speak('努力、能力、体力、影響力。')">🔊</button></td></tr>
+      <tr><td>再〜 (さい〜)</td><td>Tái / làm lại<span class="eg">再確認(tái xác nhận)・再利用(tái sử dụng)・再開(tái khởi động)</span></td><td><button class="pb" onclick="speak('再確認、再利用、再開。')">🔊</button></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="sec-label" style="color:var(--green);">🔄 TỰ/THA ĐỘNG TỪ — Nhớ pattern âm, không học thuộc</div>
+
+<div class="mn-wrap">
+  <div class="mn-head" onclick="tog(this)">
+    <span class="mn-dot" style="background:#34d399"></span>
+    <span class="mn-label">自動詞 ↔ 他動詞 (15 cặp)</span>
+    <span class="mn-count">〜まる/める · 〜える/す</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <div class="pt-head">Quy tắc âm: 〜まる(自) ↔ 〜める(他) · 〜える(自) ↔ 〜す/やす(他) · cùng kanji khác đuôi</div>
+    <table class="vp">
+      <tr><th>自動詞 — tự xảy ra (が)</th><th>他動詞 — ai đó làm (を)</th><th>Nghĩa</th><th></th></tr>
+      <tr><td class="ji">集まる</td><td class="ta">集める</td><td class="mn">tụ lại / thu thập</td><td><button class="pb" onclick="speak('人が集まる。人を集める。')">🔊</button></td></tr>
+      <tr><td class="ji">決まる</td><td class="ta">決める</td><td class="mn">được quyết / quyết định</td><td><button class="pb" onclick="speak('日程が決まる。日程を決める。')">🔊</button></td></tr>
+      <tr><td class="ji">始まる</td><td class="ta">始める</td><td class="mn">bắt đầu (tự) / bắt đầu làm</td><td><button class="pb" onclick="speak('授業が始まる。授業を始める。')">🔊</button></td></tr>
+      <tr><td class="ji">止まる</td><td class="ta">止める</td><td class="mn">dừng lại / dừng cái gì</td><td><button class="pb" onclick="speak('車が止まる。車を止める。')">🔊</button></td></tr>
+      <tr><td class="ji">開く</td><td class="ta">開ける</td><td class="mn">mở ra (tự) / mở cái gì</td><td><button class="pb" onclick="speak('ドアが開く。ドアを開ける。')">🔊</button></td></tr>
+      <tr><td class="ji">閉まる</td><td class="ta">閉める</td><td class="mn">đóng lại (tự) / đóng cái gì</td><td><button class="pb" onclick="speak('ドアが閉まる。ドアを閉める。')">🔊</button></td></tr>
+      <tr><td class="ji">増える</td><td class="ta">増やす</td><td class="mn">tăng lên / tăng cái gì</td><td><button class="pb" onclick="speak('人口が増える。人口を増やす。')">🔊</button></td></tr>
+      <tr><td class="ji">減る</td><td class="ta">減らす</td><td class="mn">giảm / giảm bớt</td><td><button class="pb" onclick="speak('体重が減る。体重を減らす。')">🔊</button></td></tr>
+      <tr><td class="ji">消える</td><td class="ta">消す</td><td class="mn">tắt (tự) / tắt cái gì</td><td><button class="pb" onclick="speak('火が消える。火を消す。')">🔊</button></td></tr>
+      <tr><td class="ji">壊れる</td><td class="ta">壊す</td><td class="mn">bị hỏng / phá hỏng</td><td><button class="pb" onclick="speak('機械が壊れる。機械を壊す。')">🔊</button></td></tr>
+      <tr><td class="ji">倒れる</td><td class="ta">倒す</td><td class="mn">ngã / đánh ngã</td><td><button class="pb" onclick="speak('木が倒れる。木を倒す。')">🔊</button></td></tr>
+      <tr><td class="ji">変わる</td><td class="ta">変える</td><td class="mn">thay đổi (tự) / thay đổi cái gì</td><td><button class="pb" onclick="speak('状況が変わる。予定を変える。')">🔊</button></td></tr>
+      <tr><td class="ji">続く</td><td class="ta">続ける</td><td class="mn">tiếp tục (tự) / tiếp tục làm</td><td><button class="pb" onclick="speak('雨が続く。練習を続ける。')">🔊</button></td></tr>
+      <tr><td class="ji">つながる</td><td class="ta">つなぐ</td><td class="mn">được kết nối / kết nối</td><td><button class="pb" onclick="speak('インターネットにつながる。')">🔊</button></td></tr>
+      <tr><td class="ji">見つかる</td><td class="ta">見つける</td><td class="mn">được tìm thấy / tìm thấy</td><td><button class="pb" onclick="speak('答えが見つかる。答えを見つける。')">🔊</button></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="sec-label" style="color:var(--p);">💬 PHÓ TỪ N3 — Nhóm hay thi nhất</div>
+
+<div class="mn-wrap">
+  <div class="mn-head" onclick="tog(this)">
+    <span class="mn-dot" style="background:#a78bfa"></span>
+    <span class="mn-label">副詞 — nhóm theo cảm xúc (14 phó từ)</span>
+    <span class="mn-count">80 phó từ → top 14</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <div class="pt-head">Nhóm TIẾC / BỰC / BI QUAN</div>
+    <div class="adv-row"><span class="adv-jp">せっかく〜のに</span><div class="adv-body"><div class="adv-mean">Công khó mà... vậy mà (tiếc, bực bội)</div><div class="adv-eg">せっかく作ったのに、誰も食べてくれなかった。</div></div><button class="snd-btn" onclick="speak('せっかく作ったのに、誰も食べてくれなかった。')">🔊</button></div>
+    <div class="adv-row"><span class="adv-jp">どうせ〜だろう</span><div class="adv-body"><div class="adv-mean">Dù sao thì... (bi quan, buông xuôi)</div><div class="adv-eg">どうせ無理だろう。どうせ誰も来ない。</div></div><button class="snd-btn" onclick="speak('どうせ無理だろう。')">🔊</button></div>
+    <div class="adv-row"><span class="adv-jp">なかなか〜ない</span><div class="adv-body"><div class="adv-mean">Mãi vẫn không... (khó đạt được)</div><div class="adv-eg">なかなか上手くならない。なかなか来ない。</div></div><button class="snd-btn" onclick="speak('なかなか上手くならない。')">🔊</button></div>
+    <div class="pt-head">Nhóm BẤT NGỜ / NHẬN RA</div>
+    <div class="adv-row"><span class="adv-jp">まさか〜ないだろう</span><div class="adv-body"><div class="adv-mean">Chẳng lẽ... / Không thể nào (sốc)</div><div class="adv-eg">まさか彼が犯人だとは思わなかった。</div></div><button class="snd-btn" onclick="speak('まさか彼が犯人だとは思わなかった。')">🔊</button></div>
+    <div class="adv-row"><span class="adv-jp">やはり・やっぱり</span><div class="adv-body"><div class="adv-mean">Đúng như dự đoán / Dù sao vẫn thế</div><div class="adv-eg">やはりそうだったか。やっぱり彼が一番だ。</div></div><button class="snd-btn" onclick="speak('やはりそうだったか。')">🔊</button></div>
+    <div class="adv-row"><span class="adv-jp">どうも</span><div class="adv-body"><div class="adv-mean">Không hiểu sao / Có vẻ như... (mơ hồ)</div><div class="adv-eg">どうもおかしい。どうもありがとう。</div></div><button class="snd-btn" onclick="speak('どうもおかしい。')">🔊</button></div>
+    <div class="pt-head">Nhóm CỐ GẮNG / HOÀN THÀNH</div>
+    <div class="adv-row"><span class="adv-jp">わざわざ</span><div class="adv-body"><div class="adv-mean">Cố ý / đặc biệt làm (tốn công sức)</div><div class="adv-eg">わざわざ来てくれてありがとう。</div></div><button class="snd-btn" onclick="speak('わざわざ来てくれてありがとう。')">🔊</button></div>
+    <div class="adv-row"><span class="adv-jp">ついに</span><div class="adv-body"><div class="adv-mean">Cuối cùng cũng... (sau thời gian dài)</div><div class="adv-eg">ついに合格した！ついに夢が叶った！</div></div><button class="snd-btn" onclick="speak('ついに合格した！')">🔊</button></div>
+    <div class="adv-row"><span class="adv-jp">なんとか</span><div class="adv-body"><div class="adv-mean">Bằng cách nào đó / Gắng gượng được</div><div class="adv-eg">なんとか間に合った。なんとかなる。</div></div><button class="snd-btn" onclick="speak('なんとか間に合った。')">🔊</button></div>
+    <div class="pt-head">Nhóm TẦN SUẤT / PHẠM VI</div>
+    <div class="adv-row"><span class="adv-jp">必ずしも〜ない</span><div class="adv-body"><div class="adv-mean">Không nhất thiết là... (không tuyệt đối)</div><div class="adv-eg">高くても必ずしも良いとは限らない。</div></div><button class="snd-btn" onclick="speak('高くても必ずしも良いとは限らない。')">🔊</button></div>
+    <div class="adv-row"><span class="adv-jp">めったに〜ない</span><div class="adv-body"><div class="adv-mean">Hiếm khi... (rất ít khi xảy ra)</div><div class="adv-eg">めったに風邪をひかない。</div></div><button class="snd-btn" onclick="speak('めったに風邪をひかない。')">🔊</button></div>
+    <div class="adv-row"><span class="adv-jp">いつの間にか</span><div class="adv-body"><div class="adv-mean">Không biết từ lúc nào... (bất ngờ nhận ra)</div><div class="adv-eg">いつの間にか眠ってしまった。</div></div><button class="snd-btn" onclick="speak('いつの間にか眠ってしまった。')">🔊</button></div>
+    <div class="adv-row"><span class="adv-jp">あいにく</span><div class="adv-body"><div class="adv-mean">Không may là... / Tiếc là... (xin lỗi lịch sự)</div><div class="adv-eg">あいにく、本日は休業です。</div></div><button class="snd-btn" onclick="speak('あいにく、本日は休業です。')">🔊</button></div>
+    <div class="adv-row"><span class="adv-jp">もう少しで</span><div class="adv-body"><div class="adv-mean">Suýt nữa thì... (thiếu một chút)</div><div class="adv-eg">もう少しで遅刻するところだった。</div></div><button class="snd-btn" onclick="speak('もう少しで遅刻するところだった。')">🔊</button></div>
+  </div>
+</div>
+
+<div class="sec-label" style="color:var(--red);">🎨 TÍNH TỪ HAY NHẦM — Phân biệt 1 từ khóa</div>
+
+<div class="mn-wrap">
+  <div class="mn-head" onclick="tog(this)">
+    <span class="mn-dot" style="background:#f87171"></span>
+    <span class="mn-label">形容詞ペア hay nhầm nhất</span>
+    <span class="mn-count">6 cặp</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <table class="pt">
+      <tr><td>親切(しんせつ)<br>vs 丁寧(ていねい)</td><td>親切 = tốt bụng, nhiệt tình, chân thành<br>丁寧 = lịch sự, cẩn thận, chu đáo về cách làm<span class="eg">親切な人 · 丁寧な説明</span></td><td><button class="pb" onclick="speak('親切な人。丁寧な説明。')">🔊</button></td></tr>
+      <tr><td>適当(てきとう)<br>vs いい加減</td><td>適当(+) = phù hợp, vừa phải ↔ 適当(-) = đại khái, bừa bãi<br>いい加減 = luôn tiêu cực, tùy tiện, vô trách nhiệm<span class="tip">⚠️ 適当 có 2 nghĩa tùy ngữ cảnh!</span></td><td><button class="pb" onclick="speak('適当な答え。いい加減な人。')">🔊</button></td></tr>
+      <tr><td>久しぶり<br>vs しばらく</td><td>久しぶり = lâu không gặp (nhìn lại quá khứ)<br>しばらく = một lúc / một thời gian (nhìn về tương lai)</td><td><button class="pb" onclick="speak('久しぶりですね。しばらく待ってください。')">🔊</button></td></tr>
+      <tr><td>急に(きゅうに)<br>vs 突然(とつぜん)</td><td>急に = đột ngột nhanh chóng (nhấn mạnh tốc độ)<br>突然 = bất ngờ (nhấn mạnh yếu tố không ai ngờ)</td><td><button class="pb" onclick="speak('急に雨が降った。突然電話が来た。')">🔊</button></td></tr>
+      <tr><td>大切(たいせつ)<br>vs 大事(だいじ)</td><td>大切 = quý trọng, quan trọng về giá trị<br>大事 = quan trọng cần cẩn thận, không để mất</td><td><button class="pb" onclick="speak('大切な人。大事な書類。')">🔊</button></td></tr>
+      <tr><td>得意(とくい)<br>vs 上手(じょうず)</td><td>得意 = thế mạnh của bản thân (chủ quan)<br>上手 = kỹ năng giỏi (khách quan, người khác nhìn vào)</td><td><button class="pb" onclick="speak('料理が得意です。料理が上手ですね。')">🔊</button></td></tr>
+    </table>
+  </div>
+</div>
+
+</div><!-- end tab-vocab -->
+
+<!-- ═══════════════════════════════════════
+     KANJI
+═══════════════════════════════════════ -->
+<div id="tab-kanji" class="tab-pane">
+
+<div class="sec-label" style="color:var(--yellow);">🧩 7 BỘ THỦ NĂNG SUẤT — Nhìn hình đoán nghĩa</div>
+
+<div class="mn-wrap">
+  <div class="mn-head open" onclick="tog(this)">
+    <span class="mn-dot" style="background:#fbbf24"></span>
+    <span class="mn-label">7 bộ thủ · 50+ kanji N3</span>
+    <span class="mn-count">nhìn là biết nghĩa</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <div class="rad-row"><span class="rad-char">氵</span><div class="rad-body"><div class="rad-name">Sanzui — NƯỚC (3 giọt nước bên trái)</div><div class="rad-words">海・泳・流・港・浮・温・洗・湖・深・泣</div><div class="rad-vn">Biển · Bơi · Chảy · Cảng · Nổi · Ấm · Rửa · Hồ · Sâu · Khóc</div></div><button class="snd-btn" onclick="speak('海、泳ぐ、流れる、温かい、洗う。')">🔊</button></div>
+    <div class="rad-row"><span class="rad-char">言</span><div class="rad-body"><div class="rad-name">Gon — LỜI NÓI (miệng phát âm)</div><div class="rad-words">話・語・読・説・記・議・謝・訓・詩・訴</div><div class="rad-vn">Nói · Ngôn · Đọc · Giải · Ghi · Nghị · Tạ lỗi · Huấn · Thơ · Kiện</div></div><button class="snd-btn" onclick="speak('話す、語学、読む、説明、謝る。')">🔊</button></div>
+    <div class="rad-row"><span class="rad-char">忄</span><div class="rad-body"><div class="rad-name">Kokoro — TÂM / CẢM XÚC (trái tim)</div><div class="rad-words">怒・悲・忙・忘・感・想・恥・悩・慌・情</div><div class="rad-vn">Giận · Buồn · Bận · Quên · Cảm · Nghĩ · Xấu hổ · Lo · Hoảng · Tình</div></div><button class="snd-btn" onclick="speak('怒る、悲しい、忙しい、忘れる、感じる。')">🔊</button></div>
+    <div class="rad-row"><span class="rad-char">扌</span><div class="rad-body"><div class="rad-name">Tehen — BÀN TAY (tay đang hành động)</div><div class="rad-words">持・拾・押・引・打・折・捨・探・投・抱</div><div class="rad-vn">Cầm · Nhặt · Đẩy · Kéo · Đánh · Gập · Vứt · Tìm · Ném · Ôm</div></div><button class="snd-btn" onclick="speak('持つ、拾う、押す、引く、探す。')">🔊</button></div>
+    <div class="rad-row"><span class="rad-char">日</span><div class="rad-body"><div class="rad-name">Hi — MẶT TRỜI / NGÀY</div><div class="rad-words">明・晴・暗・暑・早・時・昨・最・曜・映</div><div class="rad-vn">Sáng · Đẹp trời · Tối · Nóng · Sớm · Thời gian · Hôm qua · Nhất · Thứ · Chiếu</div></div><button class="snd-btn" onclick="speak('明るい、晴れる、暗い、暑い、早い。')">🔊</button></div>
+    <div class="rad-row"><span class="rad-char">木</span><div class="rad-body"><div class="rad-name">Ki — CÂY / GỖ (cây với rễ và cành)</div><div class="rad-words">林・森・机・根・校・様・板・棒・橋・植</div><div class="rad-vn">Rừng nhỏ · Rừng lớn · Bàn · Rễ · Trường · Dáng · Ván · Gậy · Cầu · Trồng</div></div><button class="snd-btn" onclick="speak('林、森、机、根、学校。')">🔊</button></div>
+    <div class="rad-row"><span class="rad-char">亻</span><div class="rad-body"><div class="rad-name">Ninben — NGƯỜI (người đứng thẳng)</div><div class="rad-words">仕・休・働・他・住・使・借・係・位・信</div><div class="rad-vn">Phục vụ · Nghỉ · Làm · Khác · Ở · Dùng · Mượn · Phụ trách · Vị trí · Tín</div></div><button class="snd-btn" onclick="speak('仕事、休む、働く、住む、借りる。')">🔊</button></div>
+  </div>
+</div>
+
+<div class="sec-label" style="color:var(--neon);">🔊 CỤM ÂM ON'YOMI — Học 1 âm nhớ 5 chữ</div>
+
+<div class="mn-wrap">
+  <div class="mn-head" onclick="tog(this)">
+    <span class="mn-dot" style="background:#c4b5fd"></span>
+    <span class="mn-label">Kanji cùng âm = cùng gốc Hán-Việt</span>
+    <span class="mn-count">4 cụm âm quan trọng</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <div class="pt-head">Cùng âm On'yomi → cùng gốc Hán-Việt → nghe âm đoán nghĩa ngay!</div>
+    <table class="pt">
+      <tr><td>けい<br><span class="eg">kinh/kế/hình/hệ/kính</span></td><td>経(kinh)・計(kế)・形(hình)・系(hệ)・敬(kính)<span class="eg">経験・計画・形式・関係・敬語</span></td><td><button class="pb" onclick="speak('経験、計画、形式、関係、敬語。')">🔊</button></td></tr>
+      <tr><td>かん<br><span class="eg">cảm/quan/quản/hoàn</span></td><td>感(cảm)・関(quan)・管(quản)・観(quan)・慣(quán)<span class="eg">感謝・関係・管理・観光・習慣</span></td><td><button class="pb" onclick="speak('感謝、関係、管理、観光、習慣。')">🔊</button></td></tr>
+      <tr><td>せい<br><span class="eg">sinh/thành/chính/thanh</span></td><td>生(sinh)・成(thành)・正(chính)・清(thanh)・制(chế)<span class="eg">学生・成功・正しい・清潔・制度</span></td><td><button class="pb" onclick="speak('学生、成功、正しい、清潔。')">🔊</button></td></tr>
+      <tr><td>しゃ<br><span class="eg">xã/giả/tạ/tả</span></td><td>社(xã)・者(giả)・謝(tạ)・写(tả)・射(xạ)<span class="eg">社会・医者・謝る・写真・射撃</span></td><td><button class="pb" onclick="speak('社会、医者、謝る、写真。')">🔊</button></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="sec-label" style="color:var(--orange);">⭐ KANJI HAY THI NHẤT — Theo nhóm chủ đề</div>
+
+<div class="mn-wrap">
+  <div class="mn-head" onclick="tog(this)">
+    <span class="mn-dot" style="background:#fb923c"></span>
+    <span class="mn-label">💼 Công việc · 😊 Cảm xúc · 💰 Xã hội</span>
+    <span class="mn-count">top 18 chữ ★頻出</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <div class="pt-head">💼 Nhóm CÔNG VIỆC (29 chữ trong app — đây là 6 hay thi nhất)</div>
+    <div class="kj-grid" style="padding:8px 10px;">
+      <div class="kj-cell"><span class="kj-char">働</span><div class="kj-hv">どう · động</div><div class="kj-mean">làm việc</div><div class="kj-word">労働・働く</div></div>
+      <div class="kj-cell"><span class="kj-char">給</span><div class="kj-hv">きゅう · cấp</div><div class="kj-mean">lương, cấp phát</div><div class="kj-word">給料・給食</div></div>
+      <div class="kj-cell"><span class="kj-char">職</span><div class="kj-hv">しょく · chức</div><div class="kj-mean">nghề nghiệp</div><div class="kj-word">職業・就職</div></div>
+      <div class="kj-cell"><span class="kj-char">収</span><div class="kj-hv">しゅう · thu</div><div class="kj-mean">thu nhập</div><div class="kj-word">収入・回収</div></div>
+      <div class="kj-cell"><span class="kj-char">費</span><div class="kj-hv">ひ · phí</div><div class="kj-mean">chi phí</div><div class="kj-word">費用・交通費</div></div>
+      <div class="kj-cell"><span class="kj-char">営</span><div class="kj-hv">えい · doanh</div><div class="kj-mean">kinh doanh</div><div class="kj-word">経営・営業</div></div>
+    </div>
+    <div class="pt-head">😊 Nhóm CẢM XÚC (29 chữ — top 6)</div>
+    <div class="kj-grid" style="padding:8px 10px;">
+      <div class="kj-cell"><span class="kj-char">悩</span><div class="kj-hv">のう · não</div><div class="kj-mean">lo lắng</div><div class="kj-word">悩む・苦悩</div></div>
+      <div class="kj-cell"><span class="kj-char">驚</span><div class="kj-hv">きょう · kinh</div><div class="kj-mean">ngạc nhiên</div><div class="kj-word">驚く・驚き</div></div>
+      <div class="kj-cell"><span class="kj-char">怒</span><div class="kj-hv">ど · nộ</div><div class="kj-mean">tức giận</div><div class="kj-word">怒る・怒り</div></div>
+      <div class="kj-cell"><span class="kj-char">恥</span><div class="kj-hv">ち · sỉ</div><div class="kj-mean">xấu hổ</div><div class="kj-word">恥ずかしい</div></div>
+      <div class="kj-cell"><span class="kj-char">喜</span><div class="kj-hv">き · hỷ</div><div class="kj-mean">vui mừng</div><div class="kj-word">喜ぶ・喜び</div></div>
+      <div class="kj-cell"><span class="kj-char">慌</span><div class="kj-hv">こう · hoảng</div><div class="kj-mean">hoảng loạn</div><div class="kj-word">慌てる・慌て</div></div>
+    </div>
+    <div class="pt-head">💰 Nhóm XÃ HỘI (30 chữ — top 6)</div>
+    <div class="kj-grid" style="padding:8px 10px;">
+      <div class="kj-cell"><span class="kj-char">税</span><div class="kj-hv">ぜい · thuế</div><div class="kj-mean">thuế</div><div class="kj-word">税金・消費税</div></div>
+      <div class="kj-cell"><span class="kj-char">投</span><div class="kj-hv">とう · đầu</div><div class="kj-mean">ném, đầu tư</div><div class="kj-word">投票・投資</div></div>
+      <div class="kj-cell"><span class="kj-char">輸</span><div class="kj-hv">ゆ · du</div><div class="kj-mean">vận chuyển</div><div class="kj-word">輸出・輸入</div></div>
+      <div class="kj-cell"><span class="kj-char">際</span><div class="kj-hv">さい · tế</div><div class="kj-mean">dịp, cạnh</div><div class="kj-word">国際・実際</div></div>
+      <div class="kj-cell"><span class="kj-char">済</span><div class="kj-hv">さい · tế</div><div class="kj-mean">hoàn tất, kinh tế</div><div class="kj-word">経済・済む</div></div>
+      <div class="kj-cell"><span class="kj-char">境</span><div class="kj-hv">きょう · cảnh</div><div class="kj-mean">ranh giới</div><div class="kj-word">環境・国境</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="sec-label" style="color:var(--green);">🏃 KANJI HÀNH ĐỘNG · 💬 GIAO TIẾP</div>
+
+<div class="mn-wrap">
+  <div class="mn-head" onclick="tog(this)">
+    <span class="mn-dot" style="background:#34d399"></span>
+    <span class="mn-label">🏃 Hành động · 💬 Giao tiếp (top 12 chữ)</span>
+    <span class="mn-count">hay ra đề đọc hiểu</span>
+    <span class="mn-arr">›</span>
+  </div>
+  <div class="mn-body">
+    <div class="pt-head">🏃 Nhóm HÀNH ĐỘNG (30 chữ — top 6 hay gặp nhất)</div>
+    <div class="kj-grid" style="padding:8px 10px;">
+      <div class="kj-cell"><span class="kj-char">捨</span><div class="kj-hv">しゃ · xả</div><div class="kj-mean">vứt bỏ</div><div class="kj-word">捨てる・廃棄</div></div>
+      <div class="kj-cell"><span class="kj-char">拾</span><div class="kj-hv">しゅう · thập</div><div class="kj-mean">nhặt, 10</div><div class="kj-word">拾う・収拾</div></div>
+      <div class="kj-cell"><span class="kj-char">押</span><div class="kj-hv">おう · áp</div><div class="kj-mean">đẩy, ấn</div><div class="kj-word">押す・押し入れ</div></div>
+      <div class="kj-cell"><span class="kj-char">引</span><div class="kj-hv">いん · dẫn</div><div class="kj-mean">kéo, dẫn</div><div class="kj-word">引く・引っ越し</div></div>
+      <div class="kj-cell"><span class="kj-char">折</span><div class="kj-hv">せつ · chiết</div><div class="kj-mean">gập, gãy</div><div class="kj-word">折る・骨折</div></div>
+      <div class="kj-cell"><span class="kj-char">抱</span><div class="kj-hv">ほう · bao</div><div class="kj-mean">ôm, bế</div><div class="kj-word">抱く・抱っこ</div></div>
+    </div>
+    <div class="pt-head">💬 Nhóm GIAO TIẾP (29 chữ — top 6)</div>
+    <div class="kj-grid" style="padding:8px 10px;">
+      <div class="kj-cell"><span class="kj-char">謝</span><div class="kj-hv">しゃ · tạ</div><div class="kj-mean">xin lỗi, cảm ơn</div><div class="kj-word">謝る・感謝</div></div>
+      <div class="kj-cell"><span class="kj-char">批</span><div class="kj-hv">ひ · phê</div><div class="kj-mean">phê bình</div><div class="kj-word">批判・批評</div></div>
+      <div class="kj-cell"><span class="kj-char">訴</span><div class="kj-hv">そ · tố</div><div class="kj-mean">tố cáo, kêu</div><div class="kj-word">訴える・起訴</div></div>
+      <div class="kj-cell"><span class="kj-char">議</span><div class="kj-hv">ぎ · nghị</div><div class="kj-mean">bàn bạc</div><div class="kj-word">会議・議論</div></div>
+      <div class="kj-cell"><span class="kj-char">訓</span><div class="kj-hv">くん · huấn</div><div class="kj-mean">huấn luyện</div><div class="kj-word">訓練・訓読</div></div>
+      <div class="kj-cell"><span class="kj-char">詫</span><div class="kj-hv">わ · tạ</div><div class="kj-mean">xin lỗi</div><div class="kj-word">詫びる・お詫び</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end tab-kanji -->
+
+<!-- ═══════════════════════════════════════
+     7 NGÀY
+═══════════════════════════════════════ -->
+<div id="tab-plan" class="tab-pane">
+
+  <div class="plan-progress">
+    <div class="ring-wrap">
+      <svg class="ring-svg" width="54" height="54" viewBox="0 0 54 54">
+        <circle class="ring-bg" cx="27" cy="27" r="22"/>
+        <circle class="ring-fill" id="ring" cx="27" cy="27" r="22" stroke-dasharray="138.2" stroke-dashoffset="138.2"/>
+      </svg>
+      <div class="ring-label" id="ring-pct">0%</div>
+    </div>
+    <div class="plan-info">
+      <h3>Kế hoạch 7 ngày cấp tốc</h3>
+      <p id="plan-sub">~2–3 tiếng/ngày · Tick ✓ sau mỗi ngày hoàn thành</p>
+    </div>
+  </div>
+
+  <div class="day-card" id="day1">
+    <div class="day-header" onclick="toggleDay(1)">
+      <div class="day-badge" style="background:rgba(251,146,60,.2);color:var(--orange);">1<br><span>Ngày</span></div>
+      <div class="day-info"><div class="day-title">🔑 5 Danh từ cốt lõi + Từ vựng nhóm cảm xúc</div><div class="day-sub">こと・もの・はず・わけ・ところ + Hán-Việt mapping</div></div>
+      <button class="check-btn" id="chk1" onclick="toggleCheck(event,1)">✓</button>
+    </div>
+    <div class="day-body">
+      <div class="task-list">
+        <div class="task-item"><div class="task-time">Sáng</div><div class="task-text"><b>Tab Ngữ Pháp → 5 Danh từ cốt lõi</b> — đọc to từng mẫu, đặt 1 câu bản thân<br><a class="task-link" onclick="sw('grammar',document.querySelectorAll('.tab-btn')[0])">→ Ngữ Pháp</a></div></div>
+        <div class="task-item"><div class="task-time">Chiều</div><div class="task-text"><b>Tab Từ Vựng → On'yomi = Hán-Việt</b> — đọc bảng mapping, đọc to từng nhóm âm<br><a class="task-link" onclick="sw('vocab',document.querySelectorAll('.tab-btn')[1])">→ Từ Vựng</a></div></div>
+        <div class="task-item"><div class="task-time">Tối</div><div class="task-text"><b>Tab Kanji → 7 Bộ thủ</b> — nhìn bộ thủ đọc cluster kanji 3 lần to<br><a class="task-link" href="kanji.html">→ Kanji Drill</a></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card" id="day2">
+    <div class="day-header" onclick="toggleDay(2)">
+      <div class="day-badge" style="background:rgba(251,191,36,.2);color:var(--yellow);">2<br><span>Ngày</span></div>
+      <div class="day-info"><div class="day-title">↩️ Nhóm 逆接 + 🔄 Tự/Tha động từ</div><div class="day-sub">ながら・ものの・くせに + 15 cặp 自/他</div></div>
+      <button class="check-btn" id="chk2" onclick="toggleCheck(event,2)">✓</button>
+    </div>
+    <div class="day-body">
+      <div class="task-list">
+        <div class="task-item"><div class="task-time">Sáng</div><div class="task-text"><b>Ngữ Pháp → Nhóm 逆接</b> — đọc từng mẫu + ví dụ + đặt câu<br><a class="task-link" onclick="sw('grammar',document.querySelectorAll('.tab-btn')[0])">→ Ngữ Pháp</a></div></div>
+        <div class="task-item"><div class="task-time">Chiều</div><div class="task-text"><b>Từ Vựng → 15 cặp Tự/Tha động từ</b> — học pattern âm, ghép cặp thi tốc độ<br><a class="task-link" href="vocab.html">→ Từ Vựng Drill</a></div></div>
+        <div class="task-item"><div class="task-time">Tối</div><div class="task-text"><b>Kanji → Cụm âm けい・かん</b> + Drill nhóm Cảm xúc<br><a class="task-link" href="kanji.html">→ Kanji Drill</a></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card" id="day3">
+    <div class="day-header" onclick="toggleDay(3)">
+      <div class="day-badge" style="background:rgba(52,211,153,.2);color:var(--green);">3<br><span>Ngày</span></div>
+      <div class="day-info"><div class="day-title">⏱️ Nhóm 時間 + 💬 Phó từ N3</div><div class="day-sub">うちに・とたんに・ば〜ほど + 14 phó từ</div></div>
+      <button class="check-btn" id="chk3" onclick="toggleCheck(event,3)">✓</button>
+    </div>
+    <div class="day-body">
+      <div class="task-list">
+        <div class="task-item"><div class="task-time">Sáng</div><div class="task-text"><b>Ngữ Pháp → Nhóm 時間</b> — 7 mẫu thời điểm, đọc to ví dụ<br><a class="task-link" onclick="sw('grammar',document.querySelectorAll('.tab-btn')[0])">→ Ngữ Pháp</a></div></div>
+        <div class="task-item"><div class="task-time">Chiều</div><div class="task-text"><b>Từ Vựng → Phó từ N3</b> — nhóm cảm xúc, đọc to theo nhóm<br><a class="task-link" onclick="sw('vocab',document.querySelectorAll('.tab-btn')[1])">→ Từ Vựng</a></div></div>
+        <div class="task-item"><div class="task-time">Tối</div><div class="task-text"><b>Kanji → Kanji hay thi nhất</b> (💼 Công việc + 😊 Cảm xúc) — Scan rồi Drill<br><a class="task-link" href="kanji.html">→ Kanji Drill</a></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card" id="day4">
+    <div class="day-header" onclick="toggleDay(4)">
+      <div class="day-badge" style="background:rgba(96,165,250,.2);color:var(--blue);">4<br><span>Ngày</span></div>
+      <div class="day-info"><div class="day-title">🎯 Điều kiện + 😤 Bị động + Tiền/Hậu tố</div><div class="day-sub">たら・なら・ば・と + 迷惑受身 + 不/〜的/〜化</div></div>
+      <button class="check-btn" id="chk4" onclick="toggleCheck(event,4)">✓</button>
+    </div>
+    <div class="day-body">
+      <div class="task-list">
+        <div class="task-item"><div class="task-time">Sáng</div><div class="task-text"><b>Ngữ Pháp → 仮定 + 受身</b> — 4 điều kiện + bị động thiệt thòi<br><a class="task-link" href="n3-grammarnew.html">→ Ngữ Pháp Flashcard</a></div></div>
+        <div class="task-item"><div class="task-time">Chiều</div><div class="task-text"><b>Từ Vựng → Tiền/Hậu tố</b> — đọc 5 nhóm, đoán từ lạ thi thử<br><a class="task-link" href="vocab.html">→ Từ Vựng Exam</a></div></div>
+        <div class="task-item"><div class="task-time">Tối</div><div class="task-text"><b>Kanji → Cụm âm せい・しゃ</b> + Drill nhóm Xã hội<br><a class="task-link" href="kanji.html">→ Kanji Exam</a></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card" id="day5">
+    <div class="day-header" onclick="toggleDay(5)">
+      <div class="day-badge" style="background:rgba(244,114,182,.2);color:var(--pink);">5<br><span>Ngày</span></div>
+      <div class="day-info"><div class="day-title">🔥 Nhóm 強調・比較 + 敬語 + Đọc Hiểu</div><div class="day-sub">こそ・さえ・に対して + 尊敬/謙譲 + 短文</div></div>
+      <button class="check-btn" id="chk5" onclick="toggleCheck(event,5)">✓</button>
+    </div>
+    <div class="day-body">
+      <div class="task-list">
+        <div class="task-item"><div class="task-time">Sáng</div><div class="task-text"><b>Ngữ Pháp → Nhóm 強調 + 敬語</b> — 9 mẫu nhấn mạnh + 10 kính ngữ<br><a class="task-link" onclick="sw('grammar',document.querySelectorAll('.tab-btn')[0])">→ Ngữ Pháp</a></div></div>
+        <div class="task-item"><div class="task-time">Chiều</div><div class="task-text">Đọc hiểu <b>5 bài 短文</b> — gạch từ không biết, tra Mẹo<br><a class="task-link" href="n3-dokkai.html">→ Luyện Đọc</a></div></div>
+        <div class="task-item"><div class="task-time">Tối</div><div class="task-text"><b>Tính từ hay nhầm + Kanji</b> → Drill nhóm Giao tiếp + Hành động<br><a class="task-link" href="kanji.html">→ Kanji All</a></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card" id="day6">
+    <div class="day-header" onclick="toggleDay(6)">
+      <div class="day-badge" style="background:rgba(167,139,250,.2);color:var(--p);">6<br><span>Ngày</span></div>
+      <div class="day-info"><div class="day-title">🌀 Nhóm 状態 + Đọc Hiểu toàn bộ</div><div class="day-sub">がちだ・だらけ・っぱなし + 中文・長文</div></div>
+      <button class="check-btn" id="chk6" onclick="toggleCheck(event,6)">✓</button>
+    </div>
+    <div class="day-body">
+      <div class="task-list">
+        <div class="task-item"><div class="task-time">Sáng</div><div class="task-text"><b>Ngữ Pháp → Nhóm 状態</b> + ôn lại toàn bộ 逆接・時間<br><a class="task-link" href="n3-grammarnew.html">→ Ngữ Pháp Exam</a></div></div>
+        <div class="task-item"><div class="task-time">Chiều</div><div class="task-text">Đọc hiểu <b>5 bài 短文 + 2 bài 中文</b> — áp dụng mẹo 問題3<br><a class="task-link" href="n3-dokkai.html">→ Luyện Đọc</a></div></div>
+        <div class="task-item"><div class="task-time">Tối</div><div class="task-text">Làm 1 đề thi đọc JLPT thật hoàn chỉnh<br><a class="task-link" href="reading.html">→ Luyện Đề Thật</a></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-card" id="day7">
+    <div class="day-header" onclick="toggleDay(7)">
+      <div class="day-badge" style="background:rgba(251,146,60,.2);color:var(--orange);">7<br><span>Ngày</span></div>
+      <div class="day-info"><div class="day-title">🏆 Mock Test — Thi Thử Toàn Bộ</div><div class="day-sub">Ngữ Pháp + Kanji + Từ Vựng + Đọc Hiểu</div></div>
+      <button class="check-btn" id="chk7" onclick="toggleCheck(event,7)">✓</button>
+    </div>
+    <div class="day-body">
+      <div class="task-list">
+        <div class="task-item"><div class="task-time">Sáng</div><div class="task-text">Thi thử Ngữ Pháp — làm đề liên tục không dừng<br><a class="task-link" href="n3-grammarnew.html">→ Luyện Đề Ngữ Pháp</a></div></div>
+        <div class="task-item"><div class="task-time">Chiều</div><div class="task-text">Thi thử Kanji + Từ Vựng — xem review câu sai<br><a class="task-link" href="kanji.html">→ Kanji Exam</a></div></div>
+        <div class="task-item"><div class="task-time">Tối</div><div class="task-text">Thi thử Đọc Hiểu hoàn chỉnh · 🎉 Bạn đã sẵn sàng!</div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end tab-plan -->
+
+<nav class="bnav">
+  <button class="bnav-item" onclick="location.href='index.html'"><div class="bnav-icon">🏠</div>Home</button>
+  <button class="bnav-item" onclick="location.href='n3-grammarnew.html'"><div class="bnav-icon">📝</div>Ngữ Pháp</button>
+  <button class="bnav-item" onclick="location.href='vocab.html'"><div class="bnav-icon">📚</div>Từ Vựng</button>
+  <button class="bnav-item" onclick="location.href='kanji.html'"><div class="bnav-icon">漢</div>Kanji</button>
+  <button class="bnav-item" onclick="location.href='reading.html'"><div class="bnav-icon">📖</div>Đọc</button>
+</nav>
+
+<script>
+function sw(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+function tog(head) {
+  head.classList.toggle('open');
+}
+
+function toggleDay(n) {
+  document.getElementById('day' + n).classList.toggle('open');
+}
+
+const STORE_KEY = 'n3_plan_checked';
+let checked = new Set(JSON.parse(localStorage.getItem(STORE_KEY) || '[]'));
+
+function toggleCheck(e, n) {
+  e.stopPropagation();
+  if (checked.has(n)) checked.delete(n); else checked.add(n);
+  localStorage.setItem(STORE_KEY, JSON.stringify([...checked]));
+  renderChecks();
+}
+
+function renderChecks() {
+  for (let i = 1; i <= 7; i++) {
+    const done = checked.has(i);
+    document.getElementById('chk' + i).classList.toggle('done', done);
+    document.getElementById('day' + i).classList.toggle('done', done);
+  }
+  const pct = Math.round(checked.size / 7 * 100);
+  const circ = 2 * Math.PI * 22;
+  document.getElementById('ring').style.strokeDashoffset = circ - (circ * pct / 100);
+  document.getElementById('ring-pct').textContent = pct + '%';
+  document.getElementById('plan-sub').textContent =
+    checked.size === 7 ? '🎉 Xong rồi! Chúc thi tốt nhé!' :
+    checked.size > 0 ? `${checked.size}/7 ngày hoàn thành · Tiếp tục!` :
+    '~2–3 tiếng/ngày · Tick ✓ sau mỗi ngày hoàn thành';
+}
+renderChecks();
+
+const todayIdx = Math.min(checked.size + 1, 7);
+document.getElementById('day' + todayIdx)?.classList.add('open');
+
+speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ja-JP'; u.rate = 0.82; u.pitch = 1;
+  const v = speechSynthesis.getVoices().find(v => v.lang && v.lang.startsWith('ja'));
+  if (v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+</script>
+</body>
+</html>

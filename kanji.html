@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>Kanji N3 — Học nhanh thi ngay</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=DM+Sans:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+:root{
+  --ink:#0f0e17;--paper:#fffffe;--dim:#eeebe4;--card:#faf8f4;
+  --a:#e85d04;--a2:#ffddd2;
+  --g:#2d6a4f;--gl:#d8f3dc;
+  --r:#c1121f;--rl:#ffe5e5;
+  --b:#023e8a;--bl:#e0f0ff;
+  --muted:#9e9789;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;padding-bottom:68px;}
+
+/* NAV */
+nav{display:flex;border-bottom:2.5px solid var(--ink);position:sticky;top:0;z-index:99;background:var(--paper);}
+.nav-logo{padding:12px 16px;border-right:2.5px solid var(--ink);font-family:'Noto Serif JP',serif;font-size:1.2rem;font-weight:900;line-height:1;display:flex;flex-direction:column;gap:1px;flex-shrink:0;}
+.nav-logo span{color:var(--a);font-size:.55rem;font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:.12em;text-transform:uppercase;}
+.nav-tabs{display:flex;flex:1;overflow:hidden;}
+.ntab{flex:1;border:none;border-right:1.5px solid var(--dim);background:var(--paper);font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:700;cursor:pointer;color:var(--muted);transition:all .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 4px;}
+.ntab:last-child{border-right:none;}
+.ntab .ic{font-size:1rem;}
+.ntab.on{background:var(--ink);color:var(--paper);}
+
+/* FILTER */
+.frow{display:flex;gap:6px;padding:8px 12px;overflow-x:auto;border-bottom:1.5px solid var(--dim);-webkit-overflow-scrolling:touch;}
+.frow::-webkit-scrollbar{display:none;}
+.chip{padding:4px 12px;border-radius:20px;border:1.5px solid var(--dim);background:var(--paper);font-size:.65rem;font-weight:700;cursor:pointer;white-space:nowrap;color:var(--muted);transition:all .15s;}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+.chip.hot{border-color:var(--a);color:var(--a);}
+.chip.hot.on{background:var(--a);color:#fff;}
+
+/* PAGE */
+.pg{display:none;}
+.pg.on{display:block;}
+
+/* ═══ SCAN ═══ */
+.scan-bar{padding:7px 14px;display:flex;align-items:center;border-bottom:1px solid var(--dim);}
+.scan-info{font-size:.7rem;font-weight:600;color:var(--muted);}
+.scan-num{margin-left:auto;font-family:'Space Mono',monospace;font-size:.68rem;background:var(--dim);border-radius:20px;padding:2px 9px;}
+.prog{height:3px;background:var(--dim);}
+.pf{height:100%;background:var(--a);transition:width .4s;}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;border-bottom:2.5px solid var(--ink);}
+.kc{border-bottom:1.5px solid var(--dim);border-right:1.5px solid var(--dim);padding:10px 10px 8px;cursor:pointer;position:relative;transition:background .12s;-webkit-tap-highlight-color:transparent;overflow:hidden;}
+.kc:nth-child(2n){border-right:none;}
+.kc:active{background:var(--a2);}
+.kc.done{background:var(--gl);}
+.kc.done 
+.ktop{display:flex;justify-content:space-between;margin-bottom:5px;}
+.kidx{font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted);}
+.khot{font-size:.52rem;font-weight:800;color:var(--a);background:var(--a2);border-radius:3px;padding:1px 4px;}
+.kk{font-family:'Noto Serif JP',serif;font-size:1.9rem;font-weight:700;line-height:1;margin-bottom:4px;color:var(--ink);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.khv{font-size:.55rem;font-weight:800;letter-spacing:.1em;color:var(--a);margin-bottom:2px;}.khv:empty{display:none;margin:0;}
+.kvn{font-size:.68rem;font-weight:700;color:var(--ink);margin-bottom:5px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.kwords{display:flex;flex-direction:column;gap:3px;}
+.kw{display:flex;align-items:baseline;gap:4px;padding:3px 6px;border-radius:5px;overflow:hidden;}
+.kw.on{background:var(--bl);}
+.kw.kun{background:var(--gl);}.kw.note{background:var(--dim);padding:3px 6px;border-radius:5px;}
+.kwr{font-family:'Noto Serif JP',serif;font-size:.78rem;font-weight:700;}
+.kwf{font-size:.65rem;color:var(--b);font-weight:700;}
+.kw.kun 
+.kwm{font-size:.58rem;color:var(--muted);margin-left:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px;}
+.ktick{position:absolute;bottom:7px;right:9px;font-size:.85rem;opacity:0;transition:opacity .2s;}
+.kc.done 
+.kc-action{display:flex;gap:5px;margin-top:5px;justify-content:flex-end;}
+.kc-btn-sound,.kc-btn-done{
+  width:28px;height:28px;border-radius:7px;border:1.5px solid var(--dim);
+  background:var(--paper);font-size:.85rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  -webkit-tap-highlight-color:transparent;transition:all .15s;
+}
+.kc-btn-sound:active{background:var(--ink);color:var(--paper);}
+.kc-btn-done{font-size:.8rem;font-weight:800;color:var(--muted);}
+.kc-btn-done.active{background:var(--g);border-color:var(--g);color:#fff;}
+.kc-btn-done:active{background:var(--g);color:#fff;}
+.pager{display:flex;border-top:2px solid var(--ink);}
+.pbtn{flex:1;padding:13px;border:none;border-right:2px solid var(--ink);background:var(--paper);font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer;color:var(--ink);transition:background .12s;}
+.pbtn:last-child{border-right:none;}
+.pbtn:active{background:var(--dim);}
+.pbtn:disabled{opacity:.3;cursor:default;}
+.pbtn.pr{background:var(--ink);color:var(--paper);}
+
+/* ═══ DRILL ═══ */
+.dw{max-width:500px;margin:0 auto;}
+.dhd{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--dim);}
+.dpw{flex:1;height:5px;background:var(--dim);border-radius:3px;overflow:hidden;}
+.dpf{height:100%;background:var(--a);border-radius:3px;transition:width .3s;}
+.dcnt{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--muted);white-space:nowrap;}
+.dsc{background:var(--ink);color:var(--paper);font-size:.68rem;font-weight:700;font-family:'Space Mono',monospace;padding:3px 9px;border-radius:20px;white-space:nowrap;}
+.dleg{display:flex;gap:7px;padding:6px 14px;flex-wrap:wrap;border-bottom:1px solid var(--dim);}
+.dl{display:flex;align-items:center;gap:3px;font-size:.6rem;font-weight:700;color:var(--muted);}
+.dlc{width:7px;height:7px;border-radius:2px;flex-shrink:0;}
+.dtw{padding:9px 14px 0;}
+.dtb{display:inline-flex;align-items:center;padding:4px 11px;border-radius:6px;font-size:.65rem;font-weight:800;letter-spacing:.06em;border:1.5px solid;}
+.dtb.fw{background:var(--bl);color:var(--b);border-color:var(--b);}
+.dtb.rv{background:var(--a2);color:var(--a);border-color:var(--a);}
+.dtb.mn{background:var(--gl);color:var(--g);border-color:var(--g);}
+.dqc{margin:9px 14px;border-radius:12px;border:2.5px solid var(--ink);overflow:hidden;}
+.dqt{background:var(--ink);padding:18px 18px 16px;text-align:center;position:relative;}
+.dqt::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 65% 20%,rgba(232,93,4,.18) 0%,transparent 65%);pointer-events:none;}
+.htb{position:absolute;top:9px;right:11px;z-index:2;font-size:.6rem;font-weight:700;color:rgba(255,255,255,.5);cursor:pointer;padding:2px 7px;border:1px solid rgba(255,255,255,.2);border-radius:4px;background:none;font-family:'DM Sans',sans-serif;}
+.dqs{font-size:.82rem;color:rgba(255,255,255,.65);margin-bottom:9px;line-height:1.9;}
+.dqs .tw{color:#fff;font-family:'Noto Serif JP',serif;font-size:1.1rem;font-weight:700;border-bottom:2px solid var(--a);padding-bottom:1px;}
+.dqs .tk{color:var(--a2);font-size:1.05rem;font-weight:700;border-bottom:2px solid var(--a);padding-bottom:1px;}
+.dqm{font-family:'Noto Serif JP',serif;font-size:3rem;font-weight:700;color:#fff;line-height:1;}
+.dqm.sm{font-family:'DM Sans',sans-serif;font-size:1.1rem;font-weight:700;}
+.dqsub{font-size:.7rem;color:rgba(255,255,255,.4);margin-top:5px;}
+.dqb{background:var(--card);padding:7px 13px;font-size:.68rem;color:var(--muted);font-weight:600;border-top:1.5px solid var(--dim);text-align:center;}
+.hbox{margin:0 14px 7px;padding:8px 12px;border-radius:7px;background:var(--a2);border-left:3px solid var(--a);font-size:.73rem;color:var(--ink);font-weight:600;line-height:1.6;display:none;}
+.hbox.on{display:block;}
+.dopts{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:0 14px 7px;}
+.dopt{padding:12px 9px;border-radius:9px;border:2px solid var(--dim);background:var(--card);font-family:'Noto Serif JP','DM Sans',sans-serif;font-size:.83rem;font-weight:700;cursor:pointer;text-align:center;transition:all .13s;color:var(--ink);line-height:1.4;-webkit-tap-highlight-color:transparent;}
+.dopt:active:not([disabled]){border-color:var(--ink);background:var(--dim);}
+.dopt.ok{border-color:var(--g)!important;background:var(--gl)!important;color:var(--g)!important;}
+.dopt.ng{border-color:var(--r)!important;background:var(--rl)!important;color:var(--r)!important;}
+.dopt.rv{border-color:var(--g)!important;background:var(--gl)!important;color:var(--g)!important;}
+.dfb{margin:0 14px 7px;padding:10px 13px;border-radius:8px;font-size:.78rem;font-weight:600;line-height:1.7;display:none;}
+.dfb.on{display:block;}
+.dfb.ok{background:var(--gl);border-left:3px solid var(--g);color:#1a4a30;}
+.dnxt-btn{width:calc(100% - 28px);margin:0 14px 7px;padding:12px;border-radius:8px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:background .15s;}
+.dnxt-btn:active{background:var(--a);border-color:var(--a);}
+.dfb.ng{background:var(--rl);border-left:3px solid var(--r);color:#6b1218;}
+.fbr{font-size:.68rem;opacity:.75;margin-top:3px;}
+.dres{padding:24px 18px;text-align:center;display:none;}
+.dremo{font-size:2.8rem;margin-bottom:8px;}
+.drsc{font-family:'Space Mono',monospace;font-size:1.9rem;font-weight:700;color:var(--a);margin-bottom:3px;}
+.drsub{font-size:.82rem;color:var(--muted);margin-bottom:16px;}
+.drstats{display:flex;gap:7px;justify-content:center;margin-bottom:18px;}
+.drst{background:var(--dim);border-radius:8px;padding:9px 14px;min-width:60px;text-align:center;}
+.drst .n{font-family:'Space Mono',monospace;font-size:1.15rem;font-weight:700;}
+.drst .l{font-size:.58rem;color:var(--muted);font-weight:700;margin-top:2px;}
+.drbtns{display:flex;gap:7px;justify-content:center;}
+.drbtn{padding:11px 20px;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;border:2px solid var(--ink);transition:all .15s;}
+.drbtn.pr{background:var(--ink);color:var(--paper);}
+.drbtn.ou{background:var(--paper);color:var(--ink);}
+
+/* ═══ EXAM ═══ */
+.egrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px;}
+.ebtn{background:var(--card);border:2px solid var(--dim);border-radius:10px;padding:14px 12px;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center;transition:all .15s;}
+.ebtn:active{border-color:var(--a);background:var(--a2);}
+.ey{font-size:.85rem;font-weight:800;color:var(--ink);}
+.ecount{font-size:.62rem;color:var(--muted);margin-top:3px;}
+.escore{font-size:.62rem;font-weight:700;margin-top:4px;}
+.exam-wrap{max-width:500px;margin:0 auto;}
+.exam-hd{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--dim);}
+.exam-back{background:none;border:none;font-size:1rem;cursor:pointer;color:var(--muted);padding:2px 6px;}
+.exam-title{font-size:.85rem;font-weight:800;flex:1;}
+.exam-prog{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);}
+.eq-wrap{padding:10px 14px 6px;}
+.eq-type{display:inline-block;background:var(--bl);color:var(--b);border:1.5px solid var(--b);border-radius:6px;font-size:.62rem;font-weight:800;padding:3px 10px;margin-bottom:8px;}
+.eq-type.m2{background:var(--a2);color:var(--a);border-color:var(--a);}
+.eq-sent{font-family:'Noto Serif JP',sans-serif;font-size:.88rem;line-height:1.9;color:var(--ink);margin-bottom:10px;background:var(--card);border-radius:8px;padding:12px 14px;border:1.5px solid var(--dim);}
+.eq-sent .uw{color:var(--b);font-weight:800;text-decoration:underline;text-underline-offset:3px;}
+.eopts{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.eopt{padding:12px 9px;border-radius:9px;border:2px solid var(--dim);background:var(--card);font-family:'Noto Serif JP','DM Sans',sans-serif;font-size:.83rem;font-weight:700;cursor:pointer;text-align:center;transition:all .13s;color:var(--ink);-webkit-tap-highlight-color:transparent;}
+.eopt:active:not([disabled]){border-color:var(--ink);}
+.eopt.ok{border-color:var(--g)!important;background:var(--gl)!important;color:var(--g)!important;}
+.eopt.ng{border-color:var(--r)!important;background:var(--rl)!important;color:var(--r)!important;}
+.eopt.rv{border-color:var(--g)!important;background:var(--gl)!important;color:var(--g)!important;}
+.efb{margin:8px 0 0;padding:10px 13px;border-radius:8px;font-size:.78rem;font-weight:600;line-height:1.7;display:none;}
+.efb.on{display:block;}
+.efb.ok{background:var(--gl);border-left:3px solid var(--g);color:#1a4a30;}
+.efb.ng{background:var(--rl);border-left:3px solid var(--r);color:#6b1218;}
+.enxt{display:none;width:100%;margin-top:8px;padding:12px;border-radius:8px;border:none;background:var(--ink);color:var(--paper);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;}
+.enxt.on{display:block;}
+.exam-res{padding:24px 16px;text-align:center;}
+.erem{font-size:2.8rem;margin-bottom:8px;}
+.ersc{font-family:'Space Mono',monospace;font-size:1.9rem;font-weight:700;color:var(--a);margin-bottom:3px;}
+.ersub{font-size:.82rem;color:var(--muted);margin-bottom:16px;}
+.erstats{display:flex;gap:7px;justify-content:center;margin-bottom:16px;}
+.erst{background:var(--dim);border-radius:7px;padding:9px 14px;min-width:58px;text-align:center;}
+.erst .n{font-family:'Space Mono',monospace;font-size:1.1rem;font-weight:700;}
+.erst .l{font-size:.58rem;color:var(--muted);font-weight:700;margin-top:2px;}
+.erbtns{display:flex;gap:7px;justify-content:center;}
+.erbtn{padding:11px 18px;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;border:2px solid var(--ink);}
+.erbtn.pr{background:var(--ink);color:var(--paper);}
+.erbtn.ou{background:var(--paper);color:var(--ink);}
+
+@keyframes su{from{transform:translateY(6px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* ── BOTTOM NAV ── */
+.bnav{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--paper);border-top:2px solid var(--ink);z-index:200;box-shadow:0 -2px 8px rgba(0,0,0,.08);}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:9px 4px 11px;cursor:pointer;font-size:.6rem;font-weight:700;color:var(--muted);border:none;background:none;font-family:'DM Sans',sans-serif;gap:3px;border-left:1px solid var(--dim);}
+.bnav-item:first-child{border-left:none;}
+.bnav-item.active{color:var(--a);background:var(--a2);}
+.bnav-icon{font-size:1.2rem;line-height:1;}
+body{padding-bottom:60px;}
+
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">漢字<span>học nhanh · thi ngay</span></div>
+  <div class="nav-tabs">
+    <button class="ntab on" onclick="goTab('scan')"><span class="ic">👁</span>Scan</button>
+    <button class="ntab" onclick="goTab('drill')"><span class="ic">⚡</span>Drill</button>
+    <button class="ntab" onclick="goTab('exam')"><span class="ic">📝</span>Đề thi</button>
+    <button class="ntab" onclick="location.href='meo.html'" style="color:var(--a);flex:0;padding:8px 14px;"><span class="ic">💡</span>Mẹo</button>
+  </div>
+</nav>
+
+<!-- FILTER (Scan + Drill) -->
+<div class="frow" id="frow">
+  <button class="chip hot on" data-f="work" onclick="setF(this)">💼 Công việc <small>29</small></button>
+  <button class="chip" data-f="health" onclick="setF(this)">🏥 Sức khoẻ <small>30</small></button>
+  <button class="chip" data-f="emotion" onclick="setF(this)">😊 Cảm xúc <small>29</small></button>
+  <button class="chip" data-f="action" onclick="setF(this)">🏃 Hành động <small>30</small></button>
+  <button class="chip" data-f="communication" onclick="setF(this)">💬 Giao tiếp <small>29</small></button>
+  <button class="chip" data-f="life" onclick="setF(this)">🏠 Cuộc sống <small>31</small></button>
+  <button class="chip" data-f="transport" onclick="setF(this)">🚃 Di chuyển <small>30</small></button>
+  <button class="chip" data-f="nature" onclick="setF(this)">🌿 Tự nhiên <small>30</small></button>
+  <button class="chip" data-f="society" onclick="setF(this)">💰 Xã hội <small>30</small></button>
+  <button class="chip" data-f="traits" onclick="setF(this)">🔤 Đặc điểm <small>27</small></button>
+  <button class="chip" data-f="all" onclick="setF(this)">すべて <small>295</small></button>
+</div>
+
+
+<!-- ═══ SCAN ═══ -->
+<div id="pg-scan" class="pg on">
+  <div class="scan-bar">
+    <div class="scan-info" id="si">Lướt qua · nhớ kanji + cách đọc · ★頻出 = hay ra thi</div>
+    <div class="scan-num" id="sn">0/0</div>
+  </div>
+  <div class="prog"><div class="pf" id="spf"></div></div>
+  <div class="sgrid" id="sg"></div>
+  <div class="pager">
+    <button class="pbtn" id="pp" onclick="pgMv(-1)">← Trước</button>
+    <button class="pbtn pr" onclick="goTab('drill')">⚡ Drill ngay</button>
+    <button class="pbtn" id="pn" onclick="pgMv(1)">Sau →</button>
+  </div>
+</div>
+
+<!-- ═══ DRILL ═══ -->
+<div id="pg-drill" class="pg">
+  <div class="dw">
+    <div class="dhd">
+      <div class="dpw"><div class="dpf" id="dpf"></div></div>
+      <div class="dcnt" id="dcnt">0/0</div>
+      <div class="dsc" id="dsc">★ 0</div>
+    </div>
+    <div class="dleg">
+      <div class="dl"><div class="dlc" style="background:var(--b)"></div>Đọc kanji</div>
+      <div class="dl"><div class="dlc" style="background:var(--a)"></div>Chọn kanji</div>
+      <div class="dl"><div class="dlc" style="background:var(--g)"></div>Chọn nghĩa</div>
+    </div>
+    <div class="dtw"><div class="dtb" id="dtb">DẠNG</div></div>
+    <div class="dqc">
+      <div class="dqt" id="dqt">
+        <button class="htb" onclick="togHint()">💡 Gợi ý</button>
+        <div class="dqs" id="dqs"></div>
+        <div class="dqm" id="dqm"></div>
+        <div class="dqsub" id="dqsub"></div>
+      </div>
+      <div class="dqb" id="dqb"></div>
+    </div>
+    <div class="hbox" id="hbox"></div>
+    <div class="dopts" id="dopts"></div>
+    <div class="dfb" id="dfb"></div>
+<button class="dnxt-btn" id="dnxt" style="display:none" onclick="dNext()">Tiếp theo →</button>
+    <div class="dres" id="dres">
+      <div class="dremo" id="dremo">🏆</div>
+      <div class="drsc" id="drsc">0/0</div>
+      <div class="drsub" id="drsub"></div>
+      <div class="drstats">
+        <div class="drst"><div class="n" id="drok" style="color:var(--g)">0</div><div class="l">Đúng</div></div>
+        <div class="drst"><div class="n" id="drng" style="color:var(--r)">0</div><div class="l">Sai</div></div>
+        <div class="drst"><div class="n" id="drcb" style="color:var(--a)">0</div><div class="l">Combo</div></div>
+      </div>
+      <div class="drbtns">
+        <button class="drbtn ou" onclick="goTab('scan')">👁 Scan lại</button>
+        <button class="drbtn pr" onclick="startDrill()">🔄 Drill lại</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EXAM ═══ -->
+<div id="pg-exam" class="pg">
+  <!-- Exam list -->
+  <div id="elist">
+    <div style="padding:10px 14px 4px;font-size:.75rem;font-weight:800;color:var(--muted);">Chọn đề thi (問題1 + 問題2)</div>
+    <div class="egrid" id="egrid"></div>
+  </div>
+  <!-- Exam taking -->
+  <div id="etake" style="display:none">
+    <div class="exam-wrap">
+      <div class="exam-hd">
+        <button class="exam-back" onclick="backExam()">←</button>
+        <div class="exam-title" id="etitle">Đề 7-2016</div>
+        <div class="exam-prog" id="eprog">1/14</div>
+      </div>
+      <div class="eq-wrap">
+        <div class="eq-type" id="eqtype">問題1</div>
+        <div class="eq-sent" id="eqsent"></div>
+        <div class="eopts" id="eopts"></div>
+        <div class="efb" id="efb"></div>
+        <button class="enxt" id="enxt" onclick="nextEQ()">次へ →</button>
+      </div>
+    </div>
+  </div>
+  <!-- Exam result -->
+  <div id="eres" style="display:none">
+    <div class="exam-res">
+      <div class="erem" id="erem">🏆</div>
+      <div class="ersc" id="ersc">0/0</div>
+      <div class="ersub" id="ersub"></div>
+      <div class="erstats">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const KANJI_DB = [{"k": "出張", "on": {"word": "出張", "read": "しゅっちょう", "meaning": "công tác"}, "kun": {"word": "", "read": "", "meaning": "しゅっ+ちょう"}, "vn": "công tác", "hv": "XUẤT TRƯƠNG", "freq": 1, "group": "work", "type": "m1", "exp": "出張(しゅっちょう)= công tác. しゅっ+ちょう"}, {"k": "残業", "on": {"word": "残業", "read": "ざんぎょう", "meaning": "tăng ca"}, "kun": {"word": "残", "read": "ざん", "meaning": "còn + 業"}, "vn": "tăng ca", "hv": "TÀN NGHIỆP", "freq": 1, "group": "work", "type": "m2", "exp": "残業(ざんぎょう)= tăng ca. 残(ざん)=còn + 業(ぎょう)=việc"}, {"k": "通勤", "on": {"word": "通勤", "read": "つうきん", "meaning": "đi làm"}, "kun": {"word": "勤務", "read": "きんむ", "meaning": "công vụ"}, "vn": "đi làm", "hv": "THÔNG CẦN", "freq": 2, "group": "work", "type": "m1", "exp": "通勤(つうきん)= đi làm. 通(つう)+勤(きん). Nhớ: 勤務(きんむ)=công vụ"}, {"k": "営業", "on": {"word": "営業", "read": "えいぎょう", "meaning": "kinh doanh"}, "kun": {"word": "", "read": "", "meaning": ""}, "vn": "kinh doanh", "hv": "DOANH NGHIỆP", "freq": 1, "group": "work", "type": "m1", "exp": "営業(えいぎょう)=kinh doanh"}, {"k": "経営学", "on": {"word": "経営学", "read": "けいえいがく", "meaning": "kinh doanh học"}, "kun": {"word": "", "read": "", "meaning": "けいえい không phải けいざい(経済)"}, "vn": "kinh doanh học", "hv": "KINH DOANH HỌC", "freq": 2, "group": "work", "type": "m1", "exp": "経営学(けいえいがく)= kinh doanh học. けいえい không phải けいざい(経済)"}, {"k": "勤めて", "on": {"word": "勤めて", "read": "つとめて", "meaning": "làm việc"}, "kun": {"word": "勤める", "read": "つとめる", "meaning": "làm việc"}, "vn": "làm việc", "hv": "CẦN", "freq": 1, "group": "work", "type": "m2", "exp": "勤める(つとめる)= làm việc. 勤務(きんむ)=công vụ"}, {"k": "出勤", "on": {"word": "出勤", "read": "しゅっきん", "meaning": "đi làm"}, "kun": {"word": "", "read": "", "meaning": "出(しゅっ)+勤(きん)"}, "vn": "đi làm", "hv": "XUẤT CẦN", "freq": 1, "group": "work", "type": "m2", "exp": "出勤(しゅっきん)= đi làm. 出(しゅっ)+勤(きん)"}, {"k": "訓練", "on": {"word": "訓練", "read": "くんれん", "meaning": "huấn luyện"}, "kun": {"word": "", "read": "", "meaning": "くん không phải ぐん, れん không phả"}, "vn": "huấn luyện", "hv": "HUẤN LUYỆN", "freq": 2, "group": "work", "type": "m1", "exp": "訓練(くんれん)= huấn luyện. くん không phải ぐん, れん không phải れい"}, {"k": "制服", "on": {"word": "制服", "read": "せいふく", "meaning": "đồng phục"}, "kun": {"word": "", "read": "", "meaning": "せい+ふく"}, "vn": "đồng phục", "hv": "CHẾ PHỤC", "freq": 1, "group": "work", "type": "m1", "exp": "制服(せいふく)= đồng phục. せい+ふく"}, {"k": "分類", "on": {"word": "分類", "read": "ぶんるい", "meaning": "phân loại"}, "kun": {"word": "", "read": "", "meaning": "ぶん+るい"}, "vn": "phân loại", "hv": "PHÂN LOẠI", "freq": 1, "group": "work", "type": "m1", "exp": "分類(ぶんるい)= phân loại. ぶん+るい"}, {"k": "申し込み", "on": {"word": "申し込み", "read": "もうしこみ", "meaning": "đăng ký"}, "kun": {"word": "", "read": "", "meaning": "もうし không phải もし"}, "vn": "đăng ký", "hv": "THÂN", "freq": 2, "group": "work", "type": "m1", "exp": "申し込み(もうしこみ)= đăng ký. もうし không phải もし"}, {"k": "郵送", "on": {"word": "郵送", "read": "ゆうそう", "meaning": "gửi bưu điện"}, "kun": {"word": "郵便", "read": "ゆうびん", "meaning": "bưu điện"}, "vn": "gửi bưu điện", "hv": "BƯU TỐNG", "freq": 2, "group": "work", "type": "m1", "exp": "郵送(ゆうそう)= gửi bưu điện. ゆう+そう. Nhớ: 郵便(ゆうびん)=bưu điện"}, {"k": "広告", "on": {"word": "広告", "read": "こうこく", "meaning": "quảng cáo"}, "kun": {"word": "", "read": "", "meaning": "広(こう)+告(こく)"}, "vn": "quảng cáo", "hv": "QUẢNG CÁO", "freq": 1, "group": "work", "type": "m1", "exp": "広告(こうこく)= quảng cáo. 広(こう)+告(こく)"}, {"k": "通知", "on": {"word": "通知", "read": "つうち", "meaning": "thông báo"}, "kun": {"word": "", "read": "", "meaning": "通(つう)+知(ち)"}, "vn": "thông báo", "hv": "THÔNG TRI", "freq": 1, "group": "work", "type": "m1", "exp": "通知(つうち)= thông báo. 通(つう)+知(ち)"}, {"k": "命令", "on": {"word": "命令", "read": "めいれい", "meaning": "mệnh lệnh"}, "kun": {"word": "", "read": "", "meaning": "めい+れい"}, "vn": "mệnh lệnh", "hv": "MỆNH LỆNH", "freq": 1, "group": "work", "type": "m1", "exp": "命令(めいれい)= mệnh lệnh. めい+れい"}, {"k": "記録", "on": {"word": "記録", "read": "きろく", "meaning": "ghi chép"}, "kun": {"word": "記", "read": "き", "meaning": "ghi + 録"}, "vn": "ghi chép", "hv": "KÝ LỤC", "freq": 1, "group": "work", "type": "m2", "exp": "記録(きろく)= ghi chép. 記(き)=ghi + 録(ろく)=lưu"}, {"k": "文章", "on": {"word": "文章", "read": "ぶんしょう", "meaning": "văn bản"}, "kun": {"word": "", "read": "", "meaning": "ぶんしょう không phải ぶんそう"}, "vn": "văn bản", "hv": "VĂN CHƯƠNG", "freq": 2, "group": "work", "type": "m1", "exp": "文章(ぶんしょう)= văn bản. ぶんしょう không phải ぶんそう"}, {"k": "黒板", "on": {"word": "黒板", "read": "こくばん", "meaning": "bảng đen"}, "kun": {"word": "黒", "read": "こく", "meaning": "đen + 板"}, "vn": "bảng đen", "hv": "BẢNG ĐEN", "freq": 1, "group": "work", "type": "m2", "exp": "黒板(こくばん)= bảng đen. 黒(こく)=đen + 板(ばん)=tấm"}, {"k": "教師", "on": {"word": "教師", "read": "きょうし", "meaning": "giáo viên"}, "kun": {"word": "教", "read": "きょう", "meaning": "dạy + 師"}, "vn": "giáo viên", "hv": "GIÁO SƯ", "freq": 1, "group": "work", "type": "m2", "exp": "教師(きょうし)= giáo viên. 教(きょう)=dạy + 師(し)=thầy"}, {"k": "準備", "on": {"word": "準備", "read": "じゅんび", "meaning": "chuẩn bị"}, "kun": {"word": "", "read": "", "meaning": ""}, "vn": "chuẩn bị", "hv": "CHUẨN BỊ", "freq": 1, "group": "work", "type": "m1", "exp": "準備(じゅんび)=chuẩn bị"}, {"k": "大会", "on": {"word": "大会", "read": "たいかい", "meaning": "đại hội"}, "kun": {"word": "", "read": "", "meaning": "たい+かい"}, "vn": "đại hội", "hv": "ĐẠI HỘI", "freq": 1, "group": "work", "type": "m1", "exp": "大会(たいかい)= đại hội. たい+かい"}, {"k": "集中", "on": {"word": "集中", "read": "しゅうちゅう", "meaning": "tập trung"}, "kun": {"word": "", "read": "", "meaning": "しゅう+ちゅう"}, "vn": "tập trung", "hv": "TẬP TRUNG", "freq": 1, "group": "work", "type": "m1", "exp": "集中(しゅうちゅう)= tập trung. しゅう+ちゅう"}, {"k": "相談", "on": {"word": "相談", "read": "そうだん", "meaning": "thảo luận"}, "kun": {"word": "", "read": "", "meaning": "そう+だん"}, "vn": "thảo luận", "hv": "TƯƠNG ĐÀM", "freq": 1, "group": "work", "type": "m1", "exp": "相談(そうだん)= thảo luận. そう+だん"}, {"k": "直接", "on": {"word": "直接", "read": "ちょくせつ", "meaning": "trực tiếp"}, "kun": {"word": "直す", "read": "なおす", "meaning": "sửa"}, "vn": "trực tiếp", "hv": "TRỰC TIẾP", "freq": 2, "group": "work", "type": "m1", "exp": "直接(ちょくせつ)= trực tiếp. ちょく+せつ. Nhớ: 直す(なおす)=sửa"}, {"k": "動作", "on": {"word": "動作", "read": "どうさ", "meaning": "động tác"}, "kun": {"word": "動", "read": "どう", "meaning": "động + 作"}, "vn": "động tác", "hv": "ĐỘNG TÁC", "freq": 2, "group": "work", "type": "m1", "exp": "動作(どうさ)= động tác. どう+さ. Nhớ: 動(どう)=động + 作(さ)=tác"}, {"k": "使用", "on": {"word": "使用", "read": "しよう", "meaning": "sử dụng"}, "kun": {"word": "", "read": "", "meaning": ""}, "vn": "sử dụng", "hv": "SỬ DỤNG", "freq": 1, "group": "work", "type": "m1", "exp": "使用(しよう)=sử dụng"}, {"k": "予約", "on": {"word": "予約", "read": "よやく", "meaning": "đặt trước"}, "kun": {"word": "", "read": "", "meaning": "よ+やく"}, "vn": "đặt trước", "hv": "DỰ ƯỚC", "freq": 1, "group": "work", "type": "m1", "exp": "予約(よやく)= đặt trước. よ+やく. Không phải ようやく(ようやく=rốt cuộc)"}, {"k": "配った", "on": {"word": "配った", "read": "くばった", "meaning": "phân phát"}, "kun": {"word": "配る", "read": "くばる", "meaning": "phân phát"}, "vn": "phân phát", "hv": "PHÂN PHỐI", "freq": 2, "group": "work", "type": "m1", "exp": "配る(くばる)= phân phát. 配達(はいたつ)=giao hàng. Nhớ: くば không phải ひろ"}, {"k": "配って", "on": {"word": "配って", "read": "くばって", "meaning": "phân phát"}, "kun": {"word": "配る", "read": "くばる", "meaning": "phân phát"}, "vn": "phân phát", "hv": "PHÂN PHỐI", "freq": 1, "group": "work", "type": "m1", "exp": "配る(くばる)= phân phát. 配達(はいたつ)=giao hàng"}, {"k": "健康", "on": {"word": "健康", "read": "けんこう", "meaning": "sức khỏe"}, "kun": {"word": "", "read": "", "meaning": "けん+こう"}, "vn": "sức khỏe", "hv": "KHỎE MẠNH", "freq": 1, "group": "health", "type": "m1", "exp": "健康(けんこう)= sức khỏe. けん+こう"}, {"k": "手術", "on": {"word": "手術", "read": "しゅじゅつ", "meaning": "phẫu thuật"}, "kun": {"word": "", "read": "", "meaning": "しゅ+じゅつ"}, "vn": "phẫu thuật", "hv": "THỦ THUẬT", "freq": 1, "group": "health", "type": "m1", "exp": "手術(しゅじゅつ)= phẫu thuật. しゅ+じゅつ. Không phải しゅうじゅつ"}, {"k": "回復", "on": {"word": "回復", "read": "かいふく", "meaning": "hồi phục"}, "kun": {"word": "復習", "read": "ふくしゅう", "meaning": "ôn bài"}, "vn": "hồi phục", "hv": "HỒI PHỤC", "freq": 2, "group": "health", "type": "m2", "exp": "回復(かいふく)= hồi phục. 回(かい)+復(ふく). Nhớ: 復習(ふくしゅう)=ôn bài"}, {"k": "呼吸", "on": {"word": "呼吸", "read": "こきゅう", "meaning": "hô hấp"}, "kun": {"word": "", "read": "", "meaning": "こ không phải よ hay わ"}, "vn": "hô hấp", "hv": "HÔ HẤP", "freq": 2, "group": "health", "type": "m1", "exp": "呼吸(こきゅう)= hô hấp. こ không phải よ hay わ"}, {"k": "血液", "on": {"word": "血液", "read": "けつえき", "meaning": "máu"}, "kun": {"word": "液", "read": "えき", "meaning": "chất lỏng"}, "vn": "máu", "hv": "HUYẾT DỊCH", "freq": 1, "group": "health", "type": "m2", "exp": "血液(けつえき)= máu. 血(けつ)+液(えき)=chất lỏng"}, {"k": "血液型", "on": {"word": "血液型", "read": "けつえきがた", "meaning": "nhóm máu"}, "kun": {"word": "", "read": "", "meaning": "けつ+えき+がた"}, "vn": "nhóm máu", "hv": "HUYẾT DỊCH HÌNH", "freq": 1, "group": "health", "type": "m1", "exp": "血液型(けつえきがた)= nhóm máu. けつ+えき+がた"}, {"k": "血圧", "on": {"word": "血圧", "read": "けつあつ", "meaning": "huyết áp"}, "kun": {"word": "", "read": "", "meaning": "けつ+あつ"}, "vn": "huyết áp", "hv": "HUYẾT ÁP", "freq": 1, "group": "health", "type": "m1", "exp": "血圧(けつあつ)= huyết áp. けつ+あつ"}, {"k": "疲れ", "on": {"word": "疲れ", "read": "つかれ", "meaning": "mệt mỏi"}, "kun": {"word": "疲労", "read": "ひろう", "meaning": "mệt mỏi"}, "vn": "mệt mỏi", "hv": "MỆT MỎI", "freq": 1, "group": "health", "type": "m2", "exp": "疲れ(つかれ)= mệt mỏi. 疲労(ひろう)=mệt mỏi"}, {"k": "疲れた", "on": {"word": "疲れた", "read": "つかれた", "meaning": "mệt"}, "kun": {"word": "疲れる", "read": "つかれる", "meaning": "mệt"}, "vn": "mệt", "hv": "MỆT MỎI", "freq": 1, "group": "health", "type": "m1", "exp": "疲れる(つかれる)= mệt. 疲労(ひろう)=mệt mỏi"}, {"k": "疲れました", "on": {"word": "疲れました", "read": "つかれました", "meaning": "mệt mỏi"}, "kun": {"word": "疲れる", "read": "つかれる", "meaning": "mệt mỏi"}, "vn": "mệt mỏi", "hv": "MỆT MỎI", "freq": 1, "group": "health", "type": "m2", "exp": "疲れる(つかれる)= mệt mỏi. 疲労(ひろう)=mệt mỏi"}, {"k": "頭痛", "on": {"word": "頭痛", "read": "ずつう", "meaning": "đau đầu"}, "kun": {"word": "頭", "read": "ず", "meaning": "đầu + 痛"}, "vn": "đau đầu", "hv": "ĐẦU THỐNG", "freq": 1, "group": "health", "type": "m2", "exp": "頭痛(ずつう)= đau đầu. 頭(ず)=đầu + 痛(つう)=đau"}, {"k": "外科", "on": {"word": "外科", "read": "げか", "meaning": "khoa ngoại"}, "kun": {"word": "", "read": "", "meaning": "げか không phải がいか"}, "vn": "khoa ngoại", "hv": "NGOẠI KHOA", "freq": 2, "group": "health", "type": "m1", "exp": "外科(げか)= khoa ngoại. げか không phải がいか"}, {"k": "胃", "on": {"word": "胃", "read": "い", "meaning": "dạ dày"}, "kun": {"word": "胃腸", "read": "いちょう", "meaning": "dạ dày ruột"}, "vn": "dạ dày", "hv": "VỊ", "freq": 2, "group": "health", "type": "m2", "exp": "胃(い)= dạ dày. Kun reading của 胃. Nhớ: 胃腸(いちょう)=dạ dày ruột"}, {"k": "腰", "on": {"word": "腰", "read": "こし", "meaning": "lưng/hông"}, "kun": {"word": "", "read": "", "meaning": "Kun reading của 腰"}, "vn": "lưng/hông", "hv": "YÊU", "freq": 1, "group": "health", "type": "m2", "exp": "腰(こし)= lưng/hông. Kun reading của 腰"}, {"k": "歯", "on": {"word": "歯", "read": "は", "meaning": "răng"}, "kun": {"word": "歯医者", "read": "はいしゃ", "meaning": "nha sĩ"}, "vn": "răng", "hv": "XỈ", "freq": 2, "group": "health", "type": "m2", "exp": "歯(は)= răng. Kun reading của 歯. Nhớ: 歯医者(はいしゃ)=nha sĩ"}, {"k": "身長", "on": {"word": "身長", "read": "しんちょう", "meaning": "chiều cao"}, "kun": {"word": "", "read": "", "meaning": "身(しん)+長(ちょう)"}, "vn": "chiều cao", "hv": "THÂN TRƯỞNG", "freq": 1, "group": "health", "type": "m2", "exp": "身長(しんちょう)= chiều cao. 身(しん)+長(ちょう)"}, {"k": "汗", "on": {"word": "汗", "read": "あせ", "meaning": "mồ hôi"}, "kun": {"word": "発汗", "read": "はっかん", "meaning": "đổ mồ hôi"}, "vn": "mồ hôi", "hv": "HÃN", "freq": 2, "group": "health", "type": "m1", "exp": "汗(あせ)= mồ hôi. Kun reading của 汗. Nhớ: 発汗(はっかん)=đổ mồ hôi"}, {"k": "眠って", "on": {"word": "眠って", "read": "ねむって", "meaning": "ngủ"}, "kun": {"word": "眠る", "read": "ねむる", "meaning": "ngủ"}, "vn": "ngủ", "hv": "MIÊN", "freq": 1, "group": "health", "type": "m2", "exp": "眠る(ねむる)= ngủ. 睡眠(すいみん)=giấc ngủ"}, {"k": "禁煙", "on": {"word": "禁煙", "read": "きんえん", "meaning": "cấm hút thuốc"}, "kun": {"word": "禁", "read": "きん", "meaning": "cấm + 煙"}, "vn": "cấm hút thuốc", "hv": "CẤM YỂNCẤM", "freq": 1, "group": "health", "type": "m1", "exp": "禁煙(きんえん)= cấm hút thuốc. 禁(きん)=cấm + 煙(えん)=khói"}, {"k": "煙", "on": {"word": "煙", "read": "けむり", "meaning": "khói"}, "kun": {"word": "禁煙", "read": "きんえん", "meaning": "cấm hút thuốc"}, "vn": "khói", "hv": "YÊN", "freq": 1, "group": "health", "type": "m2", "exp": "煙(けむり)= khói. Kun reading của 煙. 禁煙(きんえん)=cấm hút thuốc"}, {"k": "燃えにくい", "on": {"word": "燃えにくい", "read": "もえにくい", "meaning": "cháy"}, "kun": {"word": "燃える", "read": "もえる", "meaning": "cháy"}, "vn": "cháy", "hv": "NHIÊN", "freq": 1, "group": "health", "type": "m1", "exp": "燃える(もえる)= cháy. 燃料(ねんりょう)=nhiên liệu"}, {"k": "焼いて", "on": {"word": "焼いて", "read": "やいて", "meaning": "nướng"}, "kun": {"word": "焼く", "read": "やく", "meaning": "nướng"}, "vn": "nướng", "hv": "THIÊU", "freq": 1, "group": "health", "type": "m2", "exp": "焼く(やく)= nướng. 焼肉(やきにく)=thịt nướng"}, {"k": "加熱", "on": {"word": "加熱", "read": "かねつ", "meaning": "đun nóng"}, "kun": {"word": "加", "read": "か", "meaning": "thêm + 熱"}, "vn": "đun nóng", "hv": "GIA NHIỆT", "freq": 2, "group": "health", "type": "m1", "exp": "加熱(かねつ)= đun nóng. か+ねつ. Nhớ: 加(か)=thêm + 熱(ねつ)=nhiệt"}, {"k": "温まって", "on": {"word": "温まって", "read": "もえて", "meaning": "ấm lên"}, "kun": {"word": "温まる", "read": "あたたまる", "meaning": "ấm lên"}, "vn": "ấm lên", "hv": "ÔN", "freq": 1, "group": "health", "type": "m1", "exp": "Câu hỏi về 温まる(あたたまる)= ấm lên"}, {"k": "温めました", "on": {"word": "温めました", "read": "あたためました", "meaning": "hâm nóng"}, "kun": {"word": "温める", "read": "あたためる", "meaning": "hâm nóng"}, "vn": "hâm nóng", "hv": "ÔN NOÃN", "freq": 1, "group": "health", "type": "m2", "exp": "温める(あたためる)= hâm nóng. 温泉(おんせん)=suối nóng"}, {"k": "温泉", "on": {"word": "温泉", "read": "おんせん", "meaning": "suối nước nóng"}, "kun": {"word": "温", "read": "おん", "meaning": "ấm + 泉"}, "vn": "suối nước nóng", "hv": "ÔN TUYỀN", "freq": 1, "group": "health", "type": "m2", "exp": "温泉(おんせん)= suối nước nóng. 温(おん)=ấm + 泉(せん)=suối"}, {"k": "冷えて", "on": {"word": "冷えて", "read": "ひえて", "meaning": "lạnh đi"}, "kun": {"word": "冷える", "read": "ひえる", "meaning": "lạnh đi"}, "vn": "lạnh đi", "hv": "LÃNH", "freq": 1, "group": "health", "type": "m2", "exp": "冷える(ひえる)= lạnh đi. 冷蔵庫(れいぞうこ)=tủ lạnh"}, {"k": "薬局", "on": {"word": "薬局", "read": "やっきょく", "meaning": "hiệu thuốc"}, "kun": {"word": "", "read": "", "meaning": "薬(やく→やっ)+局(きょく)"}, "vn": "hiệu thuốc", "hv": "DƯỢC CỤC", "freq": 2, "group": "health", "type": "m2", "exp": "薬局(やっきょく)= hiệu thuốc. 薬(やく→やっ)+局(きょく). Nhớ: 薬≠楽"}, {"k": "検査", "on": {"word": "検査", "read": "けんさ", "meaning": "kiểm tra"}, "kun": {"word": "検", "read": "けん", "meaning": "kiểm + 査"}, "vn": "kiểm tra", "hv": "KIỂM TRA", "freq": 1, "group": "health", "type": "m1", "exp": "検査(けんさ)= kiểm tra. 検(けん)=kiểm + 査(さ)=tra"}, {"k": "退院", "on": {"word": "退院", "read": "たいいん", "meaning": "xuất viện"}, "kun": {"word": "", "read": "", "meaning": "退(たい)+院(いん)"}, "vn": "xuất viện", "hv": "THOÁI VIỆN", "freq": 1, "group": "health", "type": "m2", "exp": "退院(たいいん)= xuất viện. 退(たい)+院(いん)"}, {"k": "感動的", "on": {"word": "感動的", "read": "かんどうてき", "meaning": "cảm động"}, "kun": {"word": "", "read": "", "meaning": ""}, "vn": "cảm động", "hv": "CẢM ĐỘNG", "freq": 1, "group": "emotion", "type": "m1", "exp": "感動的(かんどうてき)=cảm động"}, {"k": "感情的", "on": {"word": "感情的", "read": "かんじょうてき", "meaning": "cảm tính"}, "kun": {"word": "感情", "read": "かんじょう", "meaning": "cảm xúc"}, "vn": "cảm tính", "hv": "CẢM TÌNH", "freq": 2, "group": "emotion", "type": "m1", "exp": "感情的(かんじょうてき)= cảm tính. かんじょう+てき. Nhớ: 感情(かんじょう)=cảm xúc"}, {"k": "心配", "on": {"word": "心配", "read": "しんぱい", "meaning": "lo lắng"}, "kun": {"word": "心", "read": "しん", "meaning": "tâm + 配"}, "vn": "lo lắng", "hv": "TÂM PHỐI", "freq": 1, "group": "emotion", "type": "m2", "exp": "心配(しんぱい)= lo lắng. 心(しん)=tâm + 配(ぱい)=lo"}, {"k": "勇気", "on": {"word": "勇気", "read": "ゆうき", "meaning": "dũng cảm"}, "kun": {"word": "勇", "read": "ゆう", "meaning": "dũng + 気"}, "vn": "dũng cảm", "hv": "DŨNG KHÍ", "freq": 1, "group": "emotion", "type": "m1", "exp": "勇気(ゆうき)= dũng cảm. 勇(ゆう)=dũng + 気(き)=khí"}, {"k": "努力", "on": {"word": "努力", "read": "どりょく", "meaning": "nỗ lực"}, "kun": {"word": "", "read": "", "meaning": "ど không phải と hay きょう"}, "vn": "nỗ lực", "hv": "NỖ LỰC", "freq": 2, "group": "emotion", "type": "m1", "exp": "努力(どりょく)= nỗ lực. ど không phải と hay きょう"}, {"k": "丈夫", "on": {"word": "丈夫", "read": "じょうぶ", "meaning": "chắc chắn/khỏe mạnh"}, "kun": {"word": "", "read": "", "meaning": "じょう+ぶ"}, "vn": "chắc chắn/khỏe mạnh", "hv": "TRƯỢNG PHU", "freq": 1, "group": "emotion", "type": "m1", "exp": "丈夫(じょうぶ)= chắc chắn/khỏe mạnh. じょう+ぶ"}, {"k": "上品", "on": {"word": "上品", "read": "じょうひん", "meaning": "thanh lịch"}, "kun": {"word": "", "read": "", "meaning": "じょう+ひん"}, "vn": "thanh lịch", "hv": "THƯỢNG PHẨM", "freq": 1, "group": "emotion", "type": "m1", "exp": "上品(じょうひん)= thanh lịch. じょう+ひん"}, {"k": "恋しい", "on": {"word": "恋しい", "read": "なつかしい", "meaning": "nhớ nhung"}, "kun": {"word": "恋愛", "read": "れんあい", "meaning": "tình yêu"}, "vn": "nhớ nhung", "hv": "LUYẾN", "freq": 2, "group": "emotion", "type": "m1", "exp": "恋しい(こいしい)= nhớ nhung. Nhớ: 恋愛(れんあい)=tình yêu"}, {"k": "恋しく", "on": {"word": "恋しく", "read": "こいしく", "meaning": "nhớ nhung"}, "kun": {"word": "恋しい", "read": "こいしい", "meaning": "nhớ nhung"}, "vn": "nhớ nhung", "hv": "LUYẾN", "freq": 1, "group": "emotion", "type": "m2", "exp": "恋しい(こいしい)= nhớ nhung. 恋愛(れんあい)=tình yêu"}, {"k": "悲しい", "on": {"word": "悲しい", "read": "かなしい", "meaning": "buồn"}, "kun": {"word": "悲劇", "read": "ひげき", "meaning": "bi kịch"}, "vn": "buồn", "hv": "BI", "freq": 1, "group": "emotion", "type": "m1", "exp": "悲しい(かなしい)= buồn. 悲劇(ひげき)=bi kịch"}, {"k": "悲しそう", "on": {"word": "悲しそう", "read": "かなしそう", "meaning": "buồn"}, "kun": {"word": "悲しい", "read": "かなしい", "meaning": "buồn"}, "vn": "buồn", "hv": "BI", "freq": 1, "group": "emotion", "type": "m1", "exp": "悲しい(かなしい)= buồn. 悲劇(ひげき)=bi kịch"}, {"k": "苦しい", "on": {"word": "苦しい", "read": "くるしい", "meaning": "khổ sở"}, "kun": {"word": "苦労", "read": "くろう", "meaning": "vất vả"}, "vn": "khổ sở", "hv": "KHỔ", "freq": 1, "group": "emotion", "type": "m1", "exp": "苦しい(くるしい)= khổ sở. 苦労(くろう)=vất vả"}, {"k": "得意", "on": {"word": "得意", "read": "とくい", "meaning": "giỏi/sở trường"}, "kun": {"word": "", "read": "", "meaning": "と+くい"}, "vn": "giỏi/sở trường", "hv": "ĐẮC Ý", "freq": 1, "group": "emotion", "type": "m1", "exp": "得意(とくい)= giỏi/sở trường. と+くい"}, {"k": "性格", "on": {"word": "性格", "read": "せいかく", "meaning": "tính cách"}, "kun": {"word": "性", "read": "せい", "meaning": "tính + 格"}, "vn": "tính cách", "hv": "TÍNH CÁCH", "freq": 1, "group": "emotion", "type": "m2", "exp": "性格(せいかく)= tính cách. 性(せい)=tính + 格(かく)=cách"}, {"k": "印象", "on": {"word": "印象", "read": "いんしょう", "meaning": "ấn tượng"}, "kun": {"word": "", "read": "", "meaning": "いん+しょう"}, "vn": "ấn tượng", "hv": "ẤN TƯỢNG", "freq": 2, "group": "emotion", "type": "m1", "exp": "印象(いんしょう)= ấn tượng. いん+しょう. いん không phải にん"}, {"k": "想像", "on": {"word": "想像", "read": "そうぞう", "meaning": "tưởng tượng"}, "kun": {"word": "", "read": "", "meaning": "そう+ぞう"}, "vn": "tưởng tượng", "hv": "TƯỞNG TƯỢNG", "freq": 1, "group": "emotion", "type": "m1", "exp": "想像(そうぞう)= tưởng tượng. そう+ぞう"}, {"k": "自信", "on": {"word": "自信", "read": "じしん", "meaning": "tự tin"}, "kun": {"word": "自", "read": "じ", "meaning": "tự + 信"}, "vn": "tự tin", "hv": "TỰ TÍN", "freq": 2, "group": "emotion", "type": "m2", "exp": "自信(じしん)= tự tin. 自(じ)=tự + 信(しん)=tin. Nhớ: 自信(じしん)≠地震(じしん)=động đất"}, {"k": "熱心", "on": {"word": "熱心", "read": "ねっしん", "meaning": "nhiệt tình"}, "kun": {"word": "", "read": "", "meaning": "熱(ねつ→ねっ)+心(しん)"}, "vn": "nhiệt tình", "hv": "NHIỆT TÂM", "freq": 1, "group": "emotion", "type": "m2", "exp": "熱心(ねっしん)= nhiệt tình. 熱(ねつ→ねっ)+心(しん)"}, {"k": "満足", "on": {"word": "満足", "read": "まんぞく", "meaning": "hài lòng"}, "kun": {"word": "満", "read": "まん", "meaning": "đầy + 足"}, "vn": "hài lòng", "hv": "MÃN TÚC", "freq": 1, "group": "emotion", "type": "m2", "exp": "満足(まんぞく)= hài lòng. 満(まん)=đầy + 足(ぞく)=đủ"}, {"k": "期待", "on": {"word": "期待", "read": "きたい", "meaning": "kỳ vọng"}, "kun": {"word": "期", "read": "き", "meaning": "kỳ + 待"}, "vn": "kỳ vọng", "hv": "KỲ ĐÃI", "freq": 1, "group": "emotion", "type": "m2", "exp": "期待(きたい)= kỳ vọng. 期(き)=kỳ + 待(たい)=đợi"}, {"k": "疑って", "on": {"word": "疑って", "read": "うたがって", "meaning": "nghi ngờ"}, "kun": {"word": "疑う", "read": "うたがう", "meaning": "nghi ngờ"}, "vn": "nghi ngờ", "hv": "NGHI", "freq": 1, "group": "emotion", "type": "m1", "exp": "疑う(うたがう)= nghi ngờ. 疑問(ぎもん)=nghi vấn"}, {"k": "守る", "on": {"word": "守る", "read": "まもる", "meaning": "giữ gìn/bảo vệ"}, "kun": {"word": "守", "read": "しゅ", "meaning": "thủ"}, "vn": "giữ gìn/bảo vệ", "hv": "THỦ", "freq": 2, "group": "emotion", "type": "m2", "exp": "守る(まもる)= giữ gìn/bảo vệ. 守(まも)+る. Nhớ: 守(しゅ)=thủ"}, {"k": "願って", "on": {"word": "願って", "read": "ねがっている", "meaning": "cầu xin/ước"}, "kun": {"word": "願う", "read": "ねがう", "meaning": "cầu xin/ước"}, "vn": "cầu xin/ước", "hv": "NGUYỆN", "freq": 1, "group": "emotion", "type": "m2", "exp": "願う(ねがう)= cầu xin/ước. 願望(がんぼう)=ước muốn"}, {"k": "正しかった", "on": {"word": "正しかった", "read": "ただしかった", "meaning": "đúng"}, "kun": {"word": "正しい", "read": "ただしい", "meaning": "đúng"}, "vn": "đúng", "hv": "CHÍNH", "freq": 1, "group": "emotion", "type": "m1", "exp": "正しい(ただしい)= đúng. 正解(せいかい)=đáp án đúng"}, {"k": "独身", "on": {"word": "独身", "read": "どくしん", "meaning": "độc thân"}, "kun": {"word": "独", "read": "どく", "meaning": "một mình + 身"}, "vn": "độc thân", "hv": "ĐỘC THÂN", "freq": 1, "group": "emotion", "type": "m2", "exp": "独身(どくしん)= độc thân. 独(どく)=một mình + 身(しん)=thân"}, {"k": "独立", "on": {"word": "独立", "read": "どくりつ", "meaning": "độc lập"}, "kun": {"word": "", "read": "", "meaning": "どく không phải とく"}, "vn": "độc lập", "hv": "ĐỘC LẬP", "freq": 2, "group": "emotion", "type": "m1", "exp": "独立(どくりつ)= độc lập. どく không phải とく"}, {"k": "親切", "on": {"word": "親切", "read": "しんせつ", "meaning": "thân thiện"}, "kun": {"word": "", "read": "", "meaning": ""}, "vn": "thân thiện", "hv": "THÂN THIẾT", "freq": 1, "group": "emotion", "type": "m1", "exp": "親切(しんせつ)=thân thiện"}, {"k": "信じて", "on": {"word": "信じて", "read": "しんじて", "meaning": "tin tưởng"}, "kun": {"word": "信じる", "read": "しんじる", "meaning": "tin tưởng"}, "vn": "tin tưởng", "hv": "TÍN", "freq": 1, "group": "emotion", "type": "m2", "exp": "信じる(しんじる)= tin tưởng. 信用(しんよう)=tín dụng"}, {"k": "困って", "on": {"word": "困って", "read": "こまって", "meaning": "khó xử"}, "kun": {"word": "困る", "read": "こまる", "meaning": "khó xử"}, "vn": "khó xử", "hv": "KHỐN", "freq": 1, "group": "emotion", "type": "m1", "exp": "困る(こまる)= khó xử. 困難(こんなん)=khó khăn"}, {"k": "割って", "on": {"word": "割って", "read": "わって", "meaning": "vỡ/chia"}, "kun": {"word": "割る", "read": "わる", "meaning": "vỡ/chia"}, "vn": "vỡ/chia", "hv": "PHÂN", "freq": 1, "group": "action", "type": "m1", "exp": "割る(わる)= vỡ/chia. 分割(ぶんかつ)=phân chia"}, {"k": "割れて", "on": {"word": "割れて", "read": "われて", "meaning": "vỡ"}, "kun": {"word": "割れる", "read": "われる", "meaning": "vỡ"}, "vn": "vỡ", "hv": "PHÂN", "freq": 1, "group": "action", "type": "m1", "exp": "割れる(われる)= vỡ. 分割(ぶんかつ)=phân chia"}, {"k": "折って", "on": {"word": "折って", "read": "おって", "meaning": "gãy/bẻ"}, "kun": {"word": "折る", "read": "おる", "meaning": "gãy/bẻ"}, "vn": "gãy/bẻ", "hv": "CHIẾT", "freq": 2, "group": "action", "type": "m1", "exp": "折る(おる)= gãy/bẻ. Kun reading. Nhớ: 骨折(こっせつ)=gãy xương"}, {"k": "折れて", "on": {"word": "折れて", "read": "おれて", "meaning": "bị gãy"}, "kun": {"word": "折れる", "read": "おれる", "meaning": "bị gãy"}, "vn": "bị gãy", "hv": "CHIẾT", "freq": 1, "group": "action", "type": "m1", "exp": "折れる(おれる)= bị gãy. 骨折(こっせつ)=gãy xương"}, {"k": "投げて", "on": {"word": "投げて", "read": "なげて", "meaning": "ném"}, "kun": {"word": "投げる", "read": "なげる", "meaning": "ném"}, "vn": "ném", "hv": "ĐẦU", "freq": 1, "group": "action", "type": "m2", "exp": "投げる(なげる)= ném. 投球(とうきゅう)=ném bóng"}, {"k": "回して", "on": {"word": "回して", "read": "まわして", "meaning": "xoay"}, "kun": {"word": "回す", "read": "まわす", "meaning": "xoay"}, "vn": "xoay", "hv": "HỒI", "freq": 1, "group": "action", "type": "m2", "exp": "回す(まわす)= xoay. 回転(かいてん)=xoay vòng"}, {"k": "転んだ", "on": {"word": "転んだ", "read": "ころんだ", "meaning": "ngã"}, "kun": {"word": "転ぶ", "read": "ころぶ", "meaning": "ngã"}, "vn": "ngã", "hv": "CHUYỂN", "freq": 1, "group": "action", "type": "m1", "exp": "転ぶ(ころぶ)= ngã. 転倒(てんとう)=ngã"}, {"k": "逃げて", "on": {"word": "逃げて", "read": "にげて", "meaning": "trốn"}, "kun": {"word": "逃げる", "read": "にげる", "meaning": "trốn"}, "vn": "trốn", "hv": "ĐÀO", "freq": 1, "group": "action", "type": "m2", "exp": "逃げる(にげる)= trốn. 逃走(とうそう)=bỏ trốn"}, {"k": "逃げる", "on": {"word": "逃げる", "read": "にげる", "meaning": "trốn chạy"}, "kun": {"word": "逃走", "read": "とうそう", "meaning": "bỏ trốn"}, "vn": "trốn chạy", "hv": "ĐÀO", "freq": 2, "group": "action", "type": "m2", "exp": "逃げる(にげる)= trốn chạy. Nhớ: 逃走(とうそう)=bỏ trốn"}, {"k": "飛びながら", "on": {"word": "飛びながら", "read": "とびながら", "meaning": "bay"}, "kun": {"word": "飛ぶ", "read": "とぶ", "meaning": "bay"}, "vn": "bay", "hv": "PHI", "freq": 1, "group": "action", "type": "m2", "exp": "飛ぶ(とぶ)= bay. 飛行(ひこう)=bay"}, {"k": "追って", "on": {"word": "追って", "read": "おって", "meaning": "đuổi theo"}, "kun": {"word": "追う", "read": "おう", "meaning": "đuổi theo"}, "vn": "đuổi theo", "hv": "TRUY", "freq": 1, "group": "action", "type": "m2", "exp": "追う(おう)= đuổi theo. 追跡(ついせき)=truy đuổi"}, {"k": "降りる", "on": {"word": "降りる", "read": "おりる", "meaning": "xuống xe"}, "kun": {"word": "下降", "read": "かこう", "meaning": "hạ xuống"}, "vn": "xuống xe", "hv": "GIÁNG", "freq": 1, "group": "action", "type": "m2", "exp": "降りる(おりる)= xuống xe. 下降(かこう)=hạ xuống"}, {"k": "浴びました", "on": {"word": "浴びました", "read": "あびました", "meaning": "tắm/dội"}, "kun": {"word": "浴びる", "read": "あびる", "meaning": "tắm/dội"}, "vn": "tắm/dội", "hv": "DỤC", "freq": 1, "group": "action", "type": "m2", "exp": "浴びる(あびる)= tắm/dội. 入浴(にゅうよく)=tắm"}, {"k": "吸った", "on": {"word": "吸った", "read": "すった", "meaning": "hít vào"}, "kun": {"word": "吸う", "read": "すう", "meaning": "hít vào"}, "vn": "hít vào", "hv": "HÚT", "freq": 1, "group": "action", "type": "m2", "exp": "吸う(すう)= hít vào. 呼吸(こきゅう)=hô hấp"}, {"k": "泣かないで", "on": {"word": "泣かないで", "read": "なかないで", "meaning": "khóc"}, "kun": {"word": "泣く", "read": "なく", "meaning": "khóc"}, "vn": "khóc", "hv": "KHỐC", "freq": 1, "group": "action", "type": "m2", "exp": "泣く(なく)= khóc. 号泣(ごうきゅう)=khóc to"}, {"k": "消して", "on": {"word": "消して", "read": "けして", "meaning": "xóa/tắt"}, "kun": {"word": "消す", "read": "けす", "meaning": "xóa/tắt"}, "vn": "xóa/tắt", "hv": "TIÊU", "freq": 1, "group": "action", "type": "m2", "exp": "消す(けす)= xóa/tắt. 消灯(しょうとう)=tắt đèn"}, {"k": "覚えて", "on": {"word": "覚えて", "read": "おぼえて", "meaning": "nhớ/học thuộc"}, "kun": {"word": "覚える", "read": "おぼえる", "meaning": "nhớ/học thuộc"}, "vn": "nhớ/học thuộc", "hv": "GIÁC", "freq": 1, "group": "action", "type": "m1", "exp": "覚える(おぼえる)= nhớ/học thuộc. 記憶(きおく)=ký ức"}, {"k": "遊ぶ", "on": {"word": "遊ぶ", "read": "あそぶ", "meaning": "chơi"}, "kun": {"word": "", "read": "", "meaning": "Kun reading của 遊"}, "vn": "chơi", "hv": "DU", "freq": 1, "group": "action", "type": "m1", "exp": "遊ぶ(あそぶ)= chơi. Kun reading của 遊"}, {"k": "組んで", "on": {"word": "組んで", "read": "くんで", "meaning": "khoanh/ghép"}, "kun": {"word": "組む", "read": "くむ", "meaning": "khoanh/ghép"}, "vn": "khoanh/ghép", "hv": "TỔ", "freq": 1, "group": "action", "type": "m2", "exp": "組む(くむ)= khoanh/ghép. 組合(くみあい)=tổ hợp"}, {"k": "結んで", "on": {"word": "結んで", "read": "むすんで", "meaning": "buộc/kết nối"}, "kun": {"word": "結ぶ", "read": "むすぶ", "meaning": "buộc/kết nối"}, "vn": "buộc/kết nối", "hv": "KẾT", "freq": 1, "group": "action", "type": "m1", "exp": "結ぶ(むすぶ)= buộc/kết nối. 結婚(けっこん)=kết hôn"}, {"k": "包んで", "on": {"word": "包んで", "read": "つつんで", "meaning": "bọc/gói"}, "kun": {"word": "包む", "read": "つつむ", "meaning": "bọc/gói"}, "vn": "bọc/gói", "hv": "BAO", "freq": 2, "group": "action", "type": "m2", "exp": "包む(つつむ)= bọc/gói. Nhớ: 包装(ほうそう)=đóng gói"}, {"k": "重ねて", "on": {"word": "重ねて", "read": "かさねて", "meaning": "chồng lên"}, "kun": {"word": "重ねる", "read": "かさねる", "meaning": "chồng lên"}, "vn": "chồng lên", "hv": "TRÙNG", "freq": 1, "group": "action", "type": "m2", "exp": "重ねる(かさねる)= chồng lên. 重複(ちょうふく)=trùng lặp"}, {"k": "比べた", "on": {"word": "比べた", "read": "くらべた", "meaning": "so sánh"}, "kun": {"word": "比べる", "read": "くらべる", "meaning": "so sánh"}, "vn": "so sánh", "hv": "TỶ", "freq": 1, "group": "action", "type": "m1", "exp": "比べる(くらべる)= so sánh. 比較(ひかく)=so sánh"}, {"k": "解いて", "on": {"word": "解いて", "read": "といて", "meaning": "giải/mở"}, "kun": {"word": "解く", "read": "とく", "meaning": "giải/mở"}, "vn": "giải/mở", "hv": "GIẢI", "freq": 1, "group": "action", "type": "m2", "exp": "解く(とく)= giải/mở. 解決(かいけつ)=giải quyết"}, {"k": "加えました", "on": {"word": "加えました", "read": "くわえました", "meaning": "thêm vào"}, "kun": {"word": "加える", "read": "くわえる", "meaning": "thêm vào"}, "vn": "thêm vào", "hv": "GIA", "freq": 1, "group": "action", "type": "m1", "exp": "加える(くわえる)= thêm vào. Kun reading của 加"}, {"k": "助けて", "on": {"word": "助けて", "read": "たすけて", "meaning": "giúp đỡ"}, "kun": {"word": "助ける", "read": "たすける", "meaning": "giúp đỡ"}, "vn": "giúp đỡ", "hv": "TRỢ", "freq": 1, "group": "action", "type": "m1", "exp": "助ける(たすける)= giúp đỡ. 救助(きゅうじょ)=cứu giúp"}, {"k": "助ける", "on": {"word": "助ける", "read": "たすける", "meaning": "giúp đỡ"}, "kun": {"word": "救助", "read": "きゅうじょ", "meaning": "cứu giúp"}, "vn": "giúp đỡ", "hv": "TRỢ", "freq": 1, "group": "action", "type": "m2", "exp": "助ける(たすける)= giúp đỡ. 救助(きゅうじょ)=cứu giúp"}, {"k": "移した", "on": {"word": "移した", "read": "うつした", "meaning": "chuyển/dời"}, "kun": {"word": "移す", "read": "うつす", "meaning": "chuyển/dời"}, "vn": "chuyển/dời", "hv": "DI", "freq": 1, "group": "action", "type": "m1", "exp": "移す(うつす)= chuyển/dời. 移動(いどう)=di chuyển"}, {"k": "移りました", "on": {"word": "移りました", "read": "うつりました", "meaning": "chuyển/dời"}, "kun": {"word": "移る", "read": "うつる", "meaning": "chuyển/dời"}, "vn": "chuyển/dời", "hv": "DI", "freq": 1, "group": "action", "type": "m2", "exp": "移る(うつる)= chuyển/dời. 移動(いどう)=di chuyển"}, {"k": "測って", "on": {"word": "測って", "read": "はかって", "meaning": "đo"}, "kun": {"word": "測る", "read": "はかる", "meaning": "đo"}, "vn": "đo", "hv": "ĐO", "freq": 2, "group": "action", "type": "m1", "exp": "測る(はかる)= đo. Nhớ: 計測(けいそく)=đo đạc"}, {"k": "情報", "on": {"word": "情報", "read": "じょうほう", "meaning": "thông tin"}, "kun": {"word": "", "read": "", "meaning": "じょう không phải じゅう"}, "vn": "thông tin", "hv": "TÌNH BÁO", "freq": 2, "group": "communication", "type": "m1", "exp": "情報(じょうほう)= thông tin. じょう không phải じゅう"}, {"k": "合図", "on": {"word": "合図", "read": "あいず", "meaning": "ám hiệu/tín hiệu"}, "kun": {"word": "", "read": "", "meaning": "合(あい)+図(ず)"}, "vn": "ám hiệu/tín hiệu", "hv": "HỢP ĐỒ", "freq": 1, "group": "communication", "type": "m1", "exp": "合図(あいず)= ám hiệu/tín hiệu. 合(あい)+図(ず)"}, {"k": "計算", "on": {"word": "計算", "read": "けいさん", "meaning": "tính toán"}, "kun": {"word": "", "read": "", "meaning": "計(けい)+算(さん)"}, "vn": "tính toán", "hv": "TÍNH TOÁN", "freq": 1, "group": "communication", "type": "m1", "exp": "計算(けいさん)= tính toán. 計(けい)+算(さん)"}, {"k": "発見", "on": {"word": "発見", "read": "はっけん", "meaning": "phát hiện"}, "kun": {"word": "", "read": "", "meaning": "はっ không phải はつ hay はけん"}, "vn": "phát hiện", "hv": "PHÁT HIỆN", "freq": 2, "group": "communication", "type": "m1", "exp": "発見(はっけん)= phát hiện. はっ không phải はつ hay はけん"}, {"k": "表した", "on": {"word": "表した", "read": "あらわした", "meaning": "biểu thị"}, "kun": {"word": "表す", "read": "あらわす", "meaning": "biểu thị"}, "vn": "biểu thị", "hv": "BIỂU", "freq": 1, "group": "communication", "type": "m1", "exp": "表す(あらわす)= biểu thị. 表現(ひょうげん)=biểu đạt"}, {"k": "理由", "on": {"word": "理由", "read": "りゆう", "meaning": "lý do"}, "kun": {"word": "理", "read": "り", "meaning": "lý + 由"}, "vn": "lý do", "hv": "LÝ DO", "freq": 1, "group": "communication", "type": "m2", "exp": "理由(りゆう)= lý do. 理(り)=lý + 由(ゆう)=do"}, {"k": "事情", "on": {"word": "事情", "read": "じじょう", "meaning": "hoàn cảnh/lý do"}, "kun": {"word": "", "read": "", "meaning": "事(じ)+情(じょう)"}, "vn": "hoàn cảnh/lý do", "hv": "SỰ TÌNH", "freq": 1, "group": "communication", "type": "m1", "exp": "事情(じじょう)= hoàn cảnh/lý do. 事(じ)+情(じょう)"}, {"k": "件", "on": {"word": "件", "read": "けん", "meaning": "vụ việc/trường hợp"}, "kun": {"word": "条件", "read": "じょうけん", "meaning": "điều kiện"}, "vn": "vụ việc/trường hợp", "hv": "KIỆN", "freq": 2, "group": "communication", "type": "m1", "exp": "件(けん)= vụ việc/trường hợp. Nhớ: 条件(じょうけん)=điều kiện"}, {"k": "送信", "on": {"word": "送信", "read": "そうしん", "meaning": "gửi tin nhắn"}, "kun": {"word": "送", "read": "そう", "meaning": "gửi + 信"}, "vn": "gửi tin nhắn", "hv": "TỐNG TÍN", "freq": 2, "group": "communication", "type": "m2", "exp": "送信(そうしん)= gửi tin nhắn. 送(そう)=gửi + 信(しん)=tín hiệu. Nhớ: 送≠返"}, {"k": "約束", "on": {"word": "約束", "read": "やくそく", "meaning": "lời hứa"}, "kun": {"word": "", "read": "", "meaning": "約(やく)+束(そく)"}, "vn": "lời hứa", "hv": "ƯỚC THÚC", "freq": 1, "group": "communication", "type": "m2", "exp": "約束(やくそく)= lời hứa. 約(やく)+束(そく)"}, {"k": "物語", "on": {"word": "物語", "read": "ものがたり", "meaning": "câu chuyện"}, "kun": {"word": "語る", "read": "かたる", "meaning": "kể"}, "vn": "câu chuyện", "hv": "VẬT NGỮ", "freq": 1, "group": "communication", "type": "m2", "exp": "物語(ものがたり)= câu chuyện. 語る(かたる)=kể"}, {"k": "雑誌", "on": {"word": "雑誌", "read": "ざっし", "meaning": "tạp chí"}, "kun": {"word": "", "read": "", "meaning": "雑(ざつ→ざっ)+誌(し)"}, "vn": "tạp chí", "hv": "TẠP CHÍ", "freq": 1, "group": "communication", "type": "m2", "exp": "雑誌(ざっし)= tạp chí. 雑(ざつ→ざっ)+誌(し)"}, {"k": "週刊誌", "on": {"word": "週刊誌", "read": "しゅうかんし", "meaning": "tạp chí tuần"}, "kun": {"word": "", "read": "", "meaning": "週刊+誌"}, "vn": "tạp chí tuần", "hv": "TUẦN SAN CHÍ", "freq": 1, "group": "communication", "type": "m2", "exp": "週刊誌(しゅうかんし)= tạp chí tuần. 週刊+誌"}, {"k": "観客", "on": {"word": "観客", "read": "かんきゃく", "meaning": "khán giả"}, "kun": {"word": "", "read": "", "meaning": "かん không phải けん"}, "vn": "khán giả", "hv": "QUAN KHÁCH", "freq": 2, "group": "communication", "type": "m1", "exp": "観客(かんきゃく)= khán giả. かん không phải けん"}, {"k": "字", "on": {"word": "字", "read": "じ", "meaning": "chữ"}, "kun": {"word": "", "read": "", "meaning": "Nhớ: 漢字(かんじ)・文字(もじ)"}, "vn": "chữ", "hv": "TỰ", "freq": 2, "group": "communication", "type": "m1", "exp": "字(じ)= chữ. Nhớ: 漢字(かんじ)・文字(もじ)"}, {"k": "順番", "on": {"word": "順番", "read": "じゅんぱん", "meaning": "thứ tự"}, "kun": {"word": "順", "read": "じゅん", "meaning": "thuận + 番"}, "vn": "thứ tự", "hv": "THUẬN PHIÊN", "freq": 1, "group": "communication", "type": "m2", "exp": "順番(じゅんばん)= thứ tự. 順(じゅん)=thuận + 番(ばん)=số thứ"}, {"k": "正常", "on": {"word": "正常", "read": "せいじょう", "meaning": "bình thường"}, "kun": {"word": "", "read": "", "meaning": "正(せい)+常(じょう)"}, "vn": "bình thường", "hv": "CHÍNH THƯỜNG", "freq": 1, "group": "communication", "type": "m2", "exp": "正常(せいじょう)= bình thường. 正(せい)+常(じょう)"}, {"k": "正解", "on": {"word": "正解", "read": "せいかい", "meaning": "đáp án đúng"}, "kun": {"word": "", "read": "", "meaning": "正(せい)+解(かい)"}, "vn": "đáp án đúng", "hv": "CHÍNH GIẢI", "freq": 1, "group": "communication", "type": "m2", "exp": "正解(せいかい)= đáp án đúng. 正(せい)+解(かい)"}, {"k": "欠点", "on": {"word": "欠点", "read": "けってん", "meaning": "khuyết điểm"}, "kun": {"word": "", "read": "", "meaning": "欠(けつ→けっ)+点(てん)"}, "vn": "khuyết điểm", "hv": "KHUYẾT ĐIỂM", "freq": 1, "group": "communication", "type": "m2", "exp": "欠点(けってん)= khuyết điểm. 欠(けつ→けっ)+点(てん)"}, {"k": "欠席", "on": {"word": "欠席", "read": "けっせき", "meaning": "vắng mặt"}, "kun": {"word": "", "read": "", "meaning": "欠(けっ)+席(せき)"}, "vn": "vắng mặt", "hv": "KHUYẾT TỊCH", "freq": 1, "group": "communication", "type": "m2", "exp": "欠席(けっせき)= vắng mặt. 欠(けっ)+席(せき)"}, {"k": "仮定", "on": {"word": "仮定", "read": "かてい", "meaning": "giả định"}, "kun": {"word": "仮", "read": "か", "meaning": "tạm/giả + 定"}, "vn": "giả định", "hv": "GIẢ ĐỊNH", "freq": 1, "group": "communication", "type": "m2", "exp": "仮定(かてい)= giả định. 仮(か)=tạm/giả + 定(てい)=định"}, {"k": "一般的", "on": {"word": "一般的", "read": "いっぱんてき", "meaning": "nói chung"}, "kun": {"word": "", "read": "", "meaning": "Hay nhầm いちばん vs いっぱん"}, "vn": "nói chung", "hv": "NHẤT BAN", "freq": 2, "group": "communication", "type": "m1", "exp": "一般的(いっぱんてき)= nói chung. Hay nhầm いちばん vs いっぱん"}, {"k": "変化", "on": {"word": "変化", "read": "しめした", "meaning": "chỉ ra/thể hiện"}, "kun": {"word": "示す", "read": "しめす", "meaning": "chỉ ra/thể hiện"}, "vn": "chỉ ra/thể hiện", "hv": "BIẾN HÓA", "freq": 2, "group": "communication", "type": "m1", "exp": "示す(しめす)= chỉ ra/thể hiện. Câu này hỏi 示した không phải 変化"}, {"k": "過去", "on": {"word": "過去", "read": "かこう", "meaning": "quá khứ"}, "kun": {"word": "過", "read": "か", "meaning": "qua + 去"}, "vn": "quá khứ", "hv": "QUÁ KHỨ", "freq": 1, "group": "communication", "type": "m1", "exp": "過去(かこ)= quá khứ. 過(か)=qua + 去(こ)=đi"}, {"k": "現在", "on": {"word": "現在", "read": "げんざい", "meaning": "hiện tại"}, "kun": {"word": "現", "read": "げん", "meaning": "hiện + 在"}, "vn": "hiện tại", "hv": "HIỆN TẠI", "freq": 1, "group": "communication", "type": "m2", "exp": "現在(げんざい)= hiện tại. 現(げん)=hiện + 在(ざい)=tồn tại"}, {"k": "現れた", "on": {"word": "現れた", "read": "あらわれた", "meaning": "xuất hiện"}, "kun": {"word": "現れる", "read": "あらわれる", "meaning": "xuất hiện"}, "vn": "xuất hiện", "hv": "HIỆN", "freq": 1, "group": "communication", "type": "m2", "exp": "現れる(あらわれる)= xuất hiện. 現在(げんざい)=hiện tại"}, {"k": "未来", "on": {"word": "未来", "read": "みらい", "meaning": "tương lai"}, "kun": {"word": "未", "read": "み", "meaning": "chưa"}, "vn": "tương lai", "hv": "VỊ LAI", "freq": 2, "group": "communication", "type": "m1", "exp": "未来(みらい)= tương lai. み+らい. Nhớ: 未(み)=chưa"}, {"k": "続き", "on": {"word": "続き", "read": "つづき", "meaning": "phần tiếp theo"}, "kun": {"word": "続ける", "read": "つづける", "meaning": "tiếp tục"}, "vn": "phần tiếp theo", "hv": "TIẾP", "freq": 1, "group": "communication", "type": "m2", "exp": "続き(つづき)= phần tiếp theo. 続ける(つづける)=tiếp tục"}, {"k": "予想", "on": {"word": "予想", "read": "よそう", "meaning": "dự đoán"}, "kun": {"word": "予", "read": "よ", "meaning": "dự + 想"}, "vn": "dự đoán", "hv": "DỰ TƯỞNG", "freq": 1, "group": "communication", "type": "m2", "exp": "予想(よそう)= dự đoán. 予(よ)=dự + 想(そう)=tưởng"}, {"k": "窓", "on": {"word": "窓", "read": "まど", "meaning": "cửa sổ"}, "kun": {"word": "", "read": "", "meaning": "Kun reading của 窓"}, "vn": "cửa sổ", "hv": "SONG", "freq": 1, "group": "life", "type": "m1", "exp": "窓(まど)= cửa sổ. Kun reading của 窓"}, {"k": "塩", "on": {"word": "塩", "read": "しお", "meaning": "muối"}, "kun": {"word": "", "read": "", "meaning": "Kun reading của 塩"}, "vn": "muối", "hv": "DIÊM", "freq": 1, "group": "life", "type": "m1", "exp": "塩(しお)= muối. Kun reading của 塩"}, {"k": "包丁", "on": {"word": "包丁", "read": "ほうちょう", "meaning": "dao bếp"}, "kun": {"word": "", "read": "", "meaning": "ほう+ちょう"}, "vn": "dao bếp", "hv": "BAO ĐINH", "freq": 1, "group": "life", "type": "m1", "exp": "包丁(ほうちょう)= dao bếp. ほう+ちょう. Từ đặc biệt"}, {"k": "容器", "on": {"word": "容器", "read": "ようき", "meaning": "đồ đựng/hộp"}, "kun": {"word": "容", "read": "よう", "meaning": "dung + 器"}, "vn": "đồ đựng/hộp", "hv": "DUNG KHÍ", "freq": 1, "group": "life", "type": "m2", "exp": "容器(ようき)= đồ đựng/hộp. 容(よう)=dung + 器(き)=đồ"}, {"k": "機械", "on": {"word": "機械", "read": "きかい", "meaning": "máy móc"}, "kun": {"word": "", "read": "", "meaning": "き không phải ぎ"}, "vn": "máy móc", "hv": "CƠ GIỚI", "freq": 2, "group": "life", "type": "m1", "exp": "機械(きかい)= máy móc. き không phải ぎ"}, {"k": "楽器", "on": {"word": "楽器", "read": "がっき", "meaning": "nhạc cụ"}, "kun": {"word": "", "read": "", "meaning": "楽(がく→がっ)+器(き)"}, "vn": "nhạc cụ", "hv": "NHẠC KHÍ", "freq": 1, "group": "life", "type": "m2", "exp": "楽器(がっき)= nhạc cụ. 楽(がく→がっ)+器(き)"}, {"k": "荷物", "on": {"word": "荷物", "read": "にもつ", "meaning": "hành lý"}, "kun": {"word": "", "read": "", "meaning": "に là Kun, もつ là đặc biệt"}, "vn": "hành lý", "hv": "HÀ VẬT", "freq": 1, "group": "life", "type": "m1", "exp": "荷物(にもつ)= hành lý. に là Kun, もつ là đặc biệt"}, {"k": "券", "on": {"word": "券", "read": "けん", "meaning": "phiếu/vé"}, "kun": {"word": "", "read": "", "meaning": "Nhớ: 入場券・乗車券"}, "vn": "phiếu/vé", "hv": "券", "freq": 2, "group": "life", "type": "m2", "exp": "券(けん)= phiếu/vé. Nhớ: 入場券・乗車券"}, {"k": "根", "on": {"word": "根", "read": "ね", "meaning": "rễ cây"}, "kun": {"word": "", "read": "", "meaning": "Kun reading của 根"}, "vn": "rễ cây", "hv": "CĂN", "freq": 1, "group": "life", "type": "m1", "exp": "根(ね)= rễ cây. Kun reading của 根"}, {"k": "豆", "on": {"word": "豆", "read": "まめ", "meaning": "đậu/hạt đậu"}, "kun": {"word": "", "read": "", "meaning": "Kun reading của 豆"}, "vn": "đậu/hạt đậu", "hv": "ĐẬU", "freq": 1, "group": "life", "type": "m1", "exp": "豆(まめ)= đậu/hạt đậu. Kun reading của 豆"}, {"k": "笑顔", "on": {"word": "笑顔", "read": "えがお", "meaning": "nụ cười"}, "kun": {"word": "", "read": "", "meaning": "笑(え)+顔(がお) — đọc đặc biệt"}, "vn": "nụ cười", "hv": "TIẾU NHAN", "freq": 1, "group": "life", "type": "m1", "exp": "笑顔(えがお)= nụ cười. 笑(え)+顔(がお) — đọc đặc biệt"}, {"k": "角", "on": {"word": "角", "read": "かど", "meaning": "góc"}, "kun": {"word": "曲がり角", "read": "まがりかど", "meaning": "ngã rẽ"}, "vn": "góc", "hv": "GIÁC", "freq": 2, "group": "life", "type": "m1", "exp": "角(かど)= góc. Kun reading của 角. Nhớ: 曲がり角(まがりかど)=ngã rẽ"}, {"k": "島", "on": {"word": "島", "read": "しま", "meaning": "đảo"}, "kun": {"word": "", "read": "", "meaning": "Kun reading của 島"}, "vn": "đảo", "hv": "ĐẢO", "freq": 1, "group": "life", "type": "m2", "exp": "島(しま)= đảo. Kun reading của 島"}, {"k": "平日", "on": {"word": "平日", "read": "へいじつ", "meaning": "ngày thường"}, "kun": {"word": "平", "read": "へい", "meaning": "bình + 日"}, "vn": "ngày thường", "hv": "BÌNH NHẬT", "freq": 2, "group": "life", "type": "m1", "exp": "平日(へいじつ)= ngày thường. へい+じつ. Nhớ: 平(へい)=bình + 日(じつ)=ngày"}, {"k": "休日", "on": {"word": "休日", "read": "きゅうじつ", "meaning": "ngày nghỉ"}, "kun": {"word": "", "read": "", "meaning": "きゅう+じつ"}, "vn": "ngày nghỉ", "hv": "NGHỈ NGƠI", "freq": 1, "group": "life", "type": "m1", "exp": "休日(きゅうじつ)= ngày nghỉ. きゅう+じつ"}, {"k": "夕日", "on": {"word": "夕日", "read": "ゆうひ", "meaning": "mặt trời lặn"}, "kun": {"word": "夕", "read": "ゆう", "meaning": "chiều + 日"}, "vn": "mặt trời lặn", "hv": "TỊCH NHẬT", "freq": 2, "group": "life", "type": "m1", "exp": "夕日(ゆうひ)= mặt trời lặn. ゆう+ひ. Nhớ: 夕(ゆう)=chiều + 日(ひ)=mặt trời"}, {"k": "昼食", "on": {"word": "昼食", "read": "ちゅうしょく", "meaning": "bữa trưa"}, "kun": {"word": "", "read": "", "meaning": "ちゅう+しょく"}, "vn": "bữa trưa", "hv": "TRƯ THỰC", "freq": 1, "group": "life", "type": "m1", "exp": "昼食(ちゅうしょく)= bữa trưa. ちゅう+しょく"}, {"k": "翌週", "on": {"word": "翌週", "read": "よくしゅう", "meaning": "tuần sau"}, "kun": {"word": "翌", "read": "よく", "meaning": "hôm sau + 週"}, "vn": "tuần sau", "hv": "DỰC CHU", "freq": 1, "group": "life", "type": "m2", "exp": "翌週(よくしゅう)= tuần sau. 翌(よく)=hôm sau + 週(しゅう)=tuần"}, {"k": "秒", "on": {"word": "秒", "read": "びょう", "meaning": "giây"}, "kun": {"word": "分", "read": "ふん", "meaning": "phút"}, "vn": "giây", "hv": "GIÂY", "freq": 1, "group": "life", "type": "m2", "exp": "秒(びょう)= giây. 1分=60秒. Phân biệt: 分(ふん)=phút"}, {"k": "倍", "on": {"word": "倍", "read": "ゆしゅつ", "meaning": "gấp đôi"}, "kun": {"word": "", "read": "", "meaning": "Câu này hỏi 倍 không phải 輸出"}, "vn": "gấp đôi", "hv": "BỘI", "freq": 2, "group": "life", "type": "m2", "exp": "倍(ばい)= gấp đôi. Câu này hỏi 倍 không phải 輸出"}, {"k": "種類", "on": {"word": "種類", "read": "しゅるい", "meaning": "chủng loại"}, "kun": {"word": "種", "read": "しゅ", "meaning": "chủng"}, "vn": "chủng loại", "hv": "CHỦNG LOẠI", "freq": 1, "group": "life", "type": "m1", "exp": "種類(しゅるい)= chủng loại. しゅ+るい. 種(しゅ)=chủng"}, {"k": "部分", "on": {"word": "部分", "read": "ぶぶん", "meaning": "bộ phận"}, "kun": {"word": "", "read": "", "meaning": "ぶ+ぶん"}, "vn": "bộ phận", "hv": "BỘ PHẬN", "freq": 1, "group": "life", "type": "m1", "exp": "部分(ぶぶん)= bộ phận. ぶ+ぶん"}, {"k": "左右", "on": {"word": "左右", "read": "さゆう", "meaning": "trái phải"}, "kun": {"word": "左", "read": "さ", "meaning": "trái + 右"}, "vn": "trái phải", "hv": "TẢ HỮU", "freq": 1, "group": "life", "type": "m2", "exp": "左右(さゆう)= trái phải. 左(さ)=trái + 右(ゆう)=phải"}, {"k": "各地", "on": {"word": "各地", "read": "かくち", "meaning": "mỗi nơi"}, "kun": {"word": "各", "read": "かく", "meaning": "mỗi + 地"}, "vn": "mỗi nơi", "hv": "CÁC ĐỊA", "freq": 1, "group": "life", "type": "m1", "exp": "各地(かくち)= mỗi nơi. 各(かく)=mỗi + 地(ち)=đất"}, {"k": "各駅", "on": {"word": "各駅", "read": "かくえき", "meaning": "mỗi ga"}, "kun": {"word": "", "read": "", "meaning": "かく không phải がく"}, "vn": "mỗi ga", "hv": "CÁC DỊCH", "freq": 2, "group": "life", "type": "m1", "exp": "各駅(かくえき)= mỗi ga. かく không phải がく"}, {"k": "平均", "on": {"word": "平均", "read": "へいきん", "meaning": "trung bình"}, "kun": {"word": "", "read": "", "meaning": "へい không phải へん"}, "vn": "trung bình", "hv": "BÌNH QUÂN", "freq": 2, "group": "life", "type": "m1", "exp": "平均(へいきん)= trung bình. へい không phải へん"}, {"k": "絵画", "on": {"word": "絵画", "read": "かいが", "meaning": "hội họa/tranh"}, "kun": {"word": "絵", "read": "え", "meaning": "tranh + 画"}, "vn": "hội họa/tranh", "hv": "HỘI HỌA", "freq": 1, "group": "life", "type": "m2", "exp": "絵画(かいが)= hội họa/tranh. 絵(え)=tranh + 画(が)=vẽ"}, {"k": "残り", "on": {"word": "残り", "read": "のこり", "meaning": "phần còn lại"}, "kun": {"word": "残る", "read": "のこる", "meaning": "còn lại"}, "vn": "phần còn lại", "hv": "TÀN", "freq": 1, "group": "life", "type": "m1", "exp": "残り(のこり)= phần còn lại. 残る(のこる)=còn lại. 残業(ざんぎょう)=tăng ca"}, {"k": "残さ", "on": {"word": "残さ", "read": "のこさないで", "meaning": "để lại"}, "kun": {"word": "残す", "read": "のこす", "meaning": "để lại"}, "vn": "để lại", "hv": "TÀN", "freq": 1, "group": "life", "type": "m1", "exp": "残す(のこす)=để lại"}, {"k": "残さないで", "on": {"word": "残さないで", "read": "のこさないで", "meaning": "để lại"}, "kun": {"word": "残す", "read": "のこす", "meaning": "để lại"}, "vn": "để lại", "hv": "TÀN", "freq": 2, "group": "life", "type": "m1", "exp": "残す(のこす)= để lại. 残業(ざんぎょう)=tăng ca. Nhớ: のこ không phải なく"}, {"k": "借りました", "on": {"word": "借りました", "read": "かりました", "meaning": "mượn"}, "kun": {"word": "借りる", "read": "かりる", "meaning": "mượn"}, "vn": "mượn", "hv": "TẠ", "freq": 1, "group": "life", "type": "m2", "exp": "借りる(かりる)= mượn. Phân biệt 貸す(かす)=cho mượn"}, {"k": "交通", "on": {"word": "交通", "read": "こうつう", "meaning": "giao thông"}, "kun": {"word": "", "read": "", "meaning": ""}, "vn": "giao thông", "hv": "GIAO THÔNG", "freq": 1, "group": "transport", "type": "m1", "exp": "交通(こうつう)=giao thông"}, {"k": "横断", "on": {"word": "横断", "read": "おうだん", "meaning": "băng qua"}, "kun": {"word": "", "read": "", "meaning": "横(おう)+断(だん)"}, "vn": "băng qua", "hv": "HOÀNH ĐOẠN", "freq": 1, "group": "transport", "type": "m1", "exp": "横断(おうだん)= băng qua. 横(おう)+断(だん)"}, {"k": "右折", "on": {"word": "右折", "read": "うせつ", "meaning": "rẽ phải"}, "kun": {"word": "右", "read": "う", "meaning": "phải + 折"}, "vn": "rẽ phải", "hv": "HỮU CHIẾT", "freq": 1, "group": "transport", "type": "m2", "exp": "右折(うせつ)= rẽ phải. 右(う)=phải + 折(せつ)=quẹo"}, {"k": "改札", "on": {"word": "改札", "read": "かいさつ", "meaning": "soát vé"}, "kun": {"word": "改", "read": "かい", "meaning": "cải + 札"}, "vn": "soát vé", "hv": "CẢI TỦA", "freq": 1, "group": "transport", "type": "m1", "exp": "改札(かいさつ)= soát vé. 改(かい)=cải + 札(さつ)=thẻ"}, {"k": "乗車", "on": {"word": "乗車", "read": "じょうしゃ", "meaning": "lên xe"}, "kun": {"word": "乗", "read": "じょう", "meaning": "lên + 車"}, "vn": "lên xe", "hv": "THỪA XA", "freq": 1, "group": "transport", "type": "m2", "exp": "乗車(じょうしゃ)= lên xe. 乗(じょう)=lên + 車(しゃ)=xe"}, {"k": "駐車", "on": {"word": "駐車", "read": "ちゅうしゃ", "meaning": "đỗ xe"}, "kun": {"word": "駐", "read": "ちゅう", "meaning": "đóng + 車"}, "vn": "đỗ xe", "hv": "TRÚ XA", "freq": 1, "group": "transport", "type": "m2", "exp": "駐車(ちゅうしゃ)= đỗ xe. 駐(ちゅう)=đóng + 車(しゃ)=xe"}, {"k": "停電", "on": {"word": "停電", "read": "ていでん", "meaning": "mất điện"}, "kun": {"word": "停", "read": "てい", "meaning": "dừng + 電"}, "vn": "mất điện", "hv": "ĐÌNH ĐIỆN", "freq": 1, "group": "transport", "type": "m2", "exp": "停電(ていでん)= mất điện. 停(てい)=dừng + 電(でん)=điện"}, {"k": "坂道", "on": {"word": "坂道", "read": "さかみち", "meaning": "đường dốc"}, "kun": {"word": "坂", "read": "さか", "meaning": "dốc + 道"}, "vn": "đường dốc", "hv": "PHẢ ĐẠO", "freq": 1, "group": "transport", "type": "m2", "exp": "坂道(さかみち)= đường dốc. 坂(さか)=dốc + 道(みち)=đường"}, {"k": "地面", "on": {"word": "地面", "read": "じめん", "meaning": "mặt đất"}, "kun": {"word": "地", "read": "じ", "meaning": "đất + 面"}, "vn": "mặt đất", "hv": "ĐỊA DIỆN", "freq": 2, "group": "transport", "type": "m1", "exp": "地面(じめん)= mặt đất. じ+めん. Nhớ: 地(じ)=đất + 面(めん)=mặt"}, {"k": "首都", "on": {"word": "首都", "read": "しゅと", "meaning": "thủ đô"}, "kun": {"word": "", "read": "", "meaning": "しゅ+とu"}, "vn": "thủ đô", "hv": "THỦ ĐÔ", "freq": 1, "group": "transport", "type": "m1", "exp": "首都(しゅと)= thủ đô. しゅ+とu"}, {"k": "到着", "on": {"word": "到着", "read": "とうちゃく", "meaning": "đến nơi"}, "kun": {"word": "", "read": "", "meaning": "Hay nhầm とう↔どう"}, "vn": "đến nơi", "hv": "ĐẾN NƠI", "freq": 2, "group": "transport", "type": "m1", "exp": "到着(とうちゃく)= đến nơi. Hay nhầm とう↔どう"}, {"k": "横", "on": {"word": "横", "read": "よこ", "meaning": "phía ngang/bên cạnh"}, "kun": {"word": "横断", "read": "おうだん", "meaning": "băng qua"}, "vn": "phía ngang/bên cạnh", "hv": "HOÀNH", "freq": 1, "group": "transport", "type": "m1", "exp": "横(よこ)= phía ngang/bên cạnh. Kun reading của 横. 横断(おうだん)=băng qua"}, {"k": "速く", "on": {"word": "速く", "read": "はやく", "meaning": "nhanh"}, "kun": {"word": "速い", "read": "はやい", "meaning": "nhanh"}, "vn": "nhanh", "hv": "TỐC", "freq": 1, "group": "transport", "type": "m2", "exp": "速い(はやい)= nhanh. 速度(そくど)=tốc độ. Nhớ 速≠早"}, {"k": "逆", "on": {"word": "逆", "read": "ぎゃく", "meaning": "ngược lại"}, "kun": {"word": "逆転", "read": "ぎゃくてん", "meaning": "đảo ngược"}, "vn": "ngược lại", "hv": "NGHỊCH", "freq": 1, "group": "transport", "type": "m2", "exp": "逆(ぎゃく)= ngược lại. 逆転(ぎゃくてん)=đảo ngược"}, {"k": "経由", "on": {"word": "経由", "read": "けいゆ", "meaning": "qua/transit"}, "kun": {"word": "経", "read": "けい", "meaning": "kinh + 由"}, "vn": "qua/transit", "hv": "KINH DO", "freq": 1, "group": "transport", "type": "m2", "exp": "経由(けいゆ)= qua/transit. 経(けい)=kinh + 由(ゆ)=do"}, {"k": "位置", "on": {"word": "位置", "read": "いち", "meaning": "vị trí"}, "kun": {"word": "位", "read": "い", "meaning": "vị + 置"}, "vn": "vị trí", "hv": "VỊ TRÍ", "freq": 1, "group": "transport", "type": "m1", "exp": "位置(いち)= vị trí. 位(い)=vị + 置(ち)=đặt"}, {"k": "基本", "on": {"word": "基本", "read": "きほん", "meaning": "cơ bản"}, "kun": {"word": "基", "read": "き", "meaning": "nền + 本"}, "vn": "cơ bản", "hv": "CƠ BẢN", "freq": 2, "group": "transport", "type": "m1", "exp": "基本(きほん)= cơ bản. き+ほん. Nhớ: 基(き)=nền + 本(ほん)=gốc"}, {"k": "方向", "on": {"word": "方向", "read": "ほうこう", "meaning": "phương hướng"}, "kun": {"word": "", "read": "", "meaning": "ほうこう không phải ほうほう"}, "vn": "phương hướng", "hv": "PHƯƠNG HƯỚNG", "freq": 2, "group": "transport", "type": "m1", "exp": "方向(ほうこう)= phương hướng. ほうこう không phải ほうほう"}, {"k": "帰宅", "on": {"word": "帰宅", "read": "きたく", "meaning": "về nhà"}, "kun": {"word": "帰", "read": "き", "meaning": "về + 宅"}, "vn": "về nhà", "hv": "QUY TRẠCH", "freq": 1, "group": "transport", "type": "m2", "exp": "帰宅(きたく)= về nhà. 帰(き)=về + 宅(たく)=nhà"}, {"k": "最初", "on": {"word": "最初", "read": "さいしょ", "meaning": "đầu tiên"}, "kun": {"word": "最", "read": "さい", "meaning": "tối + 初"}, "vn": "đầu tiên", "hv": "TỐI SƠ", "freq": 2, "group": "transport", "type": "m1", "exp": "最初(さいしょ)= đầu tiên. さい+しょ. Nhớ: 最(さい)=tối + 初(しょ)=đầu"}, {"k": "返しました", "on": {"word": "返しました", "read": "かえしました", "meaning": "trả lại"}, "kun": {"word": "返す", "read": "かえす", "meaning": "trả lại"}, "vn": "trả lại", "hv": "PHẢN", "freq": 2, "group": "transport", "type": "m1", "exp": "返す(かえす)= trả lại. Kun reading. Nhớ: 返却(へんきゃく)=hoàn trả"}, {"k": "換えて", "on": {"word": "換えて", "read": "かえて", "meaning": "đổi/thay"}, "kun": {"word": "換える", "read": "かえる", "meaning": "đổi/thay"}, "vn": "đổi/thay", "hv": "HOÁN", "freq": 1, "group": "transport", "type": "m1", "exp": "換える(かえる)= đổi/thay. 交換(こうかん)=trao đổi"}, {"k": "払って", "on": {"word": "払って", "read": "はらって", "meaning": "trả tiền"}, "kun": {"word": "払う", "read": "はらう", "meaning": "trả tiền"}, "vn": "trả tiền", "hv": "PHẤT", "freq": 1, "group": "transport", "type": "m1", "exp": "払う(はらう)= trả tiền. 支払い(しはらい)=thanh toán"}, {"k": "留守", "on": {"word": "留守", "read": "るす", "meaning": "vắng nhà"}, "kun": {"word": "", "read": "", "meaning": "Đọc đặc biệt, không phải りゅうす"}, "vn": "vắng nhà", "hv": "LƯU THỦ", "freq": 2, "group": "transport", "type": "m1", "exp": "留守(るす)= vắng nhà. Đọc đặc biệt, không phải りゅうす"}, {"k": "相手", "on": {"word": "相手", "read": "あいて", "meaning": "đối phương"}, "kun": {"word": "", "read": "", "meaning": "あい+て"}, "vn": "đối phương", "hv": "TƯƠNG THỦ", "freq": 1, "group": "transport", "type": "m1", "exp": "相手(あいて)= đối phương. あい+て. Đọc Kun đặc biệt"}, {"k": "預け", "on": {"word": "預け", "read": "あずけ", "meaning": "gửi giữ"}, "kun": {"word": "預ける", "read": "あずける", "meaning": "gửi giữ"}, "vn": "gửi giữ", "hv": "KÝ", "freq": 1, "group": "transport", "type": "m2", "exp": "預ける(あずける)= gửi giữ. 預金(よきん)=tiền gửi"}, {"k": "当たった", "on": {"word": "当たった", "read": "あたった", "meaning": "trúng"}, "kun": {"word": "当たる", "read": "あたる", "meaning": "trúng"}, "vn": "trúng", "hv": "ĐƯƠNG", "freq": 1, "group": "transport", "type": "m2", "exp": "当たる(あたる)= trúng. 命中(めいちゅう)=trúng đích"}, {"k": "困りました", "on": {"word": "困りました", "read": "こまりました", "meaning": "khó xử"}, "kun": {"word": "困る", "read": "こまる", "meaning": "khó xử"}, "vn": "khó xử", "hv": "KHỐN", "freq": 1, "group": "transport", "type": "m2", "exp": "困る(こまる)= khó xử. 困難(こんなん)=khó khăn"}, {"k": "料理", "on": {"word": "料理", "read": "りょうり", "meaning": "nấu ăn"}, "kun": {"word": "", "read": "", "meaning": ""}, "vn": "nấu ăn", "hv": "LIỆU LÝ", "freq": 1, "group": "transport", "type": "m1", "exp": "料理(りょうり)=nấu ăn"}, {"k": "書いた", "on": {"word": "書いた", "read": "かいた", "meaning": "viết"}, "kun": {"word": "書く", "read": "かく", "meaning": "viết"}, "vn": "viết", "hv": "THƯ", "freq": 1, "group": "transport", "type": "m1", "exp": "書く(かく)=viết"}, {"k": "自然", "on": {"word": "自然", "read": "しぜん", "meaning": "thiên nhiên"}, "kun": {"word": "", "read": "", "meaning": "し không phải じ"}, "vn": "thiên nhiên", "hv": "TỰ NHIÊN", "freq": 2, "group": "nature", "type": "m1", "exp": "自然(しぜん)= thiên nhiên. し không phải じ"}, {"k": "気温", "on": {"word": "気温", "read": "きおん", "meaning": "nhiệt độ không khí"}, "kun": {"word": "", "read": "", "meaning": "き+おん"}, "vn": "nhiệt độ không khí", "hv": "KHÍ ÔN", "freq": 1, "group": "nature", "type": "m1", "exp": "気温(きおん)= nhiệt độ không khí. き+おん"}, {"k": "波", "on": {"word": "波", "read": "なみ", "meaning": "sóng biển"}, "kun": {"word": "", "read": "", "meaning": "Kun reading của 波"}, "vn": "sóng biển", "hv": "BA", "freq": 1, "group": "nature", "type": "m2", "exp": "波(なみ)= sóng biển. Kun reading của 波"}, {"k": "湖", "on": {"word": "湖", "read": "みずうみ", "meaning": "hồ"}, "kun": {"word": "港", "read": "みなと", "meaning": "cảng"}, "vn": "hồ", "hv": "HỒ", "freq": 1, "group": "nature", "type": "m1", "exp": "湖(みずうみ)= hồ. Kun reading đặc biệt. 港(みなと)=cảng"}, {"k": "森林", "on": {"word": "森林", "read": "しんりん", "meaning": "rừng cây"}, "kun": {"word": "森", "read": "しん", "meaning": "rừng + 林"}, "vn": "rừng cây", "hv": "SƠN LÂM", "freq": 1, "group": "nature", "type": "m2", "exp": "森林(しんりん)= rừng cây. 森(しん)=rừng + 林(りん)=rừng nhỏ"}, {"k": "石油", "on": {"word": "石油", "read": "せきゆ", "meaning": "dầu mỏ"}, "kun": {"word": "石", "read": "せき", "meaning": "đá + 油"}, "vn": "dầu mỏ", "hv": "THẠCH DẦU", "freq": 2, "group": "nature", "type": "m1", "exp": "石油(せきゆ)= dầu mỏ. せき+ゆ. Nhớ: 石(せき)=đá + 油(ゆ)=dầu"}, {"k": "草", "on": {"word": "草", "read": "はえた", "meaning": "mọc lên"}, "kun": {"word": "生える", "read": "はえる", "meaning": "mọc lên"}, "vn": "mọc lên", "hv": "THẢO", "freq": 1, "group": "nature", "type": "m1", "exp": "生える(はえる)= mọc lên. Kun reading của 生. 草(くさ)=cỏ"}, {"k": "緑", "on": {"word": "緑", "read": "みどり", "meaning": "màu xanh lá"}, "kun": {"word": "", "read": "", "meaning": "Kun reading của 緑"}, "vn": "màu xanh lá", "hv": "LỤC", "freq": 1, "group": "nature", "type": "m2", "exp": "緑(みどり)= màu xanh lá. Kun reading của 緑"}, {"k": "涙", "on": {"word": "涙", "read": "なみだ", "meaning": "nước mắt"}, "kun": {"word": "", "read": "", "meaning": "Kun reading của 涙"}, "vn": "nước mắt", "hv": "LỆ", "freq": 1, "group": "nature", "type": "m2", "exp": "涙(なみだ)= nước mắt. Kun reading của 涙"}, {"k": "増減", "on": {"word": "増減", "read": "ぞうげん", "meaning": "tăng giảm"}, "kun": {"word": "増", "read": "ぞう", "meaning": "tăng + 減"}, "vn": "tăng giảm", "hv": "TĂNG GIẢM", "freq": 1, "group": "nature", "type": "m1", "exp": "増減(ぞうげん)= tăng giảm. 増(ぞう)=tăng + 減(げん)=giảm"}, {"k": "減少", "on": {"word": "減少", "read": "げんしょう", "meaning": "giảm bớt"}, "kun": {"word": "", "read": "", "meaning": "減(げん)+少(しょう)"}, "vn": "giảm bớt", "hv": "GIẢM THIỂU", "freq": 1, "group": "nature", "type": "m2", "exp": "減少(げんしょう)= giảm bớt. 減(げん)+少(しょう)"}, {"k": "細かく", "on": {"word": "細かく", "read": "こまかく", "meaning": "nhỏ/tỉ mỉ"}, "kun": {"word": "細かい", "read": "こまかい", "meaning": "nhỏ/tỉ mỉ"}, "vn": "nhỏ/tỉ mỉ", "hv": "TẾ", "freq": 1, "group": "nature", "type": "m2", "exp": "細かい(こまかい)= nhỏ/tỉ mỉ. 細部(さいぶ)=chi tiết"}, {"k": "細く", "on": {"word": "細く", "read": "ほそく", "meaning": "mảnh/nhỏ"}, "kun": {"word": "細い", "read": "ほそい", "meaning": "mảnh/nhỏ"}, "vn": "mảnh/nhỏ", "hv": "TẾ", "freq": 1, "group": "nature", "type": "m1", "exp": "細い(ほそい)= mảnh/nhỏ. 細かい(こまかい)=tỉ mỉ"}, {"k": "深く", "on": {"word": "深く", "read": "ふかく", "meaning": "sâu"}, "kun": {"word": "深い", "read": "ふかい", "meaning": "sâu"}, "vn": "sâu", "hv": "SÂU", "freq": 1, "group": "nature", "type": "m1", "exp": "深い(ふかい)= sâu. Đối nghĩa: 浅い(あさい)=nông"}, {"k": "浅い", "on": {"word": "浅い", "read": "あさい", "meaning": "nông/cạn"}, "kun": {"word": "深い", "read": "ふかい", "meaning": "sâu"}, "vn": "nông/cạn", "hv": "THIỂN", "freq": 1, "group": "nature", "type": "m1", "exp": "浅い(あさい)= nông/cạn. Đối nghĩa: 深い(ふかい)=sâu"}, {"k": "固く", "on": {"word": "固く", "read": "かたく", "meaning": "cứng"}, "kun": {"word": "固い", "read": "かたい", "meaning": "cứng"}, "vn": "cứng", "hv": "CỐ", "freq": 1, "group": "nature", "type": "m1", "exp": "固い(かたい)= cứng. 固定(こてい)=cố định"}, {"k": "厚い", "on": {"word": "厚い", "read": "あつい", "meaning": "dày"}, "kun": {"word": "薄い", "read": "うすい", "meaning": "mỏng"}, "vn": "dày", "hv": "HẬU", "freq": 1, "group": "nature", "type": "m1", "exp": "厚い(あつい)= dày. Đối nghĩa: 薄い(うすい)=mỏng"}, {"k": "狭い", "on": {"word": "狭い", "read": "せまい", "meaning": "chật hẹp"}, "kun": {"word": "狭小", "read": "きょうしょう", "meaning": "chật hẹp"}, "vn": "chật hẹp", "hv": "HIỆP", "freq": 1, "group": "nature", "type": "m1", "exp": "狭い(せまい)= chật hẹp. 狭小(きょうしょう)=chật hẹp"}, {"k": "若い", "on": {"word": "若い", "read": "わかい", "meaning": "trẻ"}, "kun": {"word": "若者", "read": "わかもの", "meaning": "người trẻ"}, "vn": "trẻ", "hv": "NHƯỢC", "freq": 1, "group": "nature", "type": "m2", "exp": "若い(わかい)= trẻ. 若者(わかもの)=người trẻ"}, {"k": "若かった", "on": {"word": "若かった", "read": "わかかった", "meaning": "trẻ"}, "kun": {"word": "若い", "read": "わかい", "meaning": "trẻ"}, "vn": "trẻ", "hv": "NHƯỢC", "freq": 1, "group": "nature", "type": "m1", "exp": "若い(わかい)= trẻ. 若者(わかもの)=người trẻ"}, {"k": "低かった", "on": {"word": "低かった", "read": "ひくかった", "meaning": "thấp"}, "kun": {"word": "低い", "read": "ひくい", "meaning": "thấp"}, "vn": "thấp", "hv": "ĐÊ", "freq": 1, "group": "nature", "type": "m2", "exp": "低い(ひくい)= thấp. 低下(ていか)=giảm xuống"}, {"k": "短い", "on": {"word": "短い", "read": "みじかい", "meaning": "ngắn"}, "kun": {"word": "短期", "read": "たんき", "meaning": "ngắn hạn"}, "vn": "ngắn", "hv": "ĐOẢN", "freq": 1, "group": "nature", "type": "m2", "exp": "短い(みじかい)= ngắn. 短期(たんき)=ngắn hạn"}, {"k": "短すぎて", "on": {"word": "短すぎて", "read": "みじかすぎて", "meaning": "ngắn"}, "kun": {"word": "短い", "read": "みじかい", "meaning": "ngắn"}, "vn": "ngắn", "hv": "ĐOẢN", "freq": 2, "group": "nature", "type": "m1", "exp": "短い(みじかい)= ngắn. Nhớ: 短期(たんき)=ngắn hạn"}, {"k": "丸い", "on": {"word": "丸い", "read": "まるい", "meaning": "tròn"}, "kun": {"word": "", "read": "", "meaning": "Kun reading của 丸"}, "vn": "tròn", "hv": "HOÀN", "freq": 1, "group": "nature", "type": "m1", "exp": "丸い(まるい)= tròn. Kun reading của 丸"}, {"k": "下線", "on": {"word": "下線", "read": "かせん", "meaning": "gạch dưới"}, "kun": {"word": "", "read": "", "meaning": "か không phải げ"}, "vn": "gạch dưới", "hv": "HẠ TUYẾN", "freq": 2, "group": "nature", "type": "m1", "exp": "下線(かせん)= gạch dưới. か không phải げ"}, {"k": "難しい", "on": {"word": "難しい", "read": "むずかしい", "meaning": "khó"}, "kun": {"word": "困難", "read": "こんなん", "meaning": "khó khăn"}, "vn": "khó", "hv": "NAN", "freq": 1, "group": "nature", "type": "m1", "exp": "難しい(むずかしい)= khó. 困難(こんなん)=khó khăn"}, {"k": "暖かい", "on": {"word": "暖かい", "read": "あたたかい", "meaning": "ấm áp"}, "kun": {"word": "暖房", "read": "だんぼう", "meaning": "sưởi ấm"}, "vn": "ấm áp", "hv": "NOÃN", "freq": 1, "group": "nature", "type": "m2", "exp": "暖かい(あたたかい)= ấm áp. 暖房(だんぼう)=sưởi ấm"}, {"k": "結ぶ", "on": {"word": "結ぶ", "read": "むすぶ", "meaning": "buộc/kết nối"}, "kun": {"word": "結婚", "read": "けっこん", "meaning": "kết hôn"}, "vn": "buộc/kết nối", "hv": "KẾT", "freq": 1, "group": "nature", "type": "m2", "exp": "結ぶ(むすぶ)= buộc/kết nối. 結婚(けっこん)=kết hôn"}, {"k": "役", "on": {"word": "役", "read": "やくに立つ", "meaning": "có ích"}, "kun": {"word": "役に立つ", "read": "やくにたつ", "meaning": "có ích"}, "vn": "có ích", "hv": "DỊCH", "freq": 1, "group": "nature", "type": "m2", "exp": "役に立つ(やくにたつ)=có ích"}, {"k": "必ず", "on": {"word": "必ず", "read": "かならず", "meaning": "nhất định"}, "kun": {"word": "", "read": "", "meaning": "Kun reading của 必"}, "vn": "nhất định", "hv": "TẤT", "freq": 1, "group": "nature", "type": "m2", "exp": "必ず(かならず)= nhất định. Kun reading của 必"}, {"k": "税金", "on": {"word": "税金", "read": "ぜいきん", "meaning": "tiền thuế"}, "kun": {"word": "", "read": "", "meaning": "ぜい không phải せい hay ぜっ"}, "vn": "tiền thuế", "hv": "THUẾ KIM", "freq": 2, "group": "society", "type": "m1", "exp": "税金(ぜいきん)= tiền thuế. ぜい không phải せい hay ぜっ"}, {"k": "貯金", "on": {"word": "貯金", "read": "ちょきん", "meaning": "tiết kiệm"}, "kun": {"word": "貯", "read": "ちょ", "meaning": "tích + 金"}, "vn": "tiết kiệm", "hv": "TRỮ KIM", "freq": 1, "group": "society", "type": "m1", "exp": "貯金(ちょきん)= tiết kiệm. 貯(ちょ)=tích + 金(きん)=tiền"}, {"k": "値段", "on": {"word": "値段", "read": "ねだん", "meaning": "giá cả"}, "kun": {"word": "", "read": "", "meaning": "ね là Kun, だん là On"}, "vn": "giá cả", "hv": "GIÁ CẢ", "freq": 1, "group": "society", "type": "m1", "exp": "値段(ねだん)= giá cả. ね là Kun, だん là On"}, {"k": "高価", "on": {"word": "高価", "read": "こうか", "meaning": "đắt tiền"}, "kun": {"word": "高", "read": "こう", "meaning": "cao + 価"}, "vn": "đắt tiền", "hv": "CAO GIÁ", "freq": 1, "group": "society", "type": "m2", "exp": "高価(こうか)= đắt tiền. 高(こう)=cao + 価(か)=giá"}, {"k": "商品", "on": {"word": "商品", "read": "しょうひん", "meaning": "hàng hóa"}, "kun": {"word": "", "read": "", "meaning": "しょう không phải しょ hay せい"}, "vn": "hàng hóa", "hv": "THƯƠNG PHẨM", "freq": 2, "group": "society", "type": "m1", "exp": "商品(しょうひん)= hàng hóa. しょう không phải しょ hay せい"}, {"k": "製品", "on": {"word": "製品", "read": "せいひん", "meaning": "sản phẩm"}, "kun": {"word": "製", "read": "せい", "meaning": "chế + 品"}, "vn": "sản phẩm", "hv": "CHẾ PHẨM", "freq": 1, "group": "society", "type": "m2", "exp": "製品(せいひん)= sản phẩm. 製(せい)=chế + 品(ひん)=hàng"}, {"k": "法律", "on": {"word": "法律", "read": "ほうりつ", "meaning": "luật pháp"}, "kun": {"word": "法", "read": "ほう", "meaning": "pháp + 律"}, "vn": "luật pháp", "hv": "PHÁP LUẬT", "freq": 1, "group": "society", "type": "m2", "exp": "法律(ほうりつ)= luật pháp. 法(ほう)=pháp + 律(りつ)=luật"}, {"k": "規則", "on": {"word": "規則", "read": "きそく", "meaning": "quy tắc"}, "kun": {"word": "", "read": "", "meaning": "規(き)+則(そく)"}, "vn": "quy tắc", "hv": "QUY TẮC", "freq": 1, "group": "society", "type": "m2", "exp": "規則(きそく)= quy tắc. 規(き)+則(そく)"}, {"k": "能力", "on": {"word": "能力", "read": "のうりょく", "meaning": "năng lực"}, "kun": {"word": "", "read": "", "meaning": "のう+りょく"}, "vn": "năng lực", "hv": "NĂNG LỰC", "freq": 1, "group": "society", "type": "m1", "exp": "能力(のうりょく)= năng lực. のう+りょく"}, {"k": "実力", "on": {"word": "実力", "read": "じつりょく", "meaning": "thực lực"}, "kun": {"word": "", "read": "", "meaning": "じつ không phải しつ"}, "vn": "thực lực", "hv": "THỰC LỰC", "freq": 2, "group": "society", "type": "m1", "exp": "実力(じつりょく)= thực lực. じつ không phải しつ"}, {"k": "技術", "on": {"word": "技術", "read": "おうよう", "meaning": "ứng dụng"}, "kun": {"word": "応用", "read": "おうよう", "meaning": "ứng dụng"}, "vn": "ứng dụng", "hv": "KỸ THUẬT", "freq": 2, "group": "society", "type": "m1", "exp": "Câu này hỏi 応用(おうよう)= ứng dụng, không phải 技術"}, {"k": "完全", "on": {"word": "完全", "read": "かんぜん", "meaning": "hoàn toàn"}, "kun": {"word": "完", "read": "かん", "meaning": "hoàn + 全"}, "vn": "hoàn toàn", "hv": "HOÀN TOÀN", "freq": 2, "group": "society", "type": "m1", "exp": "完全(かんぜん)= hoàn toàn. かん+ぜん. Nhớ: 完(かん)=hoàn + 全(ぜん)=toàn"}, {"k": "完成", "on": {"word": "完成", "read": "かんせい", "meaning": "hoàn thành"}, "kun": {"word": "完全", "read": "かんぜん", "meaning": "hoàn toàn"}, "vn": "hoàn thành", "hv": "HOÀN THÀNH", "freq": 2, "group": "society", "type": "m1", "exp": "完成(かんせい)= hoàn thành. かん+せい. Nhớ: 完全(かんぜん)=hoàn toàn"}, {"k": "共通", "on": {"word": "共通", "read": "きょうつう", "meaning": "chung"}, "kun": {"word": "", "read": "", "meaning": "きょうつう không phải こうつう(交通)"}, "vn": "chung", "hv": "CỘNG THÔNG", "freq": 2, "group": "society", "type": "m1", "exp": "共通(きょうつう)= chung. きょうつう không phải こうつう(交通)"}, {"k": "個人", "on": {"word": "個人", "read": "こじん", "meaning": "cá nhân"}, "kun": {"word": "", "read": "", "meaning": "こ không phải こう"}, "vn": "cá nhân", "hv": "CÁ NHÂN", "freq": 2, "group": "society", "type": "m1", "exp": "個人(こじん)= cá nhân. こ không phải こう"}, {"k": "他人", "on": {"word": "他人", "read": "たにん", "meaning": "người khác"}, "kun": {"word": "他", "read": "た", "meaning": "khác + 人"}, "vn": "người khác", "hv": "THA NHÂN", "freq": 1, "group": "society", "type": "m1", "exp": "他人(たにん)= người khác. 他(た)=khác + 人(にん)=người"}, {"k": "主要", "on": {"word": "主要", "read": "じゅうよう", "meaning": "chủ yếu"}, "kun": {"word": "主", "read": "しゅ", "meaning": "chủ + 要"}, "vn": "chủ yếu", "hv": "CHỦ YẾU", "freq": 2, "group": "society", "type": "m1", "exp": "主要(しゅよう)= chủ yếu. しゅ+よう. Nhớ: 主(しゅ)=chủ + 要(よう)=yếu"}, {"k": "以降", "on": {"word": "以降", "read": "いこう", "meaning": "từ"}, "kun": {"word": "", "read": "", "meaning": "以(い)+降(こう)"}, "vn": "từ", "hv": "DĨ GIÁNG", "freq": 1, "group": "society", "type": "m1", "exp": "以降(いこう)= từ...trở đi. 以(い)+降(こう)"}, {"k": "大勢", "on": {"word": "大勢", "read": "おおぜい", "meaning": "đông người"}, "kun": {"word": "勢", "read": "ぜい", "meaning": "thế lực"}, "vn": "đông người", "hv": "ĐẠI THẾ", "freq": 1, "group": "society", "type": "m2", "exp": "大勢(おおぜい)= đông người. 大(おお)+勢(ぜい)=thế lực"}, {"k": "夫婦", "on": {"word": "夫婦", "read": "ふうふ", "meaning": "vợ chồng"}, "kun": {"word": "", "read": "", "meaning": "ふう+ふ"}, "vn": "vợ chồng", "hv": "PHU PHỤ", "freq": 2, "group": "society", "type": "m1", "exp": "夫婦(ふうふ)= vợ chồng. ふう+ふ. Đọc đặc biệt, không phải ふうふう"}, {"k": "父母", "on": {"word": "父母", "read": "ふぼ", "meaning": "cha mẹ"}, "kun": {"word": "父", "read": "ふ", "meaning": "cha + 母"}, "vn": "cha mẹ", "hv": "PHỤ MẪU", "freq": 2, "group": "society", "type": "m1", "exp": "父母(ふぼ)= cha mẹ. ふ+ぼ. Nhớ: 父(ふ)=cha + 母(ぼ)=mẹ"}, {"k": "娘", "on": {"word": "娘", "read": "むすめ", "meaning": "con gái"}, "kun": {"word": "息子", "read": "むすこ", "meaning": "con trai"}, "vn": "con gái", "hv": "NƯƠNG", "freq": 2, "group": "society", "type": "m2", "exp": "娘(むすめ)= con gái. Kun reading của 娘. Nhớ: 息子(むすこ)=con trai"}, {"k": "輸出", "on": {"word": "輸出", "read": "ゆしゅつ", "meaning": "xuất khẩu"}, "kun": {"word": "輸", "read": "ゆ", "meaning": "vận chuyển + 出"}, "vn": "xuất khẩu", "hv": "XUẤT KHẨU", "freq": 1, "group": "society", "type": "m2", "exp": "輸出(ゆしゅつ)= xuất khẩu. 輸(ゆ)=vận chuyển + 出(しゅつ)=ra"}, {"k": "関係", "on": {"word": "関係", "read": "かんけい", "meaning": "quan hệ"}, "kun": {"word": "", "read": "", "meaning": "関(かん)+係(けい)"}, "vn": "quan hệ", "hv": "QUAN HỆ", "freq": 1, "group": "society", "type": "m2", "exp": "関係(かんけい)= quan hệ. 関(かん)+係(けい)"}, {"k": "関心", "on": {"word": "関心", "read": "ふかい", "meaning": "sâu sắc"}, "kun": {"word": "深い", "read": "ふかい", "meaning": "sâu sắc"}, "vn": "sâu sắc", "hv": "QUAN TÂM", "freq": 2, "group": "society", "type": "m1", "exp": "Câu này hỏi 深い(ふかい)= sâu sắc, không phải 関心"}, {"k": "観光", "on": {"word": "観光", "read": "かんこう", "meaning": "tham quan"}, "kun": {"word": "観", "read": "かん", "meaning": "xem + 光"}, "vn": "tham quan", "hv": "QUAN QUANG", "freq": 1, "group": "society", "type": "m2", "exp": "観光(かんこう)= tham quan. 観(かん)=xem + 光(こう)=ánh sáng"}, {"k": "便利", "on": {"word": "便利", "read": "べんりい", "meaning": "tiện lợi"}, "kun": {"word": "便", "read": "べん", "meaning": "tiện + 利"}, "vn": "tiện lợi", "hv": "TIỆN LỢI", "freq": 1, "group": "society", "type": "m1", "exp": "便利(べんり)= tiện lợi. 便(べん)=tiện + 利(り)=lợi"}, {"k": "安全", "on": {"word": "安全", "read": "あんぜん", "meaning": "an toàn"}, "kun": {"word": "", "read": "", "meaning": ""}, "vn": "an toàn", "hv": "AN TOÀN", "freq": 1, "group": "society", "type": "m1", "exp": "安全(あんぜん)=an toàn"}, {"k": "可能", "on": {"word": "可能", "read": "かのう", "meaning": "có thể/khả thi"}, "kun": {"word": "可", "read": "か", "meaning": "có thể + 能"}, "vn": "có thể/khả thi", "hv": "KHẢ NĂNG", "freq": 2, "group": "society", "type": "m2", "exp": "可能(かのう)= có thể/khả thi. か+のう. Nhớ: 可(か)=có thể + 能(のう)=năng"}, {"k": "経験", "on": {"word": "経験", "read": "けいけん", "meaning": "kinh nghiệm"}, "kun": {"word": "", "read": "", "meaning": ""}, "vn": "kinh nghiệm", "hv": "KINH NGHIỆM", "freq": 1, "group": "society", "type": "m1", "exp": "経験(けいけん)=kinh nghiệm"}, {"k": "有名", "on": {"word": "有名", "read": "ゆうめい", "meaning": "nổi tiếng"}, "kun": {"word": "有", "read": "ゆう", "meaning": "hữu + 名"}, "vn": "nổi tiếng", "hv": "HỮU DANH", "freq": 2, "group": "traits", "type": "m1", "exp": "有名(ゆうめい)= nổi tiếng. ゆう+めい. Nhớ: 有(ゆう)=hữu + 名(めい)=danh"}, {"k": "複雑", "on": {"word": "複雑", "read": "ふくざつ", "meaning": "phức tạp"}, "kun": {"word": "複", "read": "ふく", "meaning": "phức + 雑"}, "vn": "phức tạp", "hv": "PHỨC TẠP", "freq": 1, "group": "traits", "type": "m2", "exp": "複雑(ふくざつ)= phức tạp. 複(ふく)=phức + 雑(ざつ)=tạp"}, {"k": "複数", "on": {"word": "複数", "read": "ふくすう", "meaning": "số nhiều"}, "kun": {"word": "複", "read": "ふく", "meaning": "phức + 数"}, "vn": "số nhiều", "hv": "PHỨC SỐ", "freq": 1, "group": "traits", "type": "m2", "exp": "複数(ふくすう)= số nhiều. 複(ふく)=phức + 数(すう)=số"}, {"k": "短気", "on": {"word": "短気", "read": "たんき", "meaning": "nóng tính"}, "kun": {"word": "短", "read": "たん", "meaning": "ngắn + 気"}, "vn": "nóng tính", "hv": "ĐOẢN KHÍ", "freq": 1, "group": "traits", "type": "m2", "exp": "短気(たんき)= nóng tính. 短(たん)=ngắn + 気(き)=tính khí"}, {"k": "成績", "on": {"word": "成績", "read": "せいせき", "meaning": "thành tích"}, "kun": {"word": "", "read": "", "meaning": "成(せい)+績(せき)"}, "vn": "thành tích", "hv": "THÀNH TÍCH", "freq": 1, "group": "traits", "type": "m2", "exp": "成績(せいせき)= thành tích. 成(せい)+績(せき)"}, {"k": "卒業", "on": {"word": "卒業", "read": "そつぎょう", "meaning": "tốt nghiệp"}, "kun": {"word": "", "read": "", "meaning": "そつ không phải さつ"}, "vn": "tốt nghiệp", "hv": "TỐT NGHIỆP", "freq": 2, "group": "traits", "type": "m1", "exp": "卒業(そつぎょう)= tốt nghiệp. そつ không phải さつ"}, {"k": "重要", "on": {"word": "重要", "read": "じゅよう", "meaning": "quan trọng"}, "kun": {"word": "", "read": "", "meaning": ""}, "vn": "quan trọng", "hv": "TRỌNG YẾU", "freq": 1, "group": "traits", "type": "m1", "exp": "重要(じゅうよう→じゅよう)= quan trọng"}, {"k": "貸して", "on": {"word": "貸して", "read": "かして", "meaning": "cho mượn"}, "kun": {"word": "貸す", "read": "かす", "meaning": "cho mượn"}, "vn": "cho mượn", "hv": "THÙ", "freq": 1, "group": "traits", "type": "m2", "exp": "貸す(かす)= cho mượn. Phân biệt: 借りる(かりる)=mượn"}, {"k": "負けて", "on": {"word": "負けて", "read": "まけて", "meaning": "thua"}, "kun": {"word": "負ける", "read": "まける", "meaning": "thua"}, "vn": "thua", "hv": "PHỤ", "freq": 1, "group": "traits", "type": "m2", "exp": "負ける(まける)= thua. 勝負(しょうぶ)=thắng thua"}, {"k": "勝った", "on": {"word": "勝った", "read": "かった", "meaning": "thắng"}, "kun": {"word": "勝つ", "read": "かつ", "meaning": "thắng"}, "vn": "thắng", "hv": "THẮNG", "freq": 1, "group": "traits", "type": "m1", "exp": "勝つ(かつ)= thắng. 勝利(しょうり)=chiến thắng"}, {"k": "解決", "on": {"word": "解決", "read": "かいけつ", "meaning": "giải quyết"}, "kun": {"word": "解", "read": "かい", "meaning": "giải + 決"}, "vn": "giải quyết", "hv": "GIẢI QUYẾT", "freq": 1, "group": "traits", "type": "m2", "exp": "解決(かいけつ)= giải quyết. 解(かい)=giải + 決(けつ)=quyết"}, {"k": "育てたい", "on": {"word": "育てたい", "read": "そだてたい", "meaning": "nuôi dưỡng"}, "kun": {"word": "育てる", "read": "そだてる", "meaning": "nuôi dưỡng"}, "vn": "nuôi dưỡng", "hv": "DỤC", "freq": 1, "group": "traits", "type": "m2", "exp": "育てる(そだてる)= nuôi dưỡng. 教育(きょういく)=giáo dục"}, {"k": "育てる", "on": {"word": "育てる", "read": "そだてる", "meaning": "nuôi dưỡng"}, "kun": {"word": "", "read": "", "meaning": "教育(きょういく)"}, "vn": "nuôi dưỡng", "hv": "DỤC", "freq": 1, "group": "traits", "type": "m2", "exp": "育てる(そだてる)= nuôi dưỡng. 教育(きょういく)"}, {"k": "泊まり", "on": {"word": "泊まり", "read": "とまり", "meaning": "nghỉ lại qua đêm"}, "kun": {"word": "泊まる", "read": "とまる", "meaning": "nghỉ lại qua đêm"}, "vn": "nghỉ lại qua đêm", "hv": "BẠC", "freq": 1, "group": "traits", "type": "m2", "exp": "泊まる(とまる)= nghỉ lại qua đêm. 宿泊(しゅくはく)=lưu trú"}, {"k": "ご自由", "on": {"word": "ご自由", "read": "ごじゆう", "meaning": "tự do"}, "kun": {"word": "自由", "read": "じゆう", "meaning": "tự do"}, "vn": "tự do", "hv": "TỰ DO", "freq": 1, "group": "traits", "type": "m2", "exp": "自由(じゆう)= tự do. 自(じ)=tự + 由(ゆう)=do"}, {"k": "違って", "on": {"word": "違って", "read": "ちがって", "meaning": "khác/sai"}, "kun": {"word": "違う", "read": "ちがう", "meaning": "khác/sai"}, "vn": "khác/sai", "hv": "VI", "freq": 1, "group": "traits", "type": "m2", "exp": "違う(ちがう)= khác/sai. 違反(いはん)=vi phạm"}, {"k": "誕生日", "on": {"word": "誕生日", "read": "たんじょうび", "meaning": "sinh nhật"}, "kun": {"word": "", "read": "", "meaning": ""}, "vn": "sinh nhật", "hv": "SINH NHẬT", "freq": 1, "group": "traits", "type": "m1", "exp": "誕生日(たんじょうび)=sinh nhật"}, {"k": "原因", "on": {"word": "原因", "read": "げんいん", "meaning": "nguyên nhân"}, "kun": {"word": "", "read": "", "meaning": "原(げん)+因(いん)"}, "vn": "nguyên nhân", "hv": "NGUYÊN NHÂN", "freq": 1, "group": "traits", "type": "m2", "exp": "原因(げんいん)= nguyên nhân. 原(げん)+因(いん)"}, {"k": "復習", "on": {"word": "復習", "read": "ふくしゅう", "meaning": "ôn bài"}, "kun": {"word": "復", "read": "ふく", "meaning": "phục + 習"}, "vn": "ôn bài", "hv": "PHỤC TẬP", "freq": 1, "group": "traits", "type": "m2", "exp": "復習(ふくしゅう)= ôn bài. 復(ふく)=phục + 習(しゅう)=học"}, {"k": "記念", "on": {"word": "記念", "read": "きねん", "meaning": "kỷ niệm"}, "kun": {"word": "記", "read": "き", "meaning": "ghi + 念"}, "vn": "kỷ niệm", "hv": "KỶ NIỆM", "freq": 1, "group": "traits", "type": "m2", "exp": "記念(きねん)= kỷ niệm. 記(き)=ghi + 念(ねん)=tưởng"}, {"k": "伝言", "on": {"word": "伝言", "read": "でんごん", "meaning": "tin nhắn/lời nhắn"}, "kun": {"word": "伝", "read": "でん", "meaning": "truyền + 言"}, "vn": "tin nhắn/lời nhắn", "hv": "TRUYỀN NGÔN", "freq": 1, "group": "traits", "type": "m2", "exp": "伝言(でんごん)= tin nhắn/lời nhắn. 伝(でん)=truyền + 言(ごん)=lời"}, {"k": "小型", "on": {"word": "小型", "read": "こがた", "meaning": "loại nhỏ"}, "kun": {"word": "型", "read": "がた", "meaning": "kiểu nhỏ"}, "vn": "loại nhỏ", "hv": "TIỂU HÌNH", "freq": 2, "group": "traits", "type": "m1", "exp": "小型(こがた)= loại nhỏ. こ+がた. Nhớ: 小(こ)+型(がた)=kiểu nhỏ"}, {"k": "表面", "on": {"word": "表面", "read": "ひょうめん", "meaning": "bề mặt"}, "kun": {"word": "", "read": "", "meaning": "ひょう không phải しょう"}, "vn": "bề mặt", "hv": "BIỂU DIỆN", "freq": 2, "group": "traits", "type": "m1", "exp": "表面(ひょうめん)= bề mặt. ひょう không phải しょう"}, {"k": "確か", "on": {"word": "確か", "read": "たしか", "meaning": "chắc chắn"}, "kun": {"word": "確認", "read": "かくにん", "meaning": "xác nhận"}, "vn": "chắc chắn", "hv": "XÁC", "freq": 1, "group": "traits", "type": "m2", "exp": "確か(たしか)= chắc chắn. 確認(かくにん)=xác nhận"}, {"k": "確かに", "on": {"word": "確かに", "read": "たしかに", "meaning": "chắc chắn"}, "kun": {"word": "確認", "read": "かくにん", "meaning": "xác nhận"}, "vn": "chắc chắn", "hv": "XÁC THỰC", "freq": 1, "group": "traits", "type": "m1", "exp": "確かに(たしかに)= chắc chắn. 確認(かくにん)=xác nhận"}, {"k": "良い", "on": {"word": "良い", "read": "よい", "meaning": "tốt"}, "kun": {"word": "", "read": "", "meaning": ""}, "vn": "tốt", "hv": "LƯƠNG", "freq": 1, "group": "traits", "type": "m1", "exp": "良い(よい)=tốt"}, {"k": "適当", "on": {"word": "適当", "read": "てきとう", "meaning": "phù hợp/tùy tiện"}, "kun": {"word": "適", "read": "てき", "meaning": "thích hợp"}, "vn": "phù hợp/tùy tiện", "hv": "THÍCH ĐƯƠNG", "freq": 2, "group": "traits", "type": "m1", "exp": "適当(てきとう)= phù hợp/tùy tiện. てき+とう. Nhớ: 適(てき)=thích hợp"}];
+const EXAM_DATA = {
+  "12-2011": {
+    m1: [
+      {q:"今年の夏は、過去十年間で一番の暑さだったそうだ。",word:"過去",opts:["かきょ","かこう","かこ","かきょう"],ans:1,exp:"過去(かこ)= quá khứ. 過(か)=qua + 去(こ)=đi"},
+      {q:"あと5分で東京駅に到着します。",word:"到着",opts:["とうつく","とうちゃく","どうつく","どうちゃく"],ans:1,exp:"到着(とうちゃく)= đến nơi. Hay nhầm とう↔どう"},
+      {q:"公園の木の枝を折ってはいけません。",word:"折って",opts:["うって","おって","わって","きって"],ans:1,exp:"折る(おる)= gãy/bẻ. Kun reading. Nhớ: 骨折(こっせつ)=gãy xương"},
+      {q:"インターネットで最新の情報をチェックした。",word:"情報",opts:["じゅうほう","じょうほ","じょうほう","じゅうほ"],ans:2,exp:"情報(じょうほう)= thông tin. じょう không phải じゅう"},
+      {q:"最近、野菜の値段が高くなっています。",word:"値段",opts:["かかく","かがく","ねたん","ねだん"],ans:3,exp:"値段(ねだん)= giá cả. ね là Kun, だん là On"},
+      {q:"彼はあの国の文化に深い関心を持っている。",word:"関心",opts:["ふかい","つよい","ひろい","おもい"],ans:0,exp:"Câu này hỏi 深い(ふかい)= sâu sắc, không phải 関心"},
+      {q:"昨日、友達に本を返しました。",word:"返しました",opts:["かしました","かえしました","もどしました","わたしました"],ans:1,exp:"返す(かえす)= trả lại. Kun reading. Nhớ: 返却(へんきゃく)=hoàn trả"},
+      {q:"月の表面はでこぼこしている。",word:"表面",opts:["しょめん","ひょめん","しょうめん","ひょうめん"],ans:3,exp:"表面(ひょうめん)= bề mặt. ひょう không phải しょう"},
+    ],
+    m2: [
+      {q:"東京はげんざい午後3時です。",word:"げんざい",opts:["視在","現存","現在","視存"],ans:2,exp:"現在(げんざい)= hiện tại. 現(げん)=hiện + 在(ざい)=tồn tại"},
+      {q:"こちらのサンプルはごじゆうにお取りください。",word:"ごじゆう",opts:["ご事有","ご事由","ご自有","ご自由"],ans:3,exp:"自由(じゆう)= tự do. 自(じ)=tự + 由(ゆう)=do"},
+      {q:"大学ではほうりつを勉強しました。",word:"ほうりつ",opts:["訪立","法立","方律","法律"],ans:3,exp:"法律(ほうりつ)= luật pháp. 法(ほう)=pháp + 律(りつ)=luật"},
+      {q:"いつか京都をゆっくりかんこうしたい。",word:"かんこう",opts:["観光","観察","歓光","歓察"],ans:0,exp:"観光(かんこう)= tham quan. 観(かん)=xem + 光(こう)=ánh sáng"},
+      {q:"当日、このけんを忘れないようにしてください。",word:"けん",opts:["巻","券","募","惹"],ans:1,exp:"券(けん)= phiếu/vé. Nhớ: 入場券・乗車券"},
+      {q:"なかなかなみだが止まらなくて困りました。",word:"なみだ",opts:["流","汗","涙","泣"],ans:2,exp:"涙(なみだ)= nước mắt. Kun reading của 涙"},
+    ]
+  },
+  "12-2012": {
+    m1: [
+      {q:"このひもは短すぎて使いにくい。",word:"短すぎて",opts:["よわすぎて","みじかすぎて","ほそすぎて","かたすぎて"],ans:1,exp:"短い(みじかい)= ngắn. Nhớ: 短期(たんき)=ngắn hạn"},
+      {q:"あの人は他人の意見を全然聞かない。",word:"他人",opts:["ちにん","たじん","たにん","ちじん"],ans:2,exp:"他人(たにん)= người khác. 他(た)=khác + 人(にん)=người"},
+      {q:"人口の変化をグラフで示した。",word:"変化",opts:["みしだ","さした","あらわした","しめした"],ans:3,exp:"示す(しめす)= chỉ ra/thể hiện. Câu này hỏi 示した không phải 変化"},
+      {q:"田中さんは外科のお医者さんです。",word:"外科",opts:["がいか","げか","げいか","がか"],ans:1,exp:"外科(げか)= khoa ngoại. げか không phải がいか"},
+      {q:"佐藤さんは笑顔がとてもすてきです。",word:"笑顔",opts:["えがお","えかお","わらがお","わらかお"],ans:0,exp:"笑顔(えがお)= nụ cười. 笑(え)+顔(がお) — đọc đặc biệt"},
+      {q:"5時以降にもう一度お電話ください。",word:"以降",opts:["いこ","いごう","いこう","いご"],ans:2,exp:"以降(いこう)= từ...trở đi. 以(い)+降(こう)"},
+      {q:"道路を横断するときは、車に十分注意してください。",word:"横断",opts:["おうだん","よとだん","おうたん","よこたん"],ans:0,exp:"横断(おうだん)= băng qua. 横(おう)+断(だん)"},
+      {q:"わたしが合図をしたら、始めてください。",word:"合図",opts:["ごうと","あいと","ごうず","あいず"],ans:3,exp:"合図(あいず)= ám hiệu/tín hiệu. 合(あい)+図(ず)"},
+    ],
+    m2: [
+      {q:"昨日は残業できたくが遅くなった。",word:"きたく",opts:["着家","帰家","着宅","帰宅"],ans:3,exp:"帰宅(きたく)= về nhà. 帰(き)=về + 宅(たく)=nhà"},
+      {q:"この辺りは子どもをそだてるのにいい環境だ。",word:"そだてる",opts:["産てる","育てる","守てる","助てる"],ans:1,exp:"育てる(そだてる)= nuôi dưỡng. 教育(きょういく)"},
+      {q:"会議で決まったことをきちんときろくしておいてください。",word:"きろく",opts:["記録","紀録","記緑","紀緑"],ans:0,exp:"記録(きろく)= ghi chép. 記(き)=ghi + 録(ろく)=lưu"},
+      {q:"今朝からはが痛いんです。",word:"は",opts:["腹","胃","歯","腰"],ans:2,exp:"歯(は)= răng. Kun reading của 歯. Nhớ: 歯医者(はいしゃ)=nha sĩ"},
+      {q:"リボンをきれいにむすぶのは難しい。",word:"むすぶ",opts:["組ぶ","絡ぶ","給ぶ","結ぶ"],ans:3,exp:"結ぶ(むすぶ)= buộc/kết nối. 結婚(けっこん)=kết hôn"},
+      {q:"学校で勉強したことを毎日ふくしゅうしています。",word:"ふくしゅう",opts:["復習","複習","練習","錬習"],ans:0,exp:"復習(ふくしゅう)= ôn bài. 復(ふく)=phục + 習(しゅう)=học"},
+    ]
+  },
+  "12-2013": {
+    m1: [
+      {q:"今週は各地でいろいろなお祭りがあります。",word:"各地",opts:["かっじ","かっち","かくじ","かくち"],ans:3,exp:"各地(かくち)= mỗi nơi. 各(かく)=mỗi + 地(ち)=đất"},
+      {q:"貯金がどのくらいかわかりません。",word:"貯金",opts:["だいきん","ちょきん","げんきん","ぜいきん"],ans:1,exp:"貯金(ちょきん)= tiết kiệm. 貯(ちょ)=tích + 金(きん)=tiền"},
+      {q:"隣のお宅は留守のようです。",word:"留守",opts:["るす","りゅうす","るしゅ","りゅうしゅ"],ans:0,exp:"留守(るす)= vắng nhà. Đọc đặc biệt, không phải りゅうす"},
+      {q:"もう少し浅い皿はありませんか。",word:"浅い",opts:["ふかい","あつい","あさい","うすい"],ans:2,exp:"浅い(あさい)= nông/cạn. Đối nghĩa: 深い(ふかい)=sâu"},
+      {q:"この文章は長くてわかりにくい。",word:"文章",opts:["ぶんそ","ぶんしょ","ぶんそう","ぶんしょう"],ans:3,exp:"文章(ぶんしょう)= văn bản. ぶんしょう không phải ぶんそう"},
+      {q:"改札の前で待っています。",word:"改札",opts:["かいさつ","かいじょう","けいさつ","けいじょう"],ans:0,exp:"改札(かいさつ)= soát vé. 改(かい)=cải + 札(さつ)=thẻ"},
+    ],
+    m2: [
+      {q:"米のゆしゅつ量が去年の2倍になった。",word:"ゆしゅつ",opts:["培","倍","増","僧"],ans:1,exp:"倍(ばい)= gấp đôi. Câu này hỏi 倍 không phải 輸出"},
+      {q:"昨日の夕方、この辺りでていでんがあった。",word:"ていでん",opts:["止電","沙電","停電","閉電"],ans:2,exp:"停電(ていでん)= mất điện. 停(てい)=dừng + 電(でん)=điện"},
+      {q:"すぐにつつんでください。",word:"つつんで",opts:["呼んで","結んで","運んで","包んで"],ans:3,exp:"包む(つつむ)= bọc/gói. Nhớ: 包装(ほうそう)=đóng gói"},
+      {q:"田中さんはどくしんです。",word:"どくしん",opts:["独身","単身","独者","単者"],ans:0,exp:"独身(どくしん)= độc thân. 独(どく)=một mình + 身(しん)=thân"},
+      {q:"この本をかしてください。",word:"かして",opts:["指して","借して","貨して","貸して"],ans:3,exp:"貸す(かす)= cho mượn. Phân biệt: 借りる(かりる)=mượn"},
+      {q:"この猫は触ろうとすると、すぐにげる。",word:"にげる",opts:["逃げる","遠げる","逆げる","返げる"],ans:0,exp:"逃げる(にげる)= trốn chạy. Nhớ: 逃走(とうそう)=bỏ trốn"},
+    ]
+  },
+  "12-2014": {
+    m1: [
+      {q:"この辺りの自然はとても美しい。",word:"自然",opts:["じぜん","じぜい","しぜん","しぜい"],ans:2,exp:"自然(しぜん)= thiên nhiên. し không phải じ"},
+      {q:"このロボットには、さまざまな技術が応用されています。",word:"技術",opts:["いんよう","おうよう","そうよう","しんよう"],ans:1,exp:"Câu này hỏi 応用(おうよう)= ứng dụng, không phải 技術"},
+      {q:"それはあまり一般的とは言えないだろう。",word:"一般的",opts:["いちばんてき","いちべんてき","いっぱんてき","いっべんてき"],ans:2,exp:"一般的(いっぱんてき)= nói chung. Hay nhầm いちばん vs いっぱん"},
+      {q:"それでは検査を始めましょう。",word:"検査",opts:["かんさ","けんき","かんさつ","けんさ"],ans:3,exp:"検査(けんさ)= kiểm tra. 検(けん)=kiểm + 査(さ)=tra"},
+      {q:"もう少し厚いほうがいいですね。",word:"厚い",opts:["あつい","うすい","あまい","からい"],ans:0,exp:"厚い(あつい)= dày. Đối nghĩa: 薄い(うすい)=mỏng"},
+      {q:"ゆっくり呼吸をしてください。",word:"呼吸",opts:["よきょう","わきゅう","よきゅう","こきゅう"],ans:3,exp:"呼吸(こきゅう)= hô hấp. こ không phải よ hay わ"},
+    ],
+    m2: [
+      {q:"この場所にちゅうしゃしてはいけません。",word:"ちゅうしゃ",opts:["駅車","駐車","停車","癌車"],ans:1,exp:"駐車(ちゅうしゃ)= đỗ xe. 駐(ちゅう)=đóng + 車(しゃ)=xe"},
+      {q:"事務所が新しいビルにうつりました。",word:"うつりました",opts:["着りました","到りました","動りました","移りました"],ans:3,exp:"移る(うつる)= chuyển/dời. 移動(いどう)=di chuyển"},
+      {q:"初めて日本のおんせんに行きました。",word:"おんせん",opts:["温泉","湯泉","温池","湯池"],ans:0,exp:"温泉(おんせん)= suối nước nóng. 温(おん)=ấm + 泉(せん)=suối"},
+      {q:"外国のざっしを買ってきました。",word:"ざっし",opts:["稚志","雑誌","稚誌","雑志"],ans:1,exp:"雑誌(ざっし)= tạp chí. 雑(ざつ→ざっ)+誌(し)"},
+      {q:"ときどき母の料理がこいしくなります。",word:"こいしく",opts:["恋しく","愛しく","親しく","好しく"],ans:0,exp:"恋しい(こいしい)= nhớ nhung. 恋愛(れんあい)=tình yêu"},
+      {q:"その話が正しいとかていしてみましょう。",word:"かてい",opts:["科定","仮定","課定","化定"],ans:1,exp:"仮定(かてい)= giả định. 仮(か)=tạm/giả + 定(てい)=định"},
+    ]
+  },
+  "12-2015": {
+    m1: [
+      {q:"病院で血液型を調べました。",word:"血液型",opts:["ちいきがた","けついきがた","ちえきがた","けつえきがた"],ans:3,exp:"血液型(けつえきがた)= nhóm máu. けつ+えき+がた"},
+      {q:"湖の上を白い鳥が飛んでいる。",word:"湖",opts:["みずうみ","みなと","いけ","なみ"],ans:0,exp:"湖(みずうみ)= hồ. Kun reading đặc biệt. 港(みなと)=cảng"},
+      {q:"この時代の生活にどんな変化があったのか調べてみたい。",word:"変化",opts:["ぶんか","へんか","ふんか","べんか"],ans:1,exp:"変化(へんか)= biến đổi. Hay nhầm ぶんか(文化=văn hóa)"},
+      {q:"その荷物を運んでください。",word:"荷物",opts:["しなもつ","しなもの","にもつ","にもの"],ans:2,exp:"荷物(にもつ)= hành lý. に là Kun, もつ là đặc biệt"},
+      {q:"毎日、平均1時間くらい勉強しています。",word:"平均",opts:["へんきん","へいきん","へんやく","へいやく"],ans:1,exp:"平均(へいきん)= trung bình. へい không phải へん"},
+      {q:"このグラフは、毎月の雨の量を表したものです。",word:"表した",opts:["あらわした","しめした","さした","うつした"],ans:0,exp:"表す(あらわす)= biểu thị. 表現(ひょうげん)=biểu đạt"},
+    ],
+    m2: [
+      {q:"この店はいろいろながっきを売っている。",word:"がっき",opts:["薬具","楽器","楽具","薬器"],ans:1,exp:"楽器(がっき)= nhạc cụ. 楽(がく→がっ)+器(き)"},
+      {q:"携帯電話をかりました。",word:"かりました",opts:["代りました","換りました","貸りました","借りました"],ans:3,exp:"借りる(かりる)= mượn. Phân biệt 貸す(かす)=cho mượn"},
+      {q:"けってんのない人はいないだろう。",word:"けってん",opts:["炎点","決天","決点","欠点"],ans:3,exp:"欠点(けってん)= khuyết điểm. 欠(けつ→けっ)+点(てん)"},
+      {q:"この古い橋はげんざいは使われていない。",word:"げんざい",opts:["原存","原在","現在","現存"],ans:2,exp:"現在(げんざい)= hiện tại. 現(げん)=hiện + 在(ざい)=tại"},
+      {q:"みどりのペンで、線を引きました。",word:"みどり",opts:["黄","緑","青","赤"],ans:1,exp:"緑(みどり)= màu xanh lá. Kun reading của 緑"},
+      {q:"家族の幸せをねがっている。",word:"ねがっている",opts:["顧って","願って","頼って","顔って"],ans:1,exp:"願う(ねがう)= cầu xin/ước. 願望(がんぼう)=ước muốn"},
+    ]
+  },
+  "7-2016": {
+    m1: [
+      {q:"丸いテーブルが欲しい。",word:"丸い",opts:["ほそい","かるい","まるい","ひくい"],ans:2,exp:"丸い(まるい)= tròn. Kun reading của 丸"},
+      {q:"この運動場は個人でも利用できる。",word:"個人",opts:["こうじん","こじん","こにん","こうにん"],ans:1,exp:"個人(こじん)= cá nhân. こ không phải こう"},
+      {q:"この方向で間違いない。",word:"方向",opts:["ほうぼう","ほうごう","ほうほう","ほうこう"],ans:3,exp:"方向(ほうこう)= phương hướng. ほうこう không phải ほうほう"},
+      {q:"申し込みはあしたまでです。",word:"申し込み",opts:["もしくみ","もしこみ","もうしくみ","もうしこみ"],ans:3,exp:"申し込み(もうしこみ)= đăng ký. もうし không phải もし"},
+      {q:"きちんと測ってください。",word:"測って",opts:["まもって","しまって","はかって","したがって"],ans:2,exp:"測る(はかる)= đo. Nhớ: 計測(けいそく)=đo đạc"},
+      {q:"その国は20年前に独立した。",word:"独立",opts:["どくりつ","とくりつ","どくれつ","とくれつ"],ans:0,exp:"独立(どくりつ)= độc lập. どく không phải とく"},
+      {q:"落としたときに折れてしまいました。",word:"折れて",opts:["われて","おれて","ぬれて","こわれて"],ans:1,exp:"折れる(おれる)= bị gãy. 骨折(こっせつ)=gãy xương"},
+      {q:"ごみを減らすためには一人一人の努力が大切だ。",word:"努力",opts:["どりょく","とりょく","きょうりょく","ぎょうりょく"],ans:0,exp:"努力(どりょく)= nỗ lực. ど không phải と hay きょう"},
+    ],
+    m2: [
+      {q:"捕まえた魚がにげてしまった。",word:"にげて",opts:["遠げて","返げて","逃げて","逆げて"],ans:2,exp:"逃げる(にげる)= trốn. 逃走(とうそう)=bỏ trốn"},
+      {q:"数学のせいせきが前よりよくなった。",word:"せいせき",opts:["成積","成績","整績","整積"],ans:1,exp:"成績(せいせき)= thành tích. 成(せい)+績(せき)"},
+      {q:"魚をやいて食べた。",word:"やいて",opts:["爆いて","燃いて","煙いて","焼いて"],ans:3,exp:"焼く(やく)= nướng. 焼肉(やきにく)=thịt nướng"},
+      {q:"その赤いところをまわしてください。",word:"まわして",opts:["回して","曲して","押して","引して"],ans:0,exp:"回す(まわす)= xoay. 回転(かいてん)=xoay vòng"},
+      {q:"し合った内容をきろくしておく。",word:"きろく",opts:["議録","記禄","記録","議禄"],ans:2,exp:"記録(きろく)= ghi chép. 記(き)+録(ろく). 禄≠録"},
+      {q:"順番にじょうしゃしてください。",word:"じょうしゃ",opts:["下車","乗車","降車","上車"],ans:1,exp:"乗車(じょうしゃ)= lên xe. 乗(じょう)=lên + 車(しゃ)=xe"},
+    ]
+  },
+  "12-2016": {
+    m1: [
+      {q:"会場には大勢の観客がいた。",word:"観客",opts:["けんぎゃく","かんぎゃく","けんきゃく","かんきゃく"],ans:3,exp:"観客(かんきゃく)= khán giả. かん không phải けん"},
+      {q:"田村さんが払ってくれました。",word:"払って",opts:["くばって","はらって","かざって","ひろって"],ans:1,exp:"払う(はらう)= trả tiền. 支払い(しはらい)=thanh toán"},
+      {q:"ホテルには3時ごろ到着します。",word:"到着",opts:["とうちゃく","とうつく","とちゃく","とつく"],ans:0,exp:"到着(とうちゃく)= đến nơi. とう+ちゃく. Chú ý không phải とちゃく"},
+      {q:"山下さんが説明を加えました。",word:"加えました",opts:["つたえました","おえました","くわえました","かえました"],ans:2,exp:"加える(くわえる)= thêm vào. Kun reading của 加"},
+      {q:"今から訓練を行います。",word:"訓練",opts:["くんれい","くんれん","ぐんれい","ぐんれん"],ans:1,exp:"訓練(くんれん)= huấn luyện. くん không phải ぐん, れん không phải れい"},
+      {q:"この豆はスープに使うといいですよ。",word:"豆",opts:["こな","いも","かい","まめ"],ans:3,exp:"豆(まめ)= đậu/hạt đậu. Kun reading của 豆"},
+      {q:"社会には共通のルールがあります。",word:"共通",opts:["きょうつ","こうつう","きょうつう","こうつ"],ans:2,exp:"共通(きょうつう)= chung. きょうつう không phải こうつう(交通)"},
+      {q:"来年から税金が上がるそうだ。",word:"税金",opts:["ぜいきん","ぜっきん","せいきん","せっきん"],ans:0,exp:"税金(ぜいきん)= tiền thuế. ぜい không phải せい hay ぜっ"},
+    ],
+    m2: [
+      {q:"しばらく、きれいなみなみを見ていた。",word:"なみ",opts:["池","湖","港","波"],ans:3,exp:"波(なみ)= sóng biển. Kun reading của 波"},
+      {q:"もう少しはやく歩きましょう。",word:"はやく",opts:["軽く","急く","速く","進く"],ans:2,exp:"速い(はやい)= nhanh. 速度(そくど)=tốc độ. Nhớ 速≠早"},
+      {q:"わたしは今の生活にまんぞくしている。",word:"まんぞく",opts:["満続","万続","満足","万足"],ans:2,exp:"満足(まんぞく)= hài lòng. 満(まん)=đầy + 足(ぞく)=đủ"},
+      {q:"父は腕をくんで何か考えていた。",word:"くんで",opts:["接んで","組んで","折んで","結んで"],ans:1,exp:"組む(くむ)= khoanh/ghép. 組合(くみあい)=tổ hợp"},
+      {q:"この国は主に米をゆしゅつしている。",word:"ゆしゅつ",opts:["輸出","諭出","輪出","論出"],ans:0,exp:"輸出(ゆしゅつ)= xuất khẩu. 輸(ゆ)=vận chuyển + 出(しゅつ)=ra"},
+      {q:"赤ちゃんが母親に抱かれてねむっています。",word:"ねむって",opts:["寝って","宿って","眼って","眠って"],ans:3,exp:"眠る(ねむる)= ngủ. 睡眠(すいみん)=giấc ngủ"},
+    ]
+  },
+  "7-2017": {
+    m1: [
+      {q:"ここは箱どから、ほかの所へ行きましょう。",word:"狭い",opts:["せまい","くさい","きたない","うるさい"],ans:0,exp:"狭い(せまい)= chật hẹp. 狭小(きょうしょう)=chật hẹp"},
+      {q:"商品に傷がないか確認します。",word:"商品",opts:["しょひん","しょうひん","せいひん","せひん"],ans:1,exp:"商品(しょうひん)= hàng hóa. しょう không phải しょ hay せい"},
+      {q:"体の調子がよくないので、もう少し待ってください。",word:"温まって",opts:["もえて","ひえて","にえて","うえて"],ans:0,exp:"Câu hỏi về 温まる(あたたまる)= ấm lên"},
+      {q:"大事なことばに下線を引いてください。",word:"下線",opts:["げぜん","かぜん","げせん","かせん"],ans:3,exp:"下線(かせん)= gạch dưới. か không phải げ"},
+      {q:"長い時に、割ってしまったみたいです。",word:"転んだ",opts:["はこんだ","ふんだ","ころんだ","つつんだ"],ans:2,exp:"転ぶ(ころぶ)= ngã. 転倒(てんとう)=ngã"},
+      {q:"今日の講義の重要なテーマは二つです。",word:"重要",opts:["しょうよう","じゅよう","しゅよ","じゅよう"],ans:1,exp:"重要(じゅうよう→じゅよう)= quan trọng"},
+    ],
+    m2: [
+      {q:"バスがなかなか来なくてこまりました。",word:"こまりました",opts:["国りました","困りました","留りました","図りました"],ans:1,exp:"困る(こまる)= khó xử. 困難(こんなん)=khó khăn"},
+      {q:"給料が上がるのをきたいどしている。",word:"きたい",opts:["規待","期願","期待","規顕"],ans:2,exp:"期待(きたい)= kỳ vọng. 期(き)=kỳ + 待(たい)=đợi"},
+      {q:"昨日はずつうがひどかったので家で寝ていた。",word:"ずつう",opts:["腹病","瑛病","腹痛","頭痛"],ans:3,exp:"頭痛(ずつう)= đau đầu. 頭(ず)=đầu + 痛(つう)=đau"},
+      {q:"銀行へお金をあずけに行ってきます。",word:"あずけ",opts:["預け","倍け","替け","買け"],ans:0,exp:"預ける(あずける)= gửi giữ. 預金(よきん)=tiền gửi"},
+      {q:"この荷物は東京をけいゆして送られるそうだ。",word:"けいゆ",opts:["係郵","経郵","係由","経由"],ans:3,exp:"経由(けいゆ)= qua/transit. 経(けい)=kinh + 由(ゆ)=do"},
+    ]
+  },
+  "12-2019": {
+    m1: [
+      {q:"10時に予約をお願いします。",word:"予約",opts:["ようやく","よやく","よよく","ようやく"],ans:1,exp:"予約(よやく)= đặt trước. よ+やく. Không phải ようやく(ようやく=rốt cuộc)"},
+      {q:"若かった頃の話をしてください。",word:"若かった",opts:["わるかった","さむかった","こわかった","わかかった"],ans:3,exp:"若い(わかい)= trẻ. 若者(わかもの)=người trẻ"},
+      {q:"上品な人ですね。",word:"上品",opts:["じょうひん","じょうびん","じょひん","じょびん"],ans:0,exp:"上品(じょうひん)= thanh lịch. じょう+ひん"},
+      {q:"山田さんに助けてもらった。",word:"助けて",opts:["とどけて","たすけて","うけて","かたづけて"],ans:1,exp:"助ける(たすける)= giúp đỡ. 救助(きゅうじょ)=cứu giúp"},
+      {q:"未来を考えてみる。",word:"未来",opts:["しょらい","しょうらい","みらい","みいらい"],ans:2,exp:"未来(みらい)= tương lai. み+らい. Nhớ: 未(み)=chưa"},
+      {q:"この電車は各駅に止まります。",word:"各駅",opts:["かくえき","がくえき","きゃくえき","ぎゃくえき"],ans:0,exp:"各駅(かくえき)= mỗi ga. かく không phải がく"},
+      {q:"誰が勝ったんですか？",word:"勝った",opts:["かざった","おった","のこった","かった"],ans:3,exp:"勝つ(かつ)= thắng. 勝利(しょうり)=chiến thắng"},
+      {q:"彼に初めて会ったときの印象はどうでしたか？",word:"印象",opts:["いんしょう","いんそう","にんしょう","にんそう"],ans:0,exp:"印象(いんしょう)= ấn tượng. いん+しょう. いん không phải にん"},
+    ],
+    m2: [
+      {q:"りゆうはよくわかりません。",word:"りゆう",opts:["里由","利由","裏由","理由"],ans:3,exp:"理由(りゆう)= lý do. 理(り)=lý + 由(ゆう)=do"},
+      {q:"このしまには初めて来ました。",word:"しま",opts:["寺","村","島","庭"],ans:2,exp:"島(しま)= đảo. Kun reading của 島"},
+      {q:"卒業のきねんに写真を撮りました。",word:"きねん",opts:["気念","記念","希念","喜念"],ans:1,exp:"記念(きねん)= kỷ niệm. 記(き)=ghi + 念(ねん)=tưởng"},
+      {q:"これがいっぱんてきな方法です。",word:"いっぱんてき",opts:["一半的","一般的","一版的","一盤的"],ans:1,exp:"一般的(いっぱんてき)= nói chung. 一般(いっぱん)=chung"},
+      {q:"今日もかならず行きます。",word:"かならず",opts:["必ず","要ず","決ず","定ず"],ans:0,exp:"必ず(かならず)= nhất định. Kun reading của 必"},
+      {q:"効果があらわれたようですよ。",word:"あらわれた",opts:["表われた","現れた","現われた","表れた"],ans:1,exp:"現れる(あらわれる)= xuất hiện. 現在(げんざい)=hiện tại"},
+    ]
+  },
+  "7-2010": {
+    m1: [
+      {q:"プレゼントはきれいな紙で包んであった。",word:"包んで",opts:["つつんで","つづんで","つうつんで","つうづんで"],ans:0,exp:"包む(つつむ)= bọc/gói. 包装(ほうそう)=đóng gói"},
+      {q:"彼はダンスが得意だ。",word:"得意",opts:["どおくい","とおくい","どくい","とくい"],ans:3,exp:"得意(とくい)= giỏi/sở trường. と+くい"},
+      {q:"新しい星が発見された。",word:"発見",opts:["はっけん","はけん","はつけん","ばつけん"],ans:0,exp:"発見(はっけん)= phát hiện. はっ không phải はつ hay はけん"},
+      {q:"このグラフは人口の変化を表しています。",word:"変化",opts:["しめして","ふやして","うごかして","あらわして"],ans:3,exp:"Câu hỏi 表す(あらわす)= biểu thị, không phải 変化"},
+      {q:"通勤にとても時間がかかります。",word:"通勤",opts:["つうがく","つうきん","つうやく","つうしん"],ans:1,exp:"通勤(つうきん)= đi làm. 通(つう)+勤(きん). Nhớ: 勤務(きんむ)=công vụ"},
+      {q:"努力することは大切だと思います。",word:"努力",opts:["どうりょく","とうりょく","どりょく","とりょく"],ans:2,exp:"努力(どりょく)= nỗ lực. ど+りょく. Không phải どう"},
+    ],
+    m2: [
+      {q:"機械がせいじょうかどうかチェックした。",word:"せいじょう",opts:["磨情","威常","正情","正常"],ans:3,exp:"正常(せいじょう)= bình thường. 正(せい)+常(じょう)"},
+      {q:"健康診断でけつえき検査を受けた。",word:"けつえき",opts:["意識","園圧","血液","血圧"],ans:2,exp:"血液(けつえき)= máu. 血(けつ)+液(えき)=chất lỏng"},
+      {q:"母親が子どもの後ろをおって走っている。",word:"おって",opts:["送って","追って","押って","折って"],ans:1,exp:"追う(おう)= đuổi theo. 追跡(ついせき)=truy đuổi"},
+      {q:"電車をおりるときに、かさを忘れてしまった。",word:"おりる",opts:["移りる","移る","隆りる","降りる"],ans:3,exp:"降りる(おりる)= xuống xe. 下降(かこう)=hạ xuống"},
+      {q:"大学に入ってから、しんちょうが変わっていない。",word:"しんちょう",opts:["背中","背後","身長","身紀"],ans:2,exp:"身長(しんちょう)= chiều cao. 身(しん)+長(ちょう)"},
+      {q:"このものがたりは誰でも知っている。",word:"ものがたり",opts:["物語","物化","物記","物源"],ans:0,exp:"物語(ものがたり)= câu chuyện. 語る(かたる)=kể"},
+    ]
+  },
+  "7-2013": {
+    m1: [
+      {q:"苦しいときは、この歌を聞きます。",word:"苦しい",opts:["かなしい","くやしい","くるしい","さびしい"],ans:2,exp:"苦しい(くるしい)= khổ sở. 苦労(くろう)=vất vả"},
+      {q:"来月、日本に出張する予定です。",word:"出張",opts:["しゅちゅう","しゅちょう","しゅっちゅう","しゅっちょう"],ans:3,exp:"出張(しゅっちょう)= công tác. しゅっ+ちょう"},
+      {q:"その木の根は薬にもなるそうです。",word:"根",opts:["ね","は","かわ","め"],ans:0,exp:"根(ね)= rễ cây. Kun reading của 根"},
+      {q:"すみませんが、事情があって、今日は行けません。",word:"事情",opts:["けいき","じじょう","るう","じじょ"],ans:1,exp:"事情(じじょう)= hoàn cảnh/lý do. 事(じ)+情(じょう)"},
+      {q:"面接の結果は、1週間以内に通知します。",word:"通知",opts:["つうち","とおち","つうし","とおし"],ans:0,exp:"通知(つうち)= thông báo. 通(つう)+知(ち)"},
+      {q:"試合に出られなかったのは、実力が足りなかったからだ。",word:"実力",opts:["しつりょく","じつりょく","どりょく","とりょく"],ans:1,exp:"実力(じつりょく)= thực lực. じつ không phải しつ"},
+    ],
+    m2: [
+      {q:"わたしは彼ならできるとしんじています。",word:"しんじて",opts:["真じて","信じて","心じて","親じて"],ans:1,exp:"信じる(しんじる)= tin tưởng. 信用(しんよう)=tín dụng"},
+      {q:"この工場ではプラスチックのようきを生産しています。",word:"ようき",opts:["溶器","容器","容機","溶機"],ans:1,exp:"容器(ようき)= đồ đựng/hộp. 容(よう)=dung + 器(き)=đồ"},
+      {q:"今日は一日中歩いていたので、足がつかれました。",word:"つかれました",opts:["疲れました","痛れました","病れました","症れました"],ans:0,exp:"疲れる(つかれる)= mệt mỏi. 疲労(ひろう)=mệt mỏi"},
+      {q:"お皿はかさねてその棚にしまってください。",word:"かさねて",opts:["整ねて","列ねて","階ねて","重ねて"],ans:3,exp:"重ねる(かさねる)= chồng lên. 重複(ちょうふく)=trùng lặp"},
+      {q:"今週はざんぎょうが多かった。",word:"ざんぎょう",opts:["増勤","増業","狭勤","残業"],ans:3,exp:"残業(ざんぎょう)= tăng ca. 残(ざん)=còn + 業(ぎょう)=việc"},
+    ]
+  },
+  "7-2014": {
+    m1: [
+      {q:"メールアドレスは覚えていません。",word:"覚えて",opts:["おしえて","おぼえて","かえて","かんがえて"],ans:1,exp:"覚える(おぼえる)= nhớ/học thuộc. 記憶(きおく)=ký ức"},
+      {q:"新しいサービスの広告はまだできていません。",word:"広告",opts:["こうこく","ほりとく","でんさぐく","ほうごく"],ans:0,exp:"広告(こうこく)= quảng cáo. 広(こう)+告(こく)"},
+      {q:"今日の試合の相手は強かった。",word:"相手",opts:["そうて","あいしゅ","あいて","そうしゅ"],ans:2,exp:"相手(あいて)= đối phương. あい+て. Đọc Kun đặc biệt"},
+      {q:"来月、スポーツ大会があります。",word:"大会",opts:["たいがい","だいかい","たいかい","だいがい"],ans:2,exp:"大会(たいかい)= đại hội. たい+かい"},
+      {q:"花瓶が割れている。",word:"割れて",opts:["われて","よごれて","たおれて","ぬれて"],ans:0,exp:"割れる(われる)= vỡ. 分割(ぶんかつ)=phân chia"},
+      {q:"うるさくて仕事に集中できない。",word:"集中",opts:["しゅじゅう","しゅちゅう","しゅうじゅう","しゅうちゅう"],ans:3,exp:"集中(しゅうちゅう)= tập trung. しゅう+ちゅう"},
+    ],
+    m2: [
+      {q:"子どもが壁に絵を書いてしまったので、けしてきれいにした。",word:"けして",opts:["流して","洗して","消して","清して"],ans:2,exp:"消す(けす)= xóa/tắt. 消灯(しょうとう)=tắt đèn"},
+      {q:"風邪で学校をけっせきした。",word:"けっせき",opts:["休座","休席","欠座","欠席"],ans:3,exp:"欠席(けっせき)= vắng mặt. 欠(けっ)+席(せき)"},
+      {q:"野菜をこまかく切ってください。",word:"こまかく",opts:["細かく","短かく","丸かく","角かく"],ans:0,exp:"細かい(こまかい)= nhỏ/tỉ mỉ. 細部(さいぶ)=chi tiết"},
+      {q:"このアパートにはわかい人がたくさん住んでいる。",word:"わかい",opts:["孝い","苦い","老い","若い"],ans:3,exp:"若い(わかい)= trẻ. 若者(わかもの)=người trẻ"},
+      {q:"ふくすうの写真からいいものを選んだ。",word:"ふくすう",opts:["複数","復数","複枚","復枚"],ans:0,exp:"複数(ふくすう)= số nhiều. 複(ふく)=phức + 数(すう)=số"},
+      {q:"米の輸入量がげんしょうしている。",word:"げんしょう",opts:["減小","減少","現少","現小"],ans:1,exp:"減少(げんしょう)= giảm bớt. 減(げん)+少(しょう)"},
+    ]
+  },
+  "7-2018": {
+    m1: [
+      {q:"塩は台所にありました。",word:"塩",opts:["あぶら","まめ","しお","とめ"],ans:2,exp:"塩(しお)= muối. Kun reading của 塩"},
+      {q:"彼は犬に命令した。",word:"命令",opts:["めれん","めいれん","めれい","めいれい"],ans:3,exp:"命令(めいれい)= mệnh lệnh. めい+れい"},
+      {q:"手紙には恋しい人を思う気持ちが書かれていた。",word:"恋しい",opts:["といしい","したしい","なつかしい","やさしい"],ans:2,exp:"恋しい(こいしい)= nhớ nhung. Nhớ: 恋愛(れんあい)=tình yêu"},
+      {q:"機械が故障した。",word:"機械",opts:["ぎかい","きかい","きけい","ぎけい"],ans:1,exp:"機械(きかい)= máy móc. き không phải ぎ"},
+      {q:"今月は休日が多かった。",word:"休日",opts:["しゅくじつ","きゅうじつ","きゅうにち","しゅくにち"],ans:1,exp:"休日(きゅうじつ)= ngày nghỉ. きゅう+じつ"},
+      {q:"この部分をよく見てください。",word:"部分",opts:["ぶふん","ぶうぶん","ぶぶん","ぶなうふん"],ans:2,exp:"部分(ぶぶん)= bộ phận. ぶ+ぶん"},
+      {q:"池田さんは木村さんを疑っているようだ。",word:"疑って",opts:["しかって","こわがって","きらって","うたがって"],ans:3,exp:"疑う(うたがう)= nghi ngờ. 疑問(ぎもん)=nghi vấn"},
+      {q:"中島さんは数学が得意らしい。",word:"得意",opts:["とくい","とうい","どくい","どうい"],ans:0,exp:"得意(とくい)= giỏi/sở trường. とくい. Nhớ: 得る(える)=đạt được"},
+    ],
+    m2: [
+      {q:"毎日パソコンを使うので、目のつかれが取れません。",word:"つかれ",opts:["疫れ","病れ","疲れ","痛れ"],ans:2,exp:"疲れ(つかれ)= mệt mỏi. 疲労(ひろう)=mệt mỏi"},
+      {q:"そんなになかないでください。",word:"なかないで",opts:["涙かないで","悲かないで","商かないで","泣かないで"],ans:3,exp:"泣く(なく)= khóc. 号泣(ごうきゅう)=khóc to"},
+      {q:"この小説はストーリーがふくざつだ。",word:"ふくざつ",opts:["複雑","復雑","複稚","復稚"],ans:0,exp:"複雑(ふくざつ)= phức tạp. 複(ふく)=phức + 雑(ざつ)=tạp"},
+      {q:"飛んできたボールが背中にあたった。",word:"あたった",opts:["過たった","打たった","当たった","向たった"],ans:2,exp:"当たる(あたる)= trúng. 命中(めいちゅう)=trúng đích"},
+      {q:"この交差点はうせつできません。",word:"うせつ",opts:["左折","右折","右上曲","左曲"],ans:1,exp:"右折(うせつ)= rẽ phải. 右(う)=phải + 折(せつ)=quẹo"},
+      {q:"最近、父は仕事が忙しいらしく、きたくが遅い日が多い。",word:"きたく",opts:["着室","着宅","帰室","帰宅"],ans:3,exp:"帰宅(きたく)= về nhà. 帰(き)=về + 宅(たく)=nhà"},
+    ]
+  },
+  "7-2015": {
+    m1: [
+      {q:"悲しい話を聞いて、涙が出た。",word:"悲しい",opts:["うつくしい","なつかしい","かなしい","さびしい"],ans:2,exp:"悲しい(かなしい)= buồn. 悲劇(ひげき)=bi kịch"},
+      {q:"100年後の世界を想像するのは難しい。",word:"想像",opts:["そぞう","そしょう","そうぞう","そうしょう"],ans:2,exp:"想像(そうぞう)= tưởng tượng. そう+ぞう"},
+      {q:"ぬれた傘がドアの前に置いてあった。",word:"ぬれた",opts:["おれた","ぬれた","やぶれた","よごれた"],ans:1,exp:"濡れる(ぬれる)= ướt. Kun reading của 濡"},
+      {q:"昼食の時間は何時ですか。",word:"昼食",opts:["ちゅうしょく","しょうしょく","ちょうしょく","しゅうしょく"],ans:0,exp:"昼食(ちゅうしょく)= bữa trưa. ちゅう+しょく"},
+      {q:"大学で経営学を勉強しています。",word:"経営学",opts:["げいざいがく","けいざいがく","げいえいがく","けいえいがく"],ans:3,exp:"経営学(けいえいがく)= kinh doanh học. けいえい không phải けいざい(経済)"},
+      {q:"本を分類して、別々の箱に入れた。",word:"分類",opts:["ぶんるい","ふんるい","ぶんれい","ふんれい"],ans:0,exp:"分類(ぶんるい)= phân loại. ぶん+るい"},
+    ],
+    m2: [
+      {q:"これからクイズの正解を言います。",word:"せいかい",opts:["正解","正答","成解","成答"],ans:0,exp:"正解(せいかい)= đáp án đúng. 正(せい)+解(かい)"},
+      {q:"先生の話を聞いて、リサイクルに関心を持った。",word:"かんしん",opts:["向心","近心","関心","始心"],ans:2,exp:"関心(かんしん)= quan tâm. 関(かん)=quan + 心(しん)=tâm"},
+      {q:"そのボールを投げてください。",word:"なげて",opts:["打げて","投げて","拾げて","押げて"],ans:1,exp:"投げる(なげる)= ném. 投球(とうきゅう)=ném bóng"},
+      {q:"故障の原因はまだわからない。",word:"げんいん",opts:["元困","元因","原因","原因"],ans:2,exp:"原因(げんいん)= nguyên nhân. 原(げん)+因(いん)"},
+      {q:"兄はデパートに勤めている。",word:"つとめて",opts:["勤めて","勧めて","働めて","励めて"],ans:0,exp:"勤める(つとめる)= làm việc. 勤務(きんむ)=công vụ"},
+      {q:"来年から会社の規則が変わるそうだ。",word:"きそく",opts:["基則","基側","規則","規側"],ans:2,exp:"規則(きそく)= quy tắc. 規(き)+則(そく)"},
+    ]
+  },
+"12-2017": {
+    m1: [
+      {q:"駅まで直接送ってあげますよ。",word:"直接",opts:["ちょくせつ","ちょくさつ","じきせつ","じきさつ"],ans:0,exp:"直接(ちょくせつ)= trực tiếp. ちょく+せつ. Nhớ: 直す(なおす)=sửa"},
+      {q:"このビルは燃えにくい素材でできている。",word:"燃えにくい",opts:["さめにくい","もえにくい","きえにくい","ぬれにくい"],ans:1,exp:"燃える(もえる)= cháy. 燃料(ねんりょう)=nhiên liệu"},
+      {q:"地図で現在の位置を確認した。",word:"位置",opts:["いち","いしつ","いじ","いって"],ans:0,exp:"位置(いち)= vị trí. 位(い)=vị + 置(ち)=đặt"},
+      {q:"まず、費用を計算してみましょう。",word:"計算",opts:["けいさん","けさん","かいさん","かさん"],ans:0,exp:"計算(けいさん)= tính toán. 計(けい)+算(さん)"},
+      {q:"長い時間歩いたので、体が疲れた。",word:"疲れた",opts:["よごれた","おそれた","つかれた","われた"],ans:2,exp:"疲れる(つかれる)= mệt. 疲労(ひろう)=mệt mỏi"},
+      {q:"駅前の禁煙エリアでタバコを吸ってはいけない。",word:"禁煙",opts:["きつえん","きんえん","きんけむり","きつけむり"],ans:1,exp:"禁煙(きんえん)= cấm hút thuốc. 禁(きん)=cấm + 煙(えん)=khói"},
+      {q:"兄と弟は仲良く手を結んで歩いた。",word:"結んで",opts:["むすんで","つないで","にぎって","くんで"],ans:0,exp:"結ぶ(むすぶ)= buộc/kết nối. 結婚(けっこん)=kết hôn"},
+      {q:"父は来週、手術を受けることになった。",word:"手術",opts:["しゅうじゅつ","てじゅつ","しゅじゅつ","てじゅつ"],ans:2,exp:"手術(しゅじゅつ)= phẫu thuật. しゅ+じゅつ. Không phải しゅうじゅつ"},
+    ],
+    m2: [
+      {q:"次の電車まであと何びょうですか。",word:"びょう",opts:["分","時","秒","刻"],ans:2,exp:"秒(びょう)= giây. 1分=60秒. Phân biệt: 分(ふん)=phút"},
+      {q:"鳥がとびながら魚を取った。",word:"とびながら",opts:["走びながら","泳びながら","飛びながら","流びながら"],ans:2,exp:"飛ぶ(とぶ)= bay. 飛行(ひこう)=bay"},
+      {q:"この道はさかみちで、自転車では大変だ。",word:"さかみち",opts:["板道","坂道","版道","判道"],ans:1,exp:"坂道(さかみち)= đường dốc. 坂(さか)=dốc + 道(みち)=đường"},
+      {q:"二人の意見がちがっていても、仲良くできる。",word:"ちがって",opts:["逆って","異って","違って","変って"],ans:2,exp:"違う(ちがう)= khác/sai. 違反(いはん)=vi phạm"},
+      {q:"田中さんと山田さんのかんけいはどうですか？",word:"かんけい",opts:["関心","関係","感系","感心"],ans:1,exp:"関係(かんけい)= quan hệ. 関(かん)+係(けい)"},
+      {q:"わたしの父はちゅうがっこうのきょうしです。",word:"きょうし",opts:["教士","教師","経士","経師"],ans:1,exp:"教師(きょうし)= giáo viên. 教(きょう)=dạy + 師(し)=thầy"},
+    ]
+  },
+  "12-2020": {
+    m1: [
+      {q:"この辺りは交通の便がよくて便利だ。",word:"便利",opts:["べんりい","べんり","ふんり","ふんりい"],ans:0,exp:"便利(べんり)= tiện lợi. 便(べん)=tiện + 利(り)=lợi"},
+      {q:"どんな種類がありますか。",word:"種類",opts:["しゅれい","じゅれい","しゅるい","じゅるい"],ans:2,exp:"種類(しゅるい)= chủng loại. しゅ+るい. 種(しゅ)=chủng"},
+      {q:"先生が教室の窓を開けた。",word:"窓",opts:["かど","まど","しょうじ","とびら"],ans:1,exp:"窓(まど)= cửa sổ. Kun reading của 窓"},
+      {q:"健康のために毎日運動している。",word:"健康",opts:["げんこう","けんこ","けんこう","げんこ"],ans:2,exp:"健康(けんこう)= sức khỏe. けん+こう"},
+      {q:"その話を聞いて、彼女の判断は正しかったと思った。",word:"正しかった",opts:["ただしかった","まさしかった","よろしかった","ひとしかった"],ans:0,exp:"正しい(ただしい)= đúng. 正解(せいかい)=đáp án đúng"},
+      {q:"あの映画は複雑なストーリーだった。",word:"複雑",opts:["ふくざつ","ふうざつ","ふくさつ","ふうさつ"],ans:0,exp:"複雑(ふくざつ)= phức tạp. 複(ふく)+雑(ざつ)"},
+      {q:"毎月の支出と収入を記録しておく。",word:"記録",opts:["きろく","きれい","きりょく","きろ"],ans:0,exp:"記録(きろく)= ghi chép. 記(き)+録(ろく)"},
+    ],
+    m2: [
+      {q:"病院でけつえきのけんさを受けた。",word:"けつえき",opts:["血液","血意","決液","決意"],ans:0,exp:"血液(けつえき)= máu. 血(けつ)+液(えき)=chất lỏng"},
+      {q:"それはぎゃくですよ。",word:"ぎゃく",opts:["途","迅","逆","造"],ans:2,exp:"逆(ぎゃく)= ngược lại. 逆転(ぎゃくてん)=đảo ngược"},
+      {q:"子どもをそだてることは大変だが、楽しい。",word:"そだてる",opts:["養てる","産てる","育てる","生てる"],ans:2,exp:"育てる(そだてる)= nuôi dưỡng. 教育(きょういく)=giáo dục"},
+      {q:"この問題の原因はまだわかっていない。",word:"げんいん",opts:["元因","現因","原因","減因"],ans:2,exp:"原因(げんいん)= nguyên nhân. 原(げん)+因(いん)"},
+      {q:"彼女はいつもほがらかで、えがおが素敵だ。",word:"えがお",opts:["笑顔","笑声","絵顔","絵声"],ans:0,exp:"笑顔(えがお)= nụ cười. 笑(え)+顔(がお) — đọc đặc biệt"},
+      {q:"このきそくは守らなければならない。",word:"きそく",opts:["規束","規則","記束","記則"],ans:1,exp:"規則(きそく)= quy tắc. 規(き)+則(そく)"},
+      {q:"彼はどんな困難もすぐにかいけつしてしまう。",word:"かいけつ",opts:["快決","解決","開決","回決"],ans:1,exp:"解決(かいけつ)= giải quyết. 解(かい)=giải + 決(けつ)=quyết"},
+    ]
+  },
+  "7-2011": {
+    m1: [
+      {q:"この川の水は浅いから、危なくない。",word:"浅い",opts:["あさい","うすい","よわい","ひくい"],ans:0,exp:"浅い(あさい)= nông/cạn. 深い(ふかい)=sâu"},
+      {q:"日本の首都はどこですか。",word:"首都",opts:["しゅとう","しゅうと","しゅと","しゅうとう"],ans:2,exp:"首都(しゅと)= thủ đô. しゅ+とu"},
+      {q:"このかばんはとても丈夫で長持ちする。",word:"丈夫",opts:["ちょうぶ","じょうふ","じょうぶ","ちょうふ"],ans:2,exp:"丈夫(じょうぶ)= chắc chắn/khỏe mạnh. じょう+ぶ"},
+      {q:"先生に質問する勇気がなかった。",word:"勇気",opts:["ゆうき","ゆき","いきおい","きりょく"],ans:0,exp:"勇気(ゆうき)= dũng cảm. 勇(ゆう)=dũng + 気(き)=khí"},
+      {q:"彼女は3か国語を話す能力がある。",word:"能力",opts:["のうりょく","ねうりょく","のりょく","ねりょく"],ans:0,exp:"能力(のうりょく)= năng lực. のう+りょく"},
+      {q:"この本は字が小さくて読みにくい。",word:"字",opts:["もじ","じ","かじ","あじ"],ans:1,exp:"字(じ)= chữ. Nhớ: 漢字(かんじ)・文字(もじ)"},
+      {q:"気温が下がって、寒くなってきた。",word:"気温",opts:["きおん","きおう","きたん","きたう"],ans:0,exp:"気温(きおん)= nhiệt độ không khí. き+おん"},
+    ],
+    m2: [
+      {q:"病気がかいふくしてきた。",word:"かいふく",opts:["快服","回服","快復","回復"],ans:3,exp:"回復(かいふく)= hồi phục. 回(かい)+復(ふく). Nhớ: 復習(ふくしゅう)=ôn bài"},
+      {q:"みんなで話し合って、問題をかいけつした。",word:"かいけつ",opts:["改決","改結","解決","解結"],ans:2,exp:"解決(かいけつ)= giải quyết. 解(かい)+決(けつ)= hồi phục. 回(かい)=quay + 復(ふく)=phục"},
+      {q:"困っている人をたすけるのは当然だ。",word:"たすける",opts:["助ける","扶ける","授ける","援ける"],ans:0,exp:"助ける(たすける)= giúp đỡ. 救助(きゅうじょ)=cứu giúp"},
+      {q:"このやくそくは必ず守ります。",word:"やくそく",opts:["約速","約束","若束","若速"],ans:1,exp:"約束(やくそく)= lời hứa. 約(やく)+束(そく)"},
+      {q:"毎日、けんこうのために歩いています。",word:"けんこう",opts:["見功","健好","見好","健康"],ans:3,exp:"健康(けんこう)= sức khỏe. 健(けん)+康(こう)"},
+      {q:"あの会社のせいひんは品質がいい。",word:"せいひん",opts:["制品","精品","製品","正品"],ans:2,exp:"製品(せいひん)= sản phẩm. 製(せい)=chế + 品(ひん)=hàng"},
+      {q:"田中さんはとても親切で、おおぜいの人に好かれている。",word:"おおぜい",opts:["多勢","大世","多世","大勢"],ans:3,exp:"大勢(おおぜい)= đông người. 大(おお)+勢(ぜい)=thế lực"},
+    ]
+  }
+  ,"12-2018": {
+    m1: [
+      {q:"息子は来年卒業します。",word:"卒業",opts:["さつぎょう","そつぎょう","そっきょう","さっきょう"],ans:1,exp:"卒業(そつぎょう)= tốt nghiệp. そつ không phải さつ"},
+      {q:"留学について先生に相談した。",word:"相談",opts:["しょうたん","しょうだん","そうたん","そうだん"],ans:3,exp:"相談(そうだん)= thảo luận. そう+だん"},
+      {q:"確かにかばんにしまいました。",word:"確かに",opts:["たしかに","しずかに","だじかに","しすかに"],ans:0,exp:"確かに(たしかに)= chắc chắn. 確認(かくにん)=xác nhận"},
+      {q:"こどもたちが遊ぶ声が聞こえます。",word:"遊ぶ",opts:["よぶ","あそぶ","まなぶ","さけぶ"],ans:1,exp:"遊ぶ(あそぶ)= chơi. Kun reading của 遊"},
+      {q:"店の人はみんな同じ制服を着ていた。",word:"制服",opts:["ようふく","せいふう","せいふく","ようふう"],ans:2,exp:"制服(せいふく)= đồng phục. せい+ふく"},
+      {q:"鈴木さんが換えてくれました。",word:"換えて",opts:["かえて","くわえて","つかまえて","つたえて"],ans:0,exp:"換える(かえる)= đổi/thay. 交換(こうかん)=trao đổi"},
+      {q:"血圧が前よりも高かったよ。",word:"血圧",opts:["ちど","けっど","けつあつ","ちあつ"],ans:2,exp:"血圧(けつあつ)= huyết áp. けつ+あつ"},
+      {q:"改札の前で会いましょう。",word:"改札",opts:["けいせつ","けいさつ","かいせつ","かいさつ"],ans:3,exp:"改札(かいさつ)= soát vé. かい+さつ. Hay nhầm với 警察(けいさつ)=cảnh sát"},
+    ],
+    m2: [
+      {q:"高橋さんにしゅうかんしを買ってきてもらった。",word:"しゅうかんし",opts:["週完誌","週刊記","週刊誌","週完記"],ans:2,exp:"週刊誌(しゅうかんし)= tạp chí tuần. 週刊+誌"},
+      {q:"このドラマのつづきが楽しみだ。",word:"つづき",opts:["総き","統き","続き","績き"],ans:2,exp:"続き(つづき)= phần tiếp theo. 続ける(つづける)=tiếp tục"},
+      {q:"毎日ねっしんに勉強している。",word:"ねっしん",opts:["熱心","燃心","熱身","燃身"],ans:0,exp:"熱心(ねっしん)= nhiệt tình. 熱(ねつ→ねっ)+心(しん)"},
+      {q:"中村さんは一週間前にたいいんしたそうです。",word:"たいいん",opts:["帰院","退院","退貞","帰貞"],ans:1,exp:"退院(たいいん)= xuất viện. 退(たい)+院(いん)"},
+      {q:"もうちょっとあついのが欲しいです。",word:"あつい",opts:["丸い","厚い","細い","浅い"],ans:1,exp:"厚い(あつい)= dày. Đối nghĩa: 薄い(うすい)=mỏng"},
+      {q:"あしたは9時にしゅっきんします。",word:"しゅっきん",opts:["出勧","出勘","出働","出勤"],ans:3,exp:"出勤(しゅっきん)= đi làm. 出(しゅっ)+勤(きん)"},
+    ]
+  }
+};
+
+
+
+// ── TTS ──
+const TTS = {
+  synth: (typeof speechSynthesis !== 'undefined') ? speechSynthesis : null,
+  voice: null,
+  init(){
+    if(!this.synth) return;
+    const load = () => {
+      const vs = this.synth.getVoices();
+      this.voice = vs.find(v=>v.lang.startsWith('ja')) ||
+                   vs.find(v=>v.lang.includes('JP')) || null;
+    };
+    try{
+      if(this.synth.getVoices().length) load();
+      else this.synth.onvoiceschanged = load;
+    }catch(e){}
+  },
+  say(text, rate=0.88){
+    if(!this.synth) return;
+    this.synth.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang='ja-JP'; u.rate=rate; u.pitch=1;
+    if(this.voice) u.voice=this.voice;
+    try{this.synth.speak(u);}catch(e){}
+  },
+  sayWord(item, type){
+    if(!item) return;
+    // Chỉ đọc hiragana — không đọc kanji để tránh đọc 2 lần
+    if(type==='on')  this.say(item.on.read);
+    else if(type==='kun') this.say(item.kun.read);
+    else this.say(item.on.read + '。' + item.kun.read);
+  }
+};
+TTS.init();
+// ── STATE ──
+const M = new Set(JSON.parse(localStorage.getItem('kn3m')||'[]'));
+const TAP = {}; // track on/kun toggle per kanji
+const ES = JSON.parse(localStorage.getItem('kn3es')||'{}'); // exam scores
+let filt='work', sPage=0;
+const PG=12;
+// Drill
+let dPool=[],dIdx=0,dOk=0,dNg=0,dSc=0,dCb=0,dMCb=0,dAns=false,hVis=false;
+// Exam
+let curExam='',eQs=[],eIdx=0,eOk=0,eNg=0;
+
+function save(){try{localStorage.setItem('kn3m',JSON.stringify([...M]));}catch(e){}}
+function saveES(){try{localStorage.setItem('kn3es',JSON.stringify(ES));}catch(e){}}
+function sh(id,v){const e=document.getElementById(id);if(e)e.style.display=v;}
+function tx(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function shuf(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+// Pool filter
+const GROUP_LABELS = {
+  water:'💧氵水 (nước)', speech:'📢言 (ngôn)', thread:'🧵糸 (kết)',
+  person:'🚶亻 (người)', hand:'🤲扌 (tay)', move:'🏃辶 (động)',
+  heart:'💭心 (tâm)', power:'💪力 (lực)', other:'📚その他'
+};
+function getPool(){
+  if(filt==='all') return KANJI_DB;
+  return KANJI_DB.filter(k=>k.group===filt);
+}
+
+// ── NAV ──
+function goTab(t){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pg-'+t).classList.add('on');
+  document.querySelector(`.ntab[onclick*="${t}"]`).classList.add('on');
+  const frow=document.getElementById('frow');
+  frow.style.display=(t==='exam')?'none':'flex';
+  window.scrollTo(0,0);
+  if(t==='drill')startDrill();
+  if(t==='scan')renderScan();
+  if(t==='exam')renderExamList();
+}
+
+// ── FILTER ──
+function setF(btn){
+  document.querySelectorAll('.chip').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); filt=btn.dataset.f; sPage=0; renderScan();
+}
+
+// ════════ SCAN ════════
+function renderScan(){
+  const pool=getPool();
+  const s=sPage*PG, e=Math.min(s+PG,pool.length), sl=pool.slice(s,e);
+  tx('sn',`${e}/${pool.length}`);
+  document.getElementById('spf').style.width=`${Math.round(e/pool.length*100)}%`;
+  const grid=document.getElementById('sg'); grid.innerHTML='';
+  sl.forEach((k,i)=>{
+    const done=M.has(k.k);
+    const d=document.createElement('div');
+    d.className='kc'+(done?' done':'');
+    d.style.animationDelay=(i*.03)+'s';
+    d.innerHTML=`<div class="ktop"><span class="kidx">${s+i+1}</span><span class="khot">${k.freq>=2?'★頻出':''}</span></div>
+<span class="kk">${k.k}</span>
+<div class="khv">${k.hv}</div>
+<div class="kvn">${k.vn}</div>
+<div class="kwords">
+  <div class="kw on"><span class="kwr">${k.on.word}</span><span class="kwf">${k.on.read}</span><span class="kwm">${k.on.meaning}</span></div>
+  ${k.kun.word ? '<div class=\"kw kun\"><span class=\"kwr\">'+k.kun.word+'</span><span class=\"kwf\">'+k.kun.read+'</span><span class=\"kwm\">'+k.kun.meaning+'</span></div>' : k.kun.meaning ? '<div class=\"kw note\"><span class=\"kwf\" style=\"font-size:.65rem;color:var(--muted)\">'+k.kun.meaning+'</span></div>' : ''}
+</div>
+<div class="kc-action">
+  <button class="kc-btn-sound">🔊</button>
+  <button class="kc-btn-done">✓</button>
+</div>`;
+    d.onclick=(e)=>{
+      if(e.target.closest('.kc-btn-sound')||e.target.closest('.kc-btn-done')) return;
+      TTS.synth&&TTS.synth.cancel();
+      const cur = d.dataset.tap||'0';
+      if(cur==='0'){TTS.say(k.on.read);d.dataset.tap='1';}
+      else{TTS.say(k.kun.read);d.dataset.tap='0';}
+    };
+    // Wire up action buttons synchronously
+    const _sd=d.querySelector('.kc-btn-sound');
+    const _td=d.querySelector('.kc-btn-done');
+    if(_sd) _sd.onclick=(e)=>{e.stopPropagation();TTS.say(k.on.read+'。'+k.kun.read);};
+    if(_td){
+      if(M.has(k.k)) _td.classList.add('active');
+      _td.onclick=(e)=>{
+        e.stopPropagation();
+        M.has(k.k)?M.delete(k.k):M.add(k.k);
+        save();
+        _td.classList.toggle('active');
+        d.classList.toggle('done');
+      };
+    }
+    grid.appendChild(d);
+  });
+  document.getElementById('pp').disabled=sPage===0;
+  document.getElementById('pn').disabled=e>=pool.length;
+}
+function toggleDone(btn, kk, e){
+  M.has(kk)?M.delete(kk):M.add(kk);
+  save();
+  btn.classList.toggle('active');
+  btn.closest('.kc').classList.toggle('done');
+}
+function pgMv(d){const p=getPool();const n=sPage+d;if(n<0||n*PG>=p.length)return;sPage=n;renderScan();window.scrollTo(0,0);}
+
+// ════════ DRILL ════════
+function startDrill(){
+  dPool=shuf(getPool()); dIdx=0;dOk=0;dNg=0;dSc=0;dCb=0;dMCb=0;
+  sh('dres','none'); document.getElementById('dopts').style.display='grid';
+  renderDrill();
+}
+
+function makeQ(k){
+  const others=shuf(dPool.filter(x=>x.k!==k.k));
+  const type=['fw','rv','mn'][Math.floor(Math.random()*3)];
+  const useOn=Math.random()>0.35;
+  const src=(useOn||!k.kun.word)?k.on:k.kun;
+  if(type==='fw'){
+    const w=others.slice(0,3).map(x=>useOn?x.on.read:x.kun.read);
+    return{type:'fw',badge:'📖 ĐỌC TỪ NÀY LÀ GÌ?',
+      sent:`<span class="tw">${src.word}</span> <span class="tk" style="font-size:.85rem">${src.meaning}</span>`,
+      main:'',sub:'',bot:`${k.k} = ${k.on.read} · ${k.vn}`,
+      correct:src.read,opts:shuf([src.read,...w.slice(0,3)]),
+      hint:k.on.read+' vs '+k.kun.read,
+      fok:`✅ ${src.word} → ${src.read}（${src.meaning}）`,
+      fng:`❌ ${src.word} → ${src.read}\n${k.on.word}(${k.on.read}) · ${k.kun.word}(${k.kun.read})`};
+  }
+  if(type==='rv'){
+    const ww=others.slice(0,3).map(x=>useOn?x.on.word:x.kun.word);
+    return{type:'rv',badge:'✏️ CHỌN KANJI ĐÚNG',
+      sent:`<span class="tk">${src.read}</span>　（${src.meaning}）`,
+      main:'',sub:'',bot:'Cùng âm đọc nhưng kanji khác nhau — dạng hay ra thi!',
+      correct:src.word,opts:shuf([src.word,...ww.slice(0,3)]),
+      hint:`${k.on.word}(${k.on.read})=On / ${k.kun.word}(${k.kun.read})=Kun`,
+      fok:`✅ ${src.read} = ${src.word}（${k.on.read} · ${k.vn}）`,
+      fng:`❌ Đáp án: ${src.word} = ${src.read}\n${k.on.word} · ${k.kun.word}`};
+  }
+  const w=others.slice(0,3).map(x=>x.vn);
+  return{type:'mn',badge:'💭 NGHĨA CỦA CHỮ NÀY?',
+    sent:'',main:k.k,sub:k.kun.read&&k.kun.read!==k.on.read?`${k.on.read} ／ ${k.kun.read}`:`${k.on.read}`,bot:`${k.on.read} · chọn nghĩa đúng`,
+    correct:k.vn,opts:shuf([k.vn,...w.slice(0,3)]),
+    hint:`${k.on.word}(${k.on.read})=${k.on.meaning}\n${k.kun.word}(${k.kun.read})=${k.kun.meaning}`,
+    fok:`✅ ${k.k} = ${k.vn}（${k.on.read}）`,
+    fng:`❌ Đáp án: ${k.vn} · ${k.on.word}・${k.kun.word}`};
+}
+
+function dNext(){
+  document.getElementById('dnxt').style.display='none';
+  dIdx++;renderDrill();
+}
+function renderDrill(){
+  if(dIdx>=dPool.length){showDRes();return;}
+  dAns=false;hVis=false;
+  document.getElementById('hbox').className='hbox';
+  const k=dPool[dIdx];const q=makeQ(k);
+  document.getElementById('dpf').style.width=`${dIdx/dPool.length*100}%`;
+  // Auto-speak question
+  // Auto-speak: chỉ đọc hiragana của từ đang hỏi
+  const _qs = q.type==='fw'?k.on:q.type==='rv'?k.on:null;
+  if(_qs) setTimeout(()=>TTS.say(_qs.read), 300);
+  tx('dcnt',`${dIdx+1}/${dPool.length}`); tx('dsc',`★ ${dSc}`);
+  const tb=document.getElementById('dtb');
+  tb.textContent=q.badge; tb.className='dtb '+(q.type==='fw'?'fw':q.type==='rv'?'rv':'mn');
+  const qs=document.getElementById('dqs');qs.innerHTML=q.sent;qs.style.display=q.sent?'block':'none';
+  const qm=document.getElementById('dqm');qm.textContent=q.main;qm.className='dqm'+(q.main.length>3?' sm':'');qm.style.display=q.main?'block':'none';
+  const qsub=document.getElementById('dqsub');qsub.textContent=q.sub;qsub.style.display=q.sub?'block':'none';
+  tx('dqb',q.bot); document.getElementById('hbox').dataset.hint=q.hint;
+  document.getElementById('dfb').className='dfb'; document.getElementById('dfb').innerHTML=''; document.getElementById('dnxt').style.display='none';
+  const opts=document.getElementById('dopts');opts.innerHTML='';
+  q.opts.forEach(o=>{const btn=document.createElement('button');btn.className='dopt';btn.textContent=o;btn.onclick=()=>ansD(btn,o,q,k);opts.appendChild(btn);});
+}
+
+function ansD(btn,chosen,q,k){
+  if(dAns)return;dAns=true;const ok=chosen===q.correct;
+  if(ok){dOk++;dCb++;dSc+=10+(dCb>1?(dCb-1)*3:0);if(dCb>dMCb)dMCb=dCb;btn.classList.add('ok');}
+  else{dNg++;dCb=0;btn.classList.add('ng');document.querySelectorAll('.dopt').forEach(b=>{if(b.textContent===q.correct)b.classList.add('rv');});}
+  document.querySelectorAll('.dopt').forEach(b=>b.disabled=true);tx('dsc',`★ ${dSc}`);
+  const pts=(ok?q.fok:q.fng).split('\n');
+  const fb=document.getElementById('dfb');
+  fb.innerHTML=`<div>${pts[0]}${ok&&dCb>1?` 🔥×${dCb}`:''}</div>${pts[1]?`<div class="fbr">${pts[1]}</div>`:''}`;
+  // Speak correct answer
+  if(ok) setTimeout(()=>TTS.say(k.on.read), 200);
+  else setTimeout(()=>TTS.say(k.on.read+'。'+k.kun.read), 300);
+  fb.className='dfb on '+(ok?'ok':'ng');
+  document.getElementById('dnxt').style.display='block';
+}
+
+function togHint(){hVis=!hVis;const b=document.getElementById('hbox');b.textContent=b.dataset.hint;b.className='hbox'+(hVis?' on':'');}
+
+function showDRes(){
+  sh('dres','block'); document.getElementById('dopts').style.display='none';
+  document.getElementById('dfb').className='dfb';
+  const pct=Math.round(dOk/dPool.length*100);
+  tx('dremo',pct>=90?'🏆':pct>=70?'🎉':pct>=50?'💪':'📚');
+  tx('drsc',`${dOk}/${dPool.length}`); tx('drsub',`${pct}% đúng · ${dSc} điểm`);
+  tx('drok',dOk); tx('drng',dNg); tx('drcb',dMCb);
+}
+
+// ════════ EXAM ════════
+function renderExamList(){
+  const grid=document.getElementById('egrid'); grid.innerHTML='';
+  Object.keys(EXAM_DATA).sort((a,b)=>{
+    const [ma,ya]=(a.replace('B','')).split('-').map(Number);
+    const [mb,yb]=(b.replace('B','')).split('-').map(Number);
+    return ya!==yb?ya-yb:ma-mb;
+  }).forEach(year=>{
+    const d=EXAM_DATA[year];
+    const total=(d.m1||[]).length+(d.m2||[]).length;
+    const sc=ES[year];
+    const btn=document.createElement('button');btn.className='ebtn';
+    btn.innerHTML=`<div class="ey">📋 ${(()=>{const y=year.replace('B','');const[m,yr]=y.split('-');return `${yr}年 ${m}月`+(year.endsWith('B')?' ②':'');})()}</div>
+<div class="ecount">${total} câu (問1+問2)</div>
+<div class="escore" style="color:${sc?'var(--g)':'var(--muted)'}">${sc?`✅ Điểm tốt nhất: ${sc}%`:'Chưa làm'}</div>`;
+    btn.onclick=()=>startExam(year);
+    grid.appendChild(btn);
+  });
+}
+
+function startExam(year){
+  curExam=year; eIdx=0; eOk=0; eNg=0;
+  const d=EXAM_DATA[year];
+  eQs=[...(d.m1||[]).map(q=>({...q,type:'m1'})),...(d.m2||[]).map(q=>({...q,type:'m2'}))];
+  sh('elist','none'); sh('eres','none'); sh('etake','block');
+  tx('etitle',`Đề N3 ${year.replace('B','').replace('-','年 ')+'月'+(year.endsWith('B')?' ②':'')}`);
+  renderEQ();
+}
+
+function renderEQ(){
+  if(eIdx>=eQs.length){showERes();return;}
+  const q=eQs[eIdx];
+  tx('eprog',`${eIdx+1}/${eQs.length}`);
+  const qt=document.getElementById('eqtype');
+  qt.textContent=q.type==='m1'?'問題1 — 読み方':'問題2 — 漢字で書く';
+  qt.className='eq-type'+(q.type==='m2'?' m2':'');
+  // Highlight tested word in sentence
+  const sent=document.getElementById('eqsent');
+  if(q.word){
+    sent.innerHTML=q.q.replace(q.word,`<span class="uw">${q.word}</span>`);
+  } else {sent.textContent=q.q;}
+  document.getElementById('efb').className='efb';
+  document.getElementById('enxt').className='enxt';
+  const opts=document.getElementById('eopts'); opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const btn=document.createElement('button');btn.className='eopt';
+    btn.innerHTML=`<span style="color:var(--muted);font-size:.65rem;margin-right:4px">${i+1}</span>${o}`;
+    btn.onclick=()=>ansE(btn,i,q);
+    opts.appendChild(btn);
+  });
+}
+
+function ansE(btn,idx,q){
+  if(btn.disabled)return;
+  const ok=idx===q.ans;
+  if(ok)eOk++;else eNg++;
+  if(ok)btn.classList.add('ok');
+  else{btn.classList.add('ng');document.querySelectorAll('.eopt').forEach((b,i)=>{if(i===q.ans)b.classList.add('rv');});}
+  document.querySelectorAll('.eopt').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('efb');
+  const pts=q.exp.split('\n');
+  fb.innerHTML=`<div>${ok?'✅':'❌'} ${pts[0]}</div>${pts[1]?`<div class="fbr">${pts[1]}</div>`:''}`;
+  fb.className='efb on '+(ok?'ok':'ng');
+  document.getElementById('enxt').className='enxt on';
+}
+
+function nextEQ(){eIdx++;renderEQ();}
+
+function showERes(){
+  sh('etake','none'); sh('eres','block');
+  const total=eOk+eNg, pct=total>0?Math.round(eOk/total*100):0;
+  if(!ES[curExam]||pct>ES[curExam]){ES[curExam]=pct;saveES();}
+  tx('erem',pct>=85?'🏆':pct>=70?'🎉':pct>=50?'💪':'📚');
+  tx('ersc',`${eOk}/${total}`); tx('ersub',`${pct}% đúng`);
+  tx('erok',eOk); tx('erng',eNg); tx('erpct',pct+'%');
+  document.getElementById('erredo').onclick=()=>startExam(curExam);
+  renderExamList();
+}
+
+function backExam(){sh('etake','none');sh('eres','none');sh('elist','block');renderExamList();}
+function redoExam(){startExam(curExam);}
+
+// ── INIT ──
+
+// ── THÊM ĐỀ MỚI 2021-2025 ──
+EXAM_DATA["12-2021"] = {
+  m1: [
+    {q:"この国の人は自然を大切にしている。",word:"自然",opts:["しぜん","じぜん","しせん","じせん"],ans:0,exp:"自然(しぜん)= thiên nhiên. し+ぜん. Nhớ: 自(し)=tự + 然(ぜん)=nhiên"},
+    {q:"あと30秒で完成します。",word:"秒",opts:["じょう","しょう","びょう","ひょう"],ans:2,exp:"秒(びょう)= giây. Nhớ: 分(ふん)=phút、秒(びょう)=giây"},
+    {q:"夏休みも残り三日になってしまった。",word:"残り",opts:["もとり","おわり","のこり","あまり"],ans:2,exp:"残り(のこり)= phần còn lại. 残る(のこる)=còn lại. 残業(ざんぎょう)=tăng ca"},
+    {q:"このグラフは、人口の増減を表している。",word:"増減",opts:["ぞうけん","ぞうげん","じょうけん","じょうげん"],ans:1,exp:"増減(ぞうげん)= tăng giảm. 増(ぞう)=tăng + 減(げん)=giảm"},
+    {q:"面接の結果は、1週間以内に通知します。",word:"通知",opts:["つうち","とおち","つうし","とおし"],ans:0,exp:"通知(つうち)= thông báo. つう+ち. Nhớ: 通(つう)=thông + 知(ち)=biết"},
+    {q:"庭に生えた草にきれいな花が咲いていた。",word:"草",opts:["はえた","せいえた","しようえた","うえた"],ans:0,exp:"生える(はえる)= mọc lên. Kun reading của 生. 草(くさ)=cỏ"},
+    {q:"外国で一人暮らしをしているので、国の料理が恋しくなる。",word:"恋しく",opts:["なつかしく","うれしく","ほしく","こいしく"],ans:3,exp:"恋しい(こいしい)= nhớ nhung. 恋愛(れんあい)=tình yêu"},
+    {q:"これを郵送してください。",word:"郵送",opts:["ほそう","ほうそう","ゆそう","ゆうそう"],ans:3,exp:"郵送(ゆうそう)= gửi bưu điện. ゆう+そう. Nhớ: 郵便(ゆうびん)=bưu điện"},
+  ],
+  m2: [
+    {q:"あそこにいるのが私のむすめです。",word:"むすめ",opts:["妹","嫁","婦","娘"],ans:3,exp:"娘(むすめ)= con gái. Kun reading của 娘. Nhớ: 息子(むすこ)=con trai"},
+    {q:"彼女は頭もいいし、せいかくもいい。",word:"せいかく",opts:["性格","正格","性確","正確"],ans:0,exp:"性格(せいかく)= tính cách. 性(せい)=tính + 格(かく)=cách"},
+    {q:"それは誰かのめいれいですか。",word:"めいれい",opts:["命例","命令","企例","企令"],ans:1,exp:"命令(めいれい)= mệnh lệnh. 命(めい)=mệnh + 令(れい)=lệnh"},
+    {q:"銀行へお金をあずけに行ってきます。",word:"あずけ",opts:["預け","借け","替け","貯け"],ans:0,exp:"預ける(あずける)= gửi giữ. 預金(よきん)=tiền gửi"},
+    {q:"テストの点数がよそう以上によかった。",word:"よそう",opts:["予習","予測","予想","予定"],ans:2,exp:"予想(よそう)= dự đoán. 予(よ)=dự + 想(そう)=tưởng"},
+    {q:"これはとてもこうかなものだ。",word:"こうか",opts:["高値","高費","高給","高価"],ans:3,exp:"高価(こうか)= đắt tiền. 高(こう)=cao + 価(か)=giá"},
+  ]
+};
+EXAM_DATA["12-2022"] = {
+  m1: [
+    {q:"この店では、いろいろな容器を売っています。",word:"容器",opts:["ようぎ","ようき","どうぐ","どうく"],ans:1,exp:"容器(ようき)= đồ đựng/hộp. よう+き. Nhớ: 容(よう)=dung + 器(き)=đồ"},
+    {q:"書類が複数あるので、間違えないでください。",word:"複数",opts:["ふくす","ふうすう","ふくすう","ふうす"],ans:2,exp:"複数(ふくすう)= số nhiều. ふく+すう. Nhớ: 複(ふく)=phức + 数(すう)=số"},
+    {q:"昨日病院で血圧を計りました。",word:"血圧",opts:["けつあつ","けつやつ","ちあつ","ちやつ"],ans:0,exp:"血圧(けつあつ)= huyết áp. けつ+あつ. Nhớ: 血液(けつえき)=máu"},
+    {q:"中村さんから出張の件でお電話がありました。",word:"件",opts:["けい","よう","けん","よん"],ans:2,exp:"件(けん)= vụ việc/trường hợp. Nhớ: 条件(じょうけん)=điều kiện"},
+    {q:"ここを横断するときは気をつけてください。",word:"横断",opts:["おうざん","おうだん","きだん","きざん"],ans:1,exp:"横断(おうだん)= băng qua. おう+だん. Nhớ: 横(おう)=ngang + 断(だん)=cắt"},
+    {q:"山本さんは何と何を比べたんですか。",word:"比べた",opts:["くらべた","ならべた","しらべた","えらべた"],ans:0,exp:"比べる(くらべる)= so sánh. 比較(ひかく)=so sánh"},
+    {q:"そこから見る夕日はきれいだ。",word:"夕日",opts:["ゆび","ゆひ","ゆうび","ゆうひ"],ans:3,exp:"夕日(ゆうひ)= mặt trời lặn. ゆう+ひ. Nhớ: 夕(ゆう)=chiều + 日(ひ)=mặt trời"},
+    {q:"そこに一人で行くのは難しいと思います。",word:"難しい",opts:["きびしい","めずらしい","さびしい","むずかしい"],ans:3,exp:"難しい(むずかしい)= khó. 困難(こんなん)=khó khăn"},
+  ],
+  m2: [
+    {q:"車から出て、外の空気をすった。",word:"すった",opts:["吹った","呼った","吸った","叫った"],ans:2,exp:"吸う(すう)= hít vào. 呼吸(こきゅう)=hô hấp"},
+    {q:"あしたのアルバイトは、いつもより時間がみじかい。",word:"みじかい",opts:["早い","長い","短い","遅い"],ans:2,exp:"短い(みじかい)= ngắn. 短期(たんき)=ngắn hạn"},
+    {q:"その話を聞いて、みんながえがおになった。",word:"えがお",opts:["楽顔","悲顔","泣顔","笑顔"],ans:3,exp:"笑顔(えがお)= nụ cười. 笑(え)+顔(がお). Đọc đặc biệt"},
+    {q:"こくばんを見てください。",word:"こくばん",opts:["黒板","黒坂","告板","告坂"],ans:0,exp:"黒板(こくばん)= bảng đen. 黒(こく)=đen + 板(ばん)=tấm"},
+    {q:"それはいっぱんてきなことだと思う。",word:"いっぱんてき",opts:["一段的","一般的","一役的","一設的"],ans:1,exp:"一般的(いっぱんてき)= nói chung. 一般(いっぱん)=chung. Nhớ: いっ+ぱん"},
+    {q:"今日は少し、いの調子がよくない。",word:"い",opts:["肩","胃","腰","肌"],ans:1,exp:"胃(い)= dạ dày. Kun reading của 胃. Nhớ: 胃腸(いちょう)=dạ dày ruột"},
+  ]
+};
+EXAM_DATA["7-2022"] = {
+  m1: [
+    {q:"その会社の情報は、インターネットで見ました。",word:"情報",opts:["じょうほう","ちょうほう","じょうぼう","ちょうぼう"],ans:0,exp:"情報(じょうほう)= thông tin. じょう+ほう. Nhớ: 情(じょう)=tình + 報(ほう)=báo"},
+    {q:"兄は、現在は海外で働いています。",word:"現在",opts:["けんさい","げんさい","けんざい","げんざい"],ans:3,exp:"現在(げんざい)= hiện tại. げん+ざい. Nhớ: 現(げん)=hiện + 在(ざい)=tại"},
+    {q:"小さくて丸いいすがほしい。",word:"丸い",opts:["くろい","まるい","あおい","かるい"],ans:1,exp:"丸い(まるい)= tròn. Kun reading của 丸"},
+    {q:"その歌は日本でも有名です。",word:"有名",opts:["ゆめ","ゆめい","ゆうめ","ゆうめい"],ans:3,exp:"有名(ゆうめい)= nổi tiếng. ゆう+めい. Nhớ: 有(ゆう)=hữu + 名(めい)=danh"},
+    {q:"そこの通りの角に、コンビニができるそうです。",word:"角",opts:["かど","そば","はし","よこ"],ans:0,exp:"角(かど)= góc. Kun reading của 角. Nhớ: 曲がり角(まがりかど)=ngã rẽ"},
+    {q:"大切な物なので、丁寧に包んでください。",word:"包んで",opts:["たたんで","はこんで","すすんで","つつんで"],ans:3,exp:"包む(つつむ)= bọc/gói. 包装(ほうそう)=đóng gói"},
+    {q:"それは、もう計算しました。",word:"計算",opts:["けいけん","けけん","けいさん","けさん"],ans:2,exp:"計算(けいさん)= tính toán. けい+さん. Nhớ: 計(けい)=kế + 算(さん)=toán"},
+  ],
+  m2: [
+    {q:"私は毎日、どのくらい歩いたかきろくしている。",word:"きろく",opts:["基緑","記緑","基録","記録"],ans:3,exp:"記録(きろく)= ghi chép. 記(き)+録(ろく). Nhớ: 録≠緑"},
+    {q:"駅で新しいこうこくを見ました。",word:"こうこく",opts:["校菅","校告","広営","広告"],ans:3,exp:"広告(こうこく)= quảng cáo. 広(こう)=rộng + 告(こく)=thông báo"},
+    {q:"体がすっかりひえてしまいました。",word:"ひえて",opts:["冷えて","寒えて","氷えて","低えて"],ans:0,exp:"冷える(ひえる)= lạnh đi. 冷蔵庫(れいぞうこ)=tủ lạnh"},
+    {q:"けんさはしたが何も問題はなかった。",word:"けんさ",opts:["健査","検査","検察","健察"],ans:1,exp:"検査(けんさ)= kiểm tra. 検(けん)+査(さ). Nhớ: 検≠健"},
+    {q:"その話はたしかですか。",word:"たしか",opts:["定か","確か","必か","常か"],ans:1,exp:"確か(たしか)= chắc chắn. 確認(かくにん)=xác nhận"},
+    {q:"私の祖父は、日本のかいがをたくさん持っている。",word:"かいが",opts:["絵面","図面","絵画","図面"],ans:2,exp:"絵画(かいが)= hội họa/tranh. 絵(え)=tranh + 画(が)=vẽ"},
+  ]
+};
+EXAM_DATA["7-2023"] = {
+  m1: [
+    {q:"毎日復習したので、よくできるようになった。",word:"復習",opts:["ふうしゅう","れんしゅう","ふくしゅう","れいしゅう"],ans:2,exp:"復習(ふくしゅう)= ôn bài. ふく+しゅう. Nhớ: 復(ふく)=phục + 習(しゅう)=học"},
+    {q:"理由もないのに、人を疑ってはいけない。",word:"疑って",opts:["きらって","こわがって","しかって","うたがって"],ans:3,exp:"疑う(うたがう)= nghi ngờ. 疑問(ぎもん)=nghi vấn"},
+    {q:"ここから先は道が細くなっている。",word:"細く",opts:["ひろく","ふとく","せまく","ほそく"],ans:3,exp:"細い(ほそい)= mảnh/nhỏ. 細かい(こまかい)=tỉ mỉ"},
+    {q:"川井さんは明日、退院するそうです。",word:"退院",opts:["たいいん","たんいん","だいいん","だんいん"],ans:0,exp:"退院(たいいん)= xuất viện. たい+いん. Nhớ: 退(たい)=rút + 院(いん)=viện"},
+    {q:"パーティーには夫婦で参加します。",word:"夫婦",opts:["ふうふう","ふうふ","ふふう","ふふ"],ans:1,exp:"夫婦(ふうふ)= vợ chồng. ふう+ふ. Đọc đặc biệt, không phải ふうふう"},
+    {q:"留守の間に誰か来たようだ。",word:"留守",opts:["るしゅ","るす","りゅうす","りゅうしゅ"],ans:1,exp:"留守(るす)= vắng nhà. Đọc đặc biệt. Nhớ: không phải りゅうす"},
+    {q:"これは、とても高価な花瓶だそうです。",word:"高価",opts:["こうか","ごうか","こうが","ごうが"],ans:0,exp:"高価(こうか)= đắt tiền. こう+か. Nhớ: 高(こう)=cao + 価(か)=giá"},
+    {q:"小型のラジオが欲しいです。",word:"小型",opts:["こかた","しょうがた","こがた","しょうかた"],ans:2,exp:"小型(こがた)= loại nhỏ. こ+がた. Nhớ: 小(こ)+型(がた)=kiểu nhỏ"},
+  ],
+  m2: [
+    {q:"彼はたんきだ。",word:"たんき",opts:["男気","単気","短気","断気"],ans:2,exp:"短気(たんき)= nóng tính. 短(たん)=ngắn + 気(き)=tính khí"},
+    {q:"次はこれをやいてください。",word:"やいて",opts:["焼いて","燃いて","煙いて","炊いて"],ans:0,exp:"焼く(やく)= nướng. 焼肉(やきにく)=thịt nướng"},
+    {q:"明日、かならず来てください。",word:"かならず",opts:["確ず","要ず","必ず","直ず"],ans:2,exp:"必ず(かならず)= nhất định. Kun reading của 必. 必要(ひつよう)=cần thiết"},
+    {q:"私の学校はせいふくがありません。",word:"せいふく",opts:["清衣","制衣","清服","制服"],ans:3,exp:"制服(せいふく)= đồng phục. 制(せい)+服(ふく). Nhớ: 制≠清"},
+    {q:"探していたやっきょくが、やっと見つかりました。",word:"やっきょく",opts:["薬局","薬曲","楽局","楽曲"],ans:0,exp:"薬局(やっきょく)= hiệu thuốc. 薬(やく→やっ)+局(きょく). Nhớ: 薬≠楽"},
+    {q:"上田さんは少ししんぱいしているようだ。",word:"しんぱい",opts:["心酔","心配","信配","信酔"],ans:1,exp:"心配(しんぱい)= lo lắng. 心(しん)=tâm + 配(ぱい)=lo"},
+  ]
+};
+EXAM_DATA["7-2024"] = {
+  m1: [
+    {q:"すみません、弟がこれを割ってしまいました。",word:"割って",opts:["けって","おって","わって","さわって"],ans:2,exp:"割る(わる)= vỡ/chia. 分割(ぶんかつ)=phân chia"},
+    {q:"ピアノを基本から習いたい。",word:"基本",opts:["ぎほん","しほん","きほん","じほん"],ans:2,exp:"基本(きほん)= cơ bản. き+ほん. Nhớ: 基(き)=nền + 本(ほん)=gốc"},
+    {q:"かばんは横においてください。",word:"横",opts:["よこ","そば","となり","ゆか"],ans:0,exp:"横(よこ)= phía ngang/bên cạnh. Kun reading của 横. 横断(おうだん)=băng qua"},
+    {q:"昨日、山田さんに本を返しました。",word:"返しました",opts:["わかしました","もどしました","かしました","かえしました"],ans:3,exp:"返す(かえす)= trả lại. 返却(へんきゃく)=hoàn trả"},
+    {q:"この包丁は使いやすい。",word:"包丁",opts:["ぼうちょう","ほうちょう","ほうちょ","ぼうちょ"],ans:1,exp:"包丁(ほうちょう)= dao bếp. ほう+ちょう. Từ đặc biệt"},
+    {q:"適当なやり方を教えてください。",word:"適当",opts:["てきどう","てきとう","ていとう","ていどう"],ans:1,exp:"適当(てきとう)= phù hợp/tùy tiện. てき+とう. Nhớ: 適(てき)=thích hợp"},
+    {q:"部屋が狭いので、大きな家具は置けません。",word:"狭い",opts:["やぐう","かぐう","やぐ","かぐ"],ans:3,exp:"家具(かぐ)= nội thất. Câu hỏi 家具(かぐ) không phải 狭い. か+ぐ"},
+    {q:"この仕事は今日が最初です。",word:"最初",opts:["さいしょ","さいしゅう","さいしょう","さいしゅ"],ans:0,exp:"最初(さいしょ)= đầu tiên. さい+しょ. Nhớ: 最(さい)=tối + 初(しょ)=đầu"},
+  ],
+  m2: [
+    {q:"この質問をといてください。",word:"といて",opts:["試いて","答いて","解いて","調いて"],ans:2,exp:"解く(とく)= giải/mở. 解決(かいけつ)=giải quyết"},
+    {q:"今日は少しこしが痛い。",word:"こし",opts:["胸","腹","脇","腰"],ans:3,exp:"腰(こし)= lưng/hông. Kun reading của 腰"},
+    {q:"入学式のよくしゅうから講義が始まる。",word:"よくしゅう",opts:["翌週","次週","明週","遠週"],ans:0,exp:"翌週(よくしゅう)= tuần sau. 翌(よく)=hôm sau + 週(しゅう)=tuần"},
+    {q:"今朝は気温がひくかったので、水が凍っていた。",word:"ひくかった",opts:["寒かった","底かった","低かった","暑かった"],ans:2,exp:"低い(ひくい)= thấp. 低下(ていか)=giảm xuống"},
+    {q:"湖はどのほうこうにありますか。",word:"ほうこう",opts:["方向","方角","法向","法角"],ans:0,exp:"方向(ほうこう)= phương hướng. ほう+こう. Nhớ: 方(ほう)=hướng + 向(こう)=về phía"},
+    {q:"学校のきそくがすこし変わるそうだ。",word:"きそく",opts:["規側","規則","期則","期側"],ans:1,exp:"規則(きそく)= quy tắc. 規(き)+則(そく). Nhớ: 則≠側"},
+  ]
+};
+EXAM_DATA["7-2025"] = {
+  m1: [
+    {q:"急に涙が出てしまいました。",word:"涙",opts:["なみだ","あせ","せき","くしゃみ"],ans:0,exp:"涙(なみだ)= nước mắt. Kun reading của 涙. Nhớ: 号泣(ごうきゅう)=khóc to"},
+    {q:"けがは完全に治りました。",word:"完全",opts:["かんぜん","かんたん","けんぜん","けんたん"],ans:0,exp:"完全(かんぜん)= hoàn toàn. かん+ぜん. Nhớ: 完(かん)=hoàn + 全(ぜん)=toàn"},
+    {q:"雨で地面がぬれている。",word:"地面",opts:["ちめい","ちめん","じめん","じめい"],ans:2,exp:"地面(じめん)= mặt đất. じ+めん. Nhớ: 地(じ)=đất + 面(めん)=mặt"},
+    {q:"お金はあの箱に移したほうがいいですか。",word:"移した",opts:["もどした","かくした","のこした","うつした"],ans:3,exp:"移す(うつす)= chuyển/dời. 移動(いどう)=di chuyển"},
+    {q:"ゆっくり呼吸をしてください。",word:"呼吸",opts:["こきよう","こきゅう","こうきゅう","こうきょう"],ans:1,exp:"呼吸(こきゅう)= hô hấp. こ+きゅう. Nhớ: 呼(こ)=gọi/thở ra + 吸(きゅう)=hít vào"},
+    {q:"ここに身長を書いてください。",word:"身長",opts:["せんちょう","しんちょう","じんちょう","ぜんちょう"],ans:1,exp:"身長(しんちょう)= chiều cao. しん+ちょう. Nhớ: 身(しん)=thân + 長(ちょう)=dài"},
+    {q:"前田さんは困っているようだ。",word:"困って",opts:["まよって","おこって","こまって","だまって"],ans:2,exp:"困る(こまる)= khó xử. 困難(こんなん)=khó khăn"},
+    {q:"近くに薬局はありますか。",word:"薬局",opts:["やっきよ","やきょく","やっきょく","やきよ"],ans:2,exp:"薬局(やっきょく)= hiệu thuốc. 薬(やく→やっ)+局(きょく). Nhớ: やっ không phải やき"},
+  ],
+  m2: [
+    {q:"この町で子どもをそだてたいと思っている。",word:"そだてたい",opts:["産てたい","育てたい","愛てたい","幸てたい"],ans:1,exp:"育てる(そだてる)= nuôi dưỡng. 教育(きょういく)=giáo dục"},
+    {q:"ここからしんりんが見えます。",word:"しんりん",opts:["森村","森林","山林","山村"],ans:1,exp:"森林(しんりん)= rừng cây. 森(しん)=rừng + 林(りん)=rừng nhỏ"},
+    {q:"文字の色を変えることはかのうでしょうか。",word:"かのう",opts:["可能","可縦","化能","化縦"],ans:0,exp:"可能(かのう)= có thể/khả thi. か+のう. Nhớ: 可(か)=có thể + 能(のう)=năng"},
+    {q:"今から、メールをそうしんします。",word:"そうしん",opts:["返信","送真","送信","返真"],ans:2,exp:"送信(そうしん)= gửi tin nhắn. 送(そう)=gửi + 信(しん)=tín hiệu. Nhớ: 送≠返"},
+    {q:"朝、シャワーをあびました。",word:"あびました",opts:["流びました","洗びました","清びました","浴びました"],ans:3,exp:"浴びる(あびる)= tắm/dội. 入浴(にゅうよく)=tắm"},
+    {q:"胸が熱いときに、けむりが出ます。",word:"けむり",opts:["煙","燥","焼","爆"],ans:0,exp:"煙(けむり)= khói. Kun reading của 煙. 禁煙(きんえん)=cấm hút thuốc"},
+  ]
+};
+
+EXAM_DATA["7-2012"] = {
+  m1: [
+    {q:"スポーツで汗をかいたので、シャワーをあびた。",word:"汗",opts:["あせ","ごみ","よごれ","なみだ"],ans:0,exp:"汗(あせ)= mồ hôi. Kun reading của 汗. Nhớ: 発汗(はっかん)=đổ mồ hôi"},
+    {q:"このお知らせをみんなに配ってください。",word:"配って",opts:["まって","もらって","はらって","くばって"],ans:3,exp:"配る(くばる)= phân phát. 配達(はいたつ)=giao hàng"},
+    {q:"新しい道路がもうすぐ完成するそうだ。",word:"完成",opts:["かんせい","けんせつ","かんぜん","けんちく"],ans:0,exp:"完成(かんせい)= hoàn thành. かん+せい. Nhớ: 完全(かんぜん)=hoàn toàn"},
+    {q:"ここから島がたくさん見えますよ。",word:"島",opts:["ほし","とり","しま","うま"],ans:2,exp:"島(しま)= đảo. Kun reading của 島. 島国(しまぐに)=đảo quốc"},
+    {q:"田中さんはちょっと困っているみたいです。",word:"困って",opts:["まよって","こまって","おこって","うたがって"],ans:1,exp:"困る(こまる)= khó xử. 困難(こんなん)=khó khăn"},
+    {q:"平日は午後8時まで開いています。",word:"平日",opts:["ほんにち","へいにち","ほんじつ","へいじつ"],ans:3,exp:"平日(へいじつ)= ngày thường. へい+じつ. Nhớ: 平(へい)=bình + 日(じつ)=ngày"},
+    {q:"わたしは3年前に大学を卒業しました。",word:"卒業",opts:["ざつぎょう","そつぎょう","さつぎょう","そっきょう"],ans:1,exp:"卒業(そつぎょう)= tốt nghiệp. そつ+ぎょう. Nhớ: そつ không phải さつ"},
+    {q:"びんのふたは固くしめておいてください。",word:"固く",opts:["かるく","ゆるく","きつく","かたく"],ans:3,exp:"固い(かたい)= cứng. 固定(こてい)=cố định"},
+  ],
+  m2: [
+    {q:"やくそくをまもることは大切だ。",word:"まもる",opts:["保る","要る","守る","取る"],ans:2,exp:"守る(まもる)= giữ gìn/bảo vệ. 守(まも)+る. Nhớ: 守(しゅ)=thủ"},
+    {q:"今、このしゅうかんしが一番売れている。",word:"しゅうかんし",opts:["週間議","週間誌","週刊議","週刊誌"],ans:3,exp:"週刊誌(しゅうかんし)= tạp chí tuần. 週刊(しゅうかん)+誌(し). Nhớ: 刊≠間"},
+    {q:"今日はこれから友達と旅行のそうだんをします。",word:"そうだん",opts:["起談","想淡","相談","相淡"],ans:2,exp:"相談(そうだん)= thảo luận. 相(そう)=tương + 談(だん)=đàm"},
+    {q:"わたしは体力にはじしんがあります。",word:"じしん",opts:["持信","自信","持心","自心"],ans:1,exp:"自信(じしん)= tự tin. 自(じ)=tự + 信(しん)=tin. Nhớ: 自信(じしん)≠地震(じしん)=động đất"},
+    {q:"電子レンジでミルクをあたためました。",word:"あたためました",opts:["温めました","暖めました","熱めました","暑めました"],ans:0,exp:"温める(あたためる)= hâm nóng. 温泉(おんせん)=suối nóng"},
+    {q:"病院でけつえき型を調べました。",word:"けつえき",opts:["血益","血役","血液","血液"],ans:2,exp:"血液(けつえき)= máu. 血(けつ)+液(えき). 血液型(けつえきがた)=nhóm máu"},
+  ]
+};
+
+EXAM_DATA["7-2021"] = {
+  m1: [
+    {q:"このビルの横に小さなレストランがあります。",word:"横",opts:["そば","よこ","かげ","うら"],ans:1,exp:"横(よこ)= phía ngang. Kun reading của 横. 横断(おうだん)=băng qua"},
+    {q:"このあたりに駐車しましょう。",word:"駐車",opts:["しゅしゃ","しゅうしゃ","ちゅしゃ","ちゅうしゃ"],ans:3,exp:"駐車(ちゅうしゃ)= đỗ xe. ちゅう+しゃ. Nhớ: 駐(ちゅう)=đóng + 車(しゃ)=xe"},
+    {q:"もう逃げてしまったようだ。",word:"逃げて",opts:["にげて","なげて","さげて","あけて"],ans:0,exp:"逃げる(にげる)= trốn. 逃走(とうそう)=bỏ trốn"},
+    {q:"努力することは大切だと思います。",word:"努力",opts:["どうりょく","とうりょく","どりょく","とりょく"],ans:2,exp:"努力(どりょく)= nỗ lực. ど+りょく. Nhớ: ど không phải どう"},
+    {q:"それは過去のことです。",word:"過去",opts:["かこ","かこう","かきょ","かきょう"],ans:0,exp:"過去(かこ)= quá khứ. か+こ. Nhớ: 過(か)=qua + 去(こ)=đi"},
+    {q:"あの少年の悲しそうな顔が忘れられない。",word:"悲しそう",opts:["やさしそう","かなしそう","きびしそう","さびしそう"],ans:1,exp:"悲しい(かなしい)= buồn. 悲劇(ひげき)=bi kịch"},
+    {q:"彼は話し方も動作もゆっくりしている。",word:"動作",opts:["とうさ","とうき","どうさ","とうさ"],ans:2,exp:"動作(どうさ)= động tác. どう+さ. Nhớ: 動(どう)=động + 作(さ)=tác"},
+    {q:"それではゆっくり呼吸をしてください。",word:"呼吸",opts:["こぎゅ","こきゅう","よきゅう","よきぎゅう"],ans:1,exp:"呼吸(こきゅう)= hô hấp. こ+きゅう. Nhớ: 呼(こ)=thở ra + 吸(きゅう)=hít vào"},
+  ],
+  m2: [
+    {q:"昨日、友達が家にとまりにきた。",word:"とまり",opts:["停まり","留まり","泊まり","下まり"],ans:2,exp:"泊まる(とまる)= nghỉ lại qua đêm. 宿泊(しゅくはく)=lưu trú"},
+    {q:"書類にはこの学校のきそくが書かれていた。",word:"きそく",opts:["現販","規則","規販","現則"],ans:1,exp:"規則(きそく)= quy tắc. 規(き)+則(そく). Nhớ: 則≠販"},
+    {q:"ここはあたたかいですね。",word:"あたたかい",opts:["明るい","小さい","暖かい","熱い"],ans:2,exp:"暖かい(あたたかい)= ấm áp. 暖房(だんぼう)=sưởi ấm"},
+    {q:"やっきょくがなかなか見つかりません。",word:"やっきょく",opts:["薬包","楽曲","薬局","楽局"],ans:2,exp:"薬局(やっきょく)= hiệu thuốc. やっ+きょく. Nhớ: 薬≠楽"},
+    {q:"お皿をかさねてその棚にしまってください。",word:"かさねて",opts:["整ねて","列ねて","階ねて","重ねて"],ans:3,exp:"重ねる(かさねる)= chồng lên. 重複(ちょうふく)=trùng lặp"},
+    {q:"机の上にでんごんのメモがあった。",word:"でんごん",opts:["伝記","伝言","転記","転各"],ans:1,exp:"伝言(でんごん)= tin nhắn/lời nhắn. 伝(でん)=truyền + 言(ごん)=lời"},
+  ]
+};
+
+EXAM_DATA["12-2024"] = {
+  m1: [
+    {q:"山田さんがちらしを配った。",word:"配った",opts:["ひろった","くばった","やぶった","はった"],ans:1,exp:"配る(くばる)= phân phát. 配達(はいたつ)=giao hàng. Nhớ: くば không phải ひろ"},
+    {q:"私の国は石油を輸入しています。",word:"石油",opts:["いしゅ","せきう","せきゆ","いしう"],ans:2,exp:"石油(せきゆ)= dầu mỏ. せき+ゆ. Nhớ: 石(せき)=đá + 油(ゆ)=dầu"},
+    {q:"卒業式には生徒の父母もたくさん来ていた。",word:"父母",opts:["ふば","ふぼ","ふうぼ","ふうば"],ans:1,exp:"父母(ふぼ)= cha mẹ. ふ+ぼ. Nhớ: 父(ふ)=cha + 母(ぼ)=mẹ"},
+    {q:"この町の主要な産業は何ですか。",word:"主要",opts:["じゅうおう","しゅおう","じゅうよう","しゅよう"],ans:2,exp:"主要(しゅよう)= chủ yếu. しゅ+よう. Nhớ: 主(しゅ)=chủ + 要(よう)=yếu"},
+    {q:"これは加熱して食べてください。",word:"加熱",opts:["かねつ","かあつ","かいねつ","かいあつ"],ans:0,exp:"加熱(かねつ)= đun nóng. か+ねつ. Nhớ: 加(か)=thêm + 熱(ねつ)=nhiệt"},
+    {q:"川はあの辺りで深くなっている。",word:"深く",opts:["ふかく","あさく","ひろく","せまく"],ans:0,exp:"深い(ふかい)= sâu. Đối nghĩa: 浅い(あさい)=nông"},
+    {q:"文句を言われたので、つい感情的になってしまった。",word:"感情的",opts:["がんじょうてき","かんしょうてき","かんじょうてき","がんしょうてき"],ans:2,exp:"感情的(かんじょうてき)= cảm tính. かんじょう+てき. Nhớ: 感情(かんじょう)=cảm xúc"},
+    {q:"これは残さないでください。",word:"残さないで",opts:["なくさないで","よごさないで","こぼさないで","のこさないで"],ans:3,exp:"残す(のこす)= để lại. 残業(ざんぎょう)=tăng ca. Nhớ: のこ không phải なく"},
+  ],
+  m2: [
+    {q:"ここからじゅんぱんに見てください。",word:"じゅんぱん",opts:["順板","項番","順番","頂番"],ans:2,exp:"順番(じゅんばん)= thứ tự. 順(じゅん)=thuận + 番(ばん)=số thứ"},
+    {q:"父は銀行につとめています。",word:"つとめて",opts:["勤めて","働めて","仕めて","労めて"],ans:0,exp:"勤める(つとめる)= làm việc. 勤務(きんむ)=công vụ"},
+    {q:"ポケットがさゆうにあるんですね。",word:"さゆう",opts:["裏表","右左","表裏","左右"],ans:3,exp:"左右(さゆう)= trái phải. 左(さ)=trái + 右(ゆう)=phải"},
+    {q:"昨日の試合はまけてしまいました。",word:"まけて",opts:["退けて","負けて","失けて","欠けて"],ans:1,exp:"負ける(まける)= thua. 勝負(しょうぶ)=thắng thua"},
+    {q:"かこの例も調べてみましょう。",word:"かこ",opts:["過去","過古","遺去","遺古"],ans:0,exp:"過去(かこ)= quá khứ. か+こ. Nhớ: 過(か)=qua + 去(こ)=đi"},
+    {q:"この資料はページがぎゃくになっていますよ。",word:"ぎゃく",opts:["逆","変","順","別"],ans:0,exp:"逆(ぎゃく)= ngược. 逆転(ぎゃくてん)=đảo ngược"},
+  ]
+};
+
+// ── THÊM 3 ĐỀ MỚI ──
+EXAM_DATA["12-2010"] = {
+  m1: [
+      {q:"山田さんがチラシを配った。",word:"配った",opts:["ひろった","くばった","やぶった","はった"],ans:1,exp:"配る(くばる)=phân phát"},
+      {q:"私の国は石油を輸入しています。",word:"石油",opts:["いしゅ","せきう","せきゆ","いしう"],ans:2,exp:"石油(せきゆ)=dầu mỏ"},
+      {q:"卒業式には生徒の父母もたくさん来ていた。",word:"父母",opts:["ふば","ふぼ","ふうぼ","ふうば"],ans:1,exp:"父母(ふぼ)=cha mẹ"},
+      {q:"この町の主要な産業は何ですか。",word:"主要",opts:["じゅうおう","しゅおう","じゅうよう","しゅよう"],ans:3,exp:"主要(しゅよう)=chủ yếu"},
+      {q:"これは加熱してから食べてください。",word:"加熱",opts:["かねつ","かあつ","かいねつ","かいあつ"],ans:0,exp:"加熱(かねつ)=đun nóng"},
+      {q:"川はこの辺りで深くなっている。",word:"深く",opts:["ふかく","あさく","ひろく","せまく"],ans:0,exp:"深い(ふかい)=sâu"},
+      {q:"文句を言われたので、つい感情的になってしまった。",word:"感情的",opts:["がんじょうてき","かんしょうてき","かんじょうてき","がんしょうてき"],ans:2,exp:"感情的(かんじょうてき)=theo cảm xúc"},
+      {q:"これは残さないでください。",word:"残さ",opts:["なくさないで","よごさないで","こぼさないで","のこさないで"],ans:3,exp:"残す(のこす)=để lại"},
+      {q:"ここからじゅんばんに見てください。",word:"じゅんばん",opts:["順番","項番","順審","項審"],ans:0,exp:"順番(じゅんばん)=thứ tự"},
+      {q:"父は銀行につとめています。",word:"つとめて",opts:["勤めて","働めて","仕めて","労めて"],ans:0,exp:"勤める(つとめる)=làm việc tại"},
+      {q:"ポケットがさゆうにあるんですね。",word:"さゆう",opts:["裏表","右左","表裏","左右"],ans:3,exp:"左右(さゆう)=trái phải"},
+      {q:"昨日の試合はまけてしまいました。",word:"まけて",opts:["退けて","負けて","失けて","欠けて"],ans:1,exp:"負ける(まける)=thua"},
+      {q:"かこの例も調べてみましょう。",word:"かこ",opts:["適去","過古","過去","適古"],ans:2,exp:"過去(かこ)=quá khứ"},
+      {q:"この資料はページがぎゃくになっていますよ。",word:"ぎゃく",opts:["違","变","逆","别"],ans:2,exp:"逆(ぎゃく)=ngược"}
+  ],
+  m2: []
+};
+
+EXAM_DATA["7-2019"] = {
+  m1: [
+      {q:"今日は友達の誕生日です。",word:"誕生日",opts:["たんじょうび","たんじょうにち","だんじょうび","だんじょうにち"],ans:0,exp:"誕生日(たんじょうび)=sinh nhật"},
+      {q:"この映画は感動的だった。",word:"感動的",opts:["かんどうてき","がんどうてき","かんどうえき","がんどうえき"],ans:0,exp:"感動的(かんどうてき)=cảm động"},
+      {q:"安全のために気をつけてください。",word:"安全",opts:["あんぜん","あんせん","あんぜい","あんせい"],ans:0,exp:"安全(あんぜん)=an toàn"},
+      {q:"電気の使用を控えましょう。",word:"使用",opts:["しよう","つかよう","しいよう","つかいよう"],ans:0,exp:"使用(しよう)=sử dụng"},
+      {q:"この問題を解決する方法を考えます。",word:"解決",opts:["かいけつ","かいきつ","げかいつ","げきかつ"],ans:0,exp:"解決(かいけつ)=giải quyết"},
+      {q:"母は毎日料理をします。",word:"料理",opts:["りょうり","りょうい","らょうり","らょうい"],ans:0,exp:"料理(りょうり)=nấu ăn"},
+      {q:"記念に写真を撮りましょう。",word:"記念",opts:["きねん","きなん","ぎねん","ぎなん"],ans:0,exp:"記念(きねん)=kỷ niệm"},
+      {q:"この店は営業中です。",word:"営業",opts:["えいぎょう","えいごう","えいきょう","えいこう"],ans:0,exp:"営業(えいぎょう)=kinh doanh"},
+      {q:"かんきょう問題が深刻です。",word:"かんきょう",opts:["感境","環境","感鏡","環鏡"],ans:1,exp:"環境(かんきょう)=môi trường"},
+      {q:"毎朝たいそうをします。",word:"たいそう",opts:["大操","大層","体操","体層"],ans:2,exp:"体操(たいそう)=thể dục"},
+      {q:"先生にしつもんしました。",word:"しつもん",opts:["質問","質文","実問","実文"],ans:0,exp:"質問(しつもん)=câu hỏi"},
+      {q:"にもつを持ってください。",word:"にもつ",opts:["荷物","何物","荷者","何者"],ans:0,exp:"荷物(にもつ)=hành lý"},
+      {q:"試験のけっかが出ました。",word:"けっか",opts:["決果","結果","決化","結化"],ans:1,exp:"結果(けっか)=kết quả"},
+      {q:"この仕事はたいへんです。",word:"たいへん",opts:["大変","大返","対変","対返"],ans:0,exp:"大変(たいへん)=vất vả"}
+  ],
+  m2: []
+};
+
+EXAM_DATA["12-2023"] = {
+  m1: [
+      {q:"先生が黒板に書いた。",word:"書いた",opts:["かいた","やいた","ひいた","ぬいた"],ans:0,exp:"書く(かく)=viết"},
+      {q:"この仕事は複雑です。",word:"複雑",opts:["ふくざつ","ふうざつ","ふくさつ","ふうさつ"],ans:0,exp:"複雑(ふくざつ)=phức tạp"},
+      {q:"交通事故に気をつけてください。",word:"交通",opts:["こうつう","こうどう","こうつ","こうど"],ans:0,exp:"交通(こうつう)=giao thông"},
+      {q:"彼女は親切な人です。",word:"親切",opts:["しんせつ","しんきつ","しんせい","しんきい"],ans:0,exp:"親切(しんせつ)=thân thiện"},
+      {q:"経験を積むことが大切です。",word:"経験",opts:["けいけん","けいかん","けいこん","けいがん"],ans:0,exp:"経験(けいけん)=kinh nghiệm"},
+      {q:"今日は天気が良い。",word:"良い",opts:["よい","わるい","すごい","おおい"],ans:0,exp:"良い(よい)=tốt"},
+      {q:"準備ができましたか。",word:"準備",opts:["じゅんび","じゅんぴ","しゅんび","しゅんぴ"],ans:0,exp:"準備(じゅんび)=chuẩn bị"},
+      {q:"この映画は有名です。",word:"有名",opts:["ゆうめい","ゆめい","ゆうめ","ゆめ"],ans:0,exp:"有名(ゆうめい)=nổi tiếng"},
+      {q:"毎日れんしゅうしています。",word:"れんしゅう",opts:["練習","練集","連習","連集"],ans:0,exp:"練習(れんしゅう)=luyện tập"},
+      {q:"じしんが来たら机の下に隠れてください。",word:"じしん",opts:["地震","地心","自震","自心"],ans:0,exp:"地震(じしん)=động đất"},
+      {q:"友達にプレゼントをおくった。",word:"プレゼント",opts:["贈った","配った","送った","渡った"],ans:2,exp:"送る(おくる)=gửi"},
+      {q:"この本はやくに立つ。",word:"やくに立つ",opts:["役","益","得","功"],ans:0,exp:"役に立つ(やくにたつ)=có ích"},
+      {q:"試験のせいせきが良かった。",word:"せいせき",opts:["成績","成跡","生績","生跡"],ans:0,exp:"成績(せいせき)=kết quả học tập"},
+      {q:"来週しゅっちょうがあります。",word:"しゅっちょう",opts:["出張","出帳","出長","出丁"],ans:0,exp:"出張(しゅっちょう)=công tác"}
+  ],
+  m2: []
+};
+
+
+
+
+renderScan();
+renderExamList();
+</script>
+
+<nav class="bnav">
+  <button class="bnav-item" onclick="location.href='index.html'"><div class="bnav-icon">🏠</div>Home</button>
+  <button class="bnav-item" onclick="location.href='n3-grammarnew.html'"><div class="bnav-icon">📝</div>Ngữ Pháp</button>
+  <button class="bnav-item" onclick="location.href='vocab.html'"><div class="bnav-icon">📚</div>Từ Vựng</button>
+  <button class="bnav-item active"><div class="bnav-icon">漢</div>Kanji</button>
+  <button class="bnav-item" onclick="location.href='reading.html'"><div class="bnav-icon">📖</div>Đọc</button>
+</nav>
+</body>
+</html>
