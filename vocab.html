@@ -127,11 +127,8 @@ body{font-family:'Nunito','Noto Sans JP',sans-serif;background:var(--bg);color:v
 
 
 .vcf-type{font-size:.65rem;font-weight:800;padding:3px 10px;border-radius:20px;background:var(--y1);color:#fff;margin-bottom:10px;}
-.vcard-back 
 .vcf-kanji{font-size:1.8rem;font-weight:700;font-family:'Noto Serif JP',serif;margin-bottom:4px;color:var(--y2);}
-.vcard-back 
 .vcf-kana{font-size:.8rem;color:var(--text3);}
-.vcard-back 
 .vcf-tap{font-size:.68rem;color:var(--text3);margin-top:12px;animation:pulse2 2s infinite;}
 @keyframes pulse2{0%,100%{opacity:.4}50%{opacity:1}}
 .vcf-vn{font-size:1.1rem;font-weight:800;margin-bottom:8px;}
@@ -221,15 +218,12 @@ ruby{ruby-align:center;}rt{font-size:.5em;color:var(--y2);}
 
 /* ===== VOCAB FLASHCARD (clean) ===== */
 .vcard-scene{perspective:1200px;margin-bottom:12px;cursor:pointer;-webkit-user-select:none;user-select:none;}
-.vcard-drag{transition:transform .3s cubic-bezier(.22,1,.36,1), opacity .3s;will-change:transform,opacity;min-height:200px;display:block;}
+.vcard-drag{transition:transform .3s cubic-bezier(.22,1,.36,1), opacity .3s;will-change:transform,opacity;min-height:200px;display:block;transform-style:preserve-3d;}
 .vcard-inner{position:relative;width:100%;height:200px;min-height:200px;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
 .vcard-scene.flipped .vcard-inner{transform:rotateY(180deg);}
 .vcard-face{position:absolute;top:0;left:0;width:100%;height:200px;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--r);padding:24px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;word-break:break-word;}
 .vcard-front{background:linear-gradient(135deg,var(--y3),var(--y4));border:2px solid var(--y1);box-shadow:var(--shadow);}
 .vcard-back{background:linear-gradient(135deg,#fef9e7,#fef3c7);transform:rotateY(180deg);color:#1c1917;border:2px solid var(--y1);box-shadow:0 8px 30px rgba(232,168,0,.3);}
-.vcard-back 
-.vcard-back 
-.vcard-back 
 
 .day-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px;}
 .day-btn{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);padding:10px 6px;text-align:center;cursor:pointer;transition:all .15s;position:relative;}
