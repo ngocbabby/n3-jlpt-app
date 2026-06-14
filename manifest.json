@@ -1,0 +1,26 @@
+{
+  "name": "N3 JLPT Luyện Thi",
+  "short_name": "N3 学習",
+  "description": "Luyện thi JLPT N3 offline - Ngữ pháp, Từ vựng, Kanji, Đọc hiểu",
+  "start_url": "/n3-jlpt-app/",
+  "scope": "/n3-jlpt-app/",
+  "display": "standalone",
+  "background_color": "#f0f4ff",
+  "theme_color": "#4361ee",
+  "orientation": "portrait",
+  "lang": "vi",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
