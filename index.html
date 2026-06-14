@@ -80,6 +80,13 @@ body{font-family:'Nunito','Noto Sans JP',sans-serif;background:var(--bg);color:v
 .cd-bar{height:5px;background:var(--surface);border-radius:4px;overflow:hidden;}
 .cd-bar-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--p));border-radius:4px;}
 </style>
+<link rel="manifest" href="/n3-jlpt-app/manifest.json">
+<meta name="theme-color" content="#4361ee">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="N3 学習">
+<link rel="apple-touch-icon" href="/n3-jlpt-app/icon-192.png">
 </head>
 <body>
 
@@ -227,6 +234,15 @@ function updateStats() {
   document.getElementById('home-streak').textContent = streak + '🔥';
 }
 updateStats();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("/n3-jlpt-app/sw.js")
+      .then(function(r) { console.log("SW registered OK"); })
+      .catch(function(e) { console.log("SW error:", e); });
+  });
+}
 </script>
 </body>
 </html>
