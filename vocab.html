@@ -291,6 +291,13 @@ ruby{ruby-align:center;}rt{font-size:.5em;color:var(--y2);}
 #page-exam-vocab .erbtn.primary{background:var(--y1);color:var(--text);}
 #page-exam-vocab .erbtn.secondary{background:var(--white);border:1.5px solid var(--border);}
 </style>
+<link rel="manifest" href="/n3-jlpt-app/manifest.json">
+<meta name="theme-color" content="#4361ee">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="N3 学習">
+<link rel="apple-touch-icon" href="/n3-jlpt-app/icon-192.png">
 </head>
 <body>
 <nav class="bnav">
@@ -1201,5 +1208,14 @@ renderDayGrid();
     <div style="padding:0 14px 24px;max-width:500px;margin:0 auto;"><div style="font-size:.62rem;font-weight:800;color:var(--text3);letter-spacing:.08em;padding:10px 0 6px;">📋 XEM LẠI TỪNG CÂU</div><div id="ev-review"></div></div>
   </div>
 </div>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("/n3-jlpt-app/sw.js")
+      .then(function(r) { console.log("SW registered OK"); })
+      .catch(function(e) { console.log("SW error:", e); });
+  });
+}
+</script>
 </body>
 </html>

@@ -505,6 +505,13 @@
 .bnav-icon{font-size:1.2rem;line-height:1;}
 body{padding-bottom:68px;}
 </style>
+<link rel="manifest" href="/n3-jlpt-app/manifest.json">
+<meta name="theme-color" content="#4361ee">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="N3 学習">
+<link rel="apple-touch-icon" href="/n3-jlpt-app/icon-192.png">
 </head>
 <body>
 
@@ -3279,5 +3286,14 @@ render();
   <button class="bnav-item" onclick="location.href='kanji.html'"><div class="bnav-icon">漢</div>Kanji</button>
   <button class="bnav-item" onclick="location.href='reading.html'"><div class="bnav-icon">📖</div>Đọc</button>
 </nav>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("/n3-jlpt-app/sw.js")
+      .then(function(r) { console.log("SW registered OK"); })
+      .catch(function(e) { console.log("SW error:", e); });
+  });
+}
+</script>
 </body>
 </html>

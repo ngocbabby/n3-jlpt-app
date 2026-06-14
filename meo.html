@@ -144,6 +144,13 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .pb{width:28px;height:28px;border-radius:7px;border:none;background:var(--p2);color:#fff;font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s;}
 .pb:active{transform:scale(.88);}
 </style>
+<link rel="manifest" href="/n3-jlpt-app/manifest.json">
+<meta name="theme-color" content="#4361ee">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="N3 学習">
+<link rel="apple-touch-icon" href="/n3-jlpt-app/icon-192.png">
 </head>
 <body>
 
@@ -816,6 +823,15 @@ function speak(text) {
   const v = speechSynthesis.getVoices().find(v => v.lang && v.lang.startsWith('ja'));
   if (v) u.voice = v;
   speechSynthesis.speak(u);
+}
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("/n3-jlpt-app/sw.js")
+      .then(function(r) { console.log("SW registered OK"); })
+      .catch(function(e) { console.log("SW error:", e); });
+  });
 }
 </script>
 </body>

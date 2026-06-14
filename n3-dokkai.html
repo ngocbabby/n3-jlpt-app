@@ -93,6 +93,13 @@ main{max-width:780px;margin:0 auto;padding:20px 14px}
 .nut-ve-home:hover{background:#1a3a2a;color:#fff}
 @media(max-width:560px){.van-ban{font-size:.93rem}.nut-dap-an{font-size:.84rem}#thanh-tien-do{display:none}}
 </style>
+<link rel="manifest" href="/n3-jlpt-app/manifest.json">
+<meta name="theme-color" content="#4361ee">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="N3 学習">
+<link rel="apple-touch-icon" href="/n3-jlpt-app/icon-192.png">
 </head>
 <body>
 <header>
@@ -700,6 +707,15 @@ function capNhatTienDo(d,t){document.getElementById('thanh-fill').style.width=(t
 function capNhatDiem(){const t=Object.keys(daLam).length,d=Object.values(daLam).filter(a=>a.dung).length;document.getElementById('diem-hien').textContent=`${d} / ${t} đúng`}
 function capNhatHuyHieu(){['tanbun','chubun','chobun','joho'].forEach(p=>{const ds=BAI.filter(b=>b.phan===p),done=ds.filter(b=>daLam[b.id]).length,el=document.getElementById('hh-'+p);if(el)el.textContent=done>0?`${done}/${ds.length} hoàn thành`:`${ds.length} bài`})}
 veHome();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("/n3-jlpt-app/sw.js")
+      .then(function(r) { console.log("SW registered OK"); })
+      .catch(function(e) { console.log("SW error:", e); });
+  });
+}
 </script>
 </body>
 </html>
