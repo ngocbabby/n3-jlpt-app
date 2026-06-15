@@ -7,14 +7,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f0f4ff;--white:#fff;--surface:#e8edf8;
-  --p:#4361ee;--p2:#3a0ca3;--p-light:#eef1ff;--p3:#7c3aed;
-  --green:#22c55e;--green-l:#f0fdf4;
-  --red:#ef4444;--red-l:#fef2f2;
-  --yellow:#f59e0b;--yellow-l:#fffbeb;
-  --orange:#f97316;--orange-l:#fff7ed;
-  --text:#1e1b4b;--text2:#4b5563;--text3:#9ca3af;
-  --border:#dde3f5;--shadow:0 4px 24px rgba(67,97,238,.10);
+  --bg:#1e1e1e;--white:#2a2a2a;--surface:#2a2a2a;
+  --p:#a78bfa;--p2:#7c3aed;--p-light:rgba(167,139,250,.12);--p3:#a78bfa;
+  --green:#34d399;--green-l:rgba(52,211,153,.1);
+  --red:#f87171;--red-l:rgba(248,113,113,.1);
+  --yellow:#fbbf24;--yellow-l:rgba(251,191,36,.1);
+  --orange:#fb923c;--orange-l:rgba(251,146,60,.1);
+  --text:#e8e8e8;--text2:#b0b0b0;--text3:#787878;
+  --border:#404040;--shadow:0 2px 12px rgba(0,0,0,.4);
   --r:16px;--r2:10px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -22,7 +22,7 @@ body{font-family:'Nunito','Noto Serif JP',sans-serif;background:var(--bg);color:
 
 /* BOTTOM NAV */
 .bnav{display:flex;flex-direction:row;position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1.5px solid var(--border);z-index:100;box-shadow:0 -2px 10px rgba(0,0,0,.06);}
-.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 12px;cursor:pointer;font-size:.65rem;font-weight:700;color:var(--text3);border:none;background:none;font-family:inherit;gap:4px;position:relative;transition:all .2s;}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 12px;cursor:pointer;font-size:.82rem;font-weight:700;color:var(--text3);border:none;background:none;font-family:inherit;gap:4px;position:relative;transition:all .2s;}
 .bnav-item.active{color:var(--p);}
 .bnav-item.active::after{content:'';position:absolute;top:0;left:20%;right:20%;height:3px;background:var(--p);border-radius:0 0 3px 3px;}
 .bnav-icon{font-size:1.3rem;line-height:1;}
@@ -44,16 +44,16 @@ body{font-family:'Nunito','Noto Serif JP',sans-serif;background:var(--bg);color:
 .menu-stats{display:flex;gap:10px;margin-top:14px;justify-content:center;}
 .menu-stat{background:rgba(255,255,255,.22);border-radius:10px;padding:8px 16px;text-align:center;}
 .menu-stat .n{font-size:1.3rem;font-weight:900;}
-.menu-stat .l{font-size:.65rem;opacity:.85;margin-top:1px;}
+.menu-stat .l{font-size:.82rem;opacity:.85;margin-top:1px;}
 
-.section-label{font-size:.72rem;font-weight:800;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;padding:0 20px 8px;}
+.section-label{font-size:.82rem;font-weight:800;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;padding:0 20px 8px;}
 
 .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px 14px;}
 .mode-card{background:var(--white);border-radius:var(--r);padding:16px;cursor:pointer;border:2px solid var(--border);transition:all .2s;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;gap:6px;}
 .mode-card:hover{transform:translateY(-2px);border-color:var(--p);}
 .mode-card .mc-icon{font-size:1.6rem;}
 .mode-card .mc-title{font-size:.85rem;font-weight:800;}
-.mode-card .mc-sub{font-size:.68rem;color:var(--text3);text-align:center;}
+.mode-card .mc-sub{font-size:.82rem;color:var(--text3);text-align:center;}
 
 /* EXAM ITEM (lesson style) */
 .exam-item{background:var(--white);border-radius:var(--r);margin:0 14px 10px;padding:16px;cursor:pointer;border:2px solid var(--border);transition:all .2s;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;}
@@ -70,7 +70,7 @@ body{font-family:'Nunito','Noto Serif JP',sans-serif;background:var(--bg);color:
 
 /* PASSAGE */
 .passage-header{background:var(--white);border-bottom:2px solid var(--border);padding:12px 16px;position:sticky;top:64px;z-index:90;}
-.ph-type{font-size:.65rem;font-weight:800;color:var(--p);background:var(--p-light);padding:3px 8px;border-radius:20px;display:inline-block;margin-bottom:4px;}
+.ph-type{font-size:.82rem;font-weight:800;color:var(--p);background:var(--p-light);padding:3px 8px;border-radius:20px;display:inline-block;margin-bottom:4px;}
 .ph-title{font-size:.9rem;font-weight:800;}
 .ph-progress{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap;}
 .ph-dot{width:8px;height:8px;border-radius:50%;background:var(--surface);}
@@ -81,7 +81,7 @@ body{font-family:'Nunito','Noto Serif JP',sans-serif;background:var(--bg);color:
 .passage-text{background:var(--white);border-radius:var(--r);margin:12px 14px;padding:18px;font-family:'Noto Serif JP',serif;font-size:.92rem;line-height:1.9;box-shadow:var(--shadow);border:2px solid var(--border);}
 .passage-text h4{font-size:.8rem;font-weight:700;color:var(--p);margin-bottom:8px;font-family:'Nunito',sans-serif;}
 .passage-text p{margin:.3em 0;}
-.passage-note{font-size:.72rem;color:var(--text3);font-family:'Nunito',sans-serif;margin-top:10px;padding-top:8px;border-top:1px dashed var(--border);}
+.passage-note{font-size:.82rem;color:var(--text3);font-family:'Nunito',sans-serif;margin-top:10px;padding-top:8px;border-top:1px dashed var(--border);}
 .passage-table{width:100%;border-collapse:collapse;font-size:.8rem;margin:8px 0;}
 .passage-table td,.passage-table th{border:1px solid var(--border);padding:6px 8px;text-align:left;}
 .passage-table th{background:var(--surface);font-weight:700;}
@@ -211,7 +211,7 @@ body{font-family:'Nunito','Noto Serif JP',sans-serif;background:var(--bg);color:
   <div id="submit-area" style="padding:0 14px 24px;display:none;">
     <div class="sb-info" id="sb-info" style="text-align:center;margin-bottom:8px;font-size:.78rem;font-weight:700;color:var(--text2);">Đã trả lời 0/0</div>
     <button class="btn btn-green" onclick="submitExam()" id="sb-btn" style="width:100%;padding:16px;font-size:1rem;">✓ Nộp bài</button>
-    <div style="text-align:center;margin-top:8px;font-size:.72rem;color:var(--text3);">Sau khi nộp bài, đáp án và giải thích sẽ hiện ra.</div>
+    <div style="text-align:center;margin-top:8px;font-size:.82rem;color:var(--text3);">Sau khi nộp bài, đáp án và giải thích sẽ hiện ra.</div>
   </div>
 </div>
 
