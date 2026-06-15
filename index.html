@@ -237,8 +237,12 @@ function updateStats() {
 updateStats();
 </script>
 <script>
-// Chặn banner cài app PWA của Chrome
-window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); });
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("/n3-jlpt-app/sw.js");
+  });
+}
+// Cho phép Chrome tự hiện popup cài app (1 lần duy nhất)
 </script>
 </body>
 </html>
