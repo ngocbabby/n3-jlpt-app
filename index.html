@@ -20,13 +20,24 @@
 body{font-family:'Nunito','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;}
 
 /* INSTALL BTN */
-.pwa-install-wrap{padding:0 16px 14px;display:none;}
-.pwa-install-wrap.show{display:block;}
+.pwa-install-wrap{padding:0 16px 14px;}
 .pwa-install-btn{width:100%;background:linear-gradient(135deg,#34d399,#059669);border:none;border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;color:#fff;box-shadow:0 4px 20px rgba(52,211,153,.3);}
 .pwa-install-btn-icon{font-size:2rem;flex-shrink:0;}
 .pwa-install-btn-text{flex:1;text-align:left;}
 .pwa-install-btn-title{font-size:1rem;font-weight:900;margin-bottom:2px;}
 .pwa-install-btn-sub{font-size:.8rem;opacity:.85;}
+/* INSTALL MODAL */
+.install-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:flex-end;justify-content:center;}
+.install-modal.show{display:flex;}
+.install-sheet{background:#2a2a2a;border-radius:20px 20px 0 0;padding:28px 20px 48px;width:100%;max-width:480px;}
+.install-sheet h3{font-size:1.15rem;font-weight:900;margin-bottom:6px;text-align:center;}
+.install-sheet p{font-size:.85rem;color:#b0b0b0;text-align:center;margin-bottom:20px;}
+.install-steps{display:flex;flex-direction:column;gap:14px;margin-bottom:24px;}
+.install-step{display:flex;gap:12px;align-items:flex-start;}
+.step-num{width:30px;height:30px;border-radius:50%;background:#34d399;color:#1e1e1e;font-weight:900;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.step-text{font-size:.9rem;color:#e8e8e8;line-height:1.55;}
+.step-text strong{color:#34d399;}
+.modal-close{width:100%;background:#404040;border:none;border-radius:12px;padding:14px;color:#e8e8e8;font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit;}
 
 /* BOTTOM NAV */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--white);border-top:1px solid var(--border);display:flex;box-shadow:0 -4px 20px rgba(67,97,238,.08);}
@@ -164,6 +175,29 @@ body{font-family:'Nunito','Noto Sans JP',sans-serif;background:var(--bg);color:v
   </button>
 </div>
 
+<!-- Modal hướng dẫn cài -->
+<div class="install-modal" id="installModal">
+  <div class="install-sheet">
+    <h3>📲 Cài app về máy</h3>
+    <p>Làm theo 3 bước đơn giản sau</p>
+    <div class="install-steps">
+      <div class="install-step">
+        <div class="step-num">1</div>
+        <div class="step-text">Bấm vào <strong>⋮ (3 chấm)</strong> góc trên phải Chrome</div>
+      </div>
+      <div class="install-step">
+        <div class="step-num">2</div>
+        <div class="step-text">Chọn <strong>"Cài đặt ứng dụng"</strong> hoặc <strong>"Thêm vào màn hình chính"</strong></div>
+      </div>
+      <div class="install-step">
+        <div class="step-num">3</div>
+        <div class="step-text">Bấm <strong>Cài đặt</strong> → App xuất hiện trên màn hình như app thật ✓</div>
+      </div>
+    </div>
+    <button class="modal-close" onclick="document.getElementById('installModal').classList.remove('show')">Đã hiểu rồi</button>
+  </div>
+</div>
+
 <div class="section-label">📚 Các mục học</div>
 <div class="subjects-grid">
   <a class="subject-card active-subj" href="n3-grammarnew.html">
@@ -264,30 +298,31 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-// Bắt sự kiện beforeinstallprompt → hiện nút cài app
 let deferredPrompt = null;
-const pwaWrap = document.getElementById('pwaInstallWrap');
-const pwaBtn = document.getElementById('pwaInstallBtn');
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
-  deferredPrompt = e;
-  if (pwaWrap) pwaWrap.classList.add('show'); // hiện nút
+  deferredPrompt = e; // lưu lại để dùng khi bấm nút
 });
 
-if (pwaBtn) {
-  pwaBtn.addEventListener('click', async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt(); // trigger popup cài app thật của Chrome
+document.getElementById('pwaInstallBtn').addEventListener('click', async () => {
+  if (deferredPrompt) {
+    // Chrome sẵn sàng → trigger popup cài app thật
+    deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     deferredPrompt = null;
-    if (pwaWrap) pwaWrap.classList.remove('show'); // ẩn nút sau khi cài
-  });
-}
+    if (outcome === 'accepted') {
+      document.getElementById('pwaInstallWrap').style.display = 'none';
+    }
+  } else {
+    // Chrome chưa sẵn sàng → hiện hướng dẫn manual
+    document.getElementById('installModal').classList.add('show');
+  }
+});
 
 window.addEventListener('appinstalled', () => {
   deferredPrompt = null;
-  if (pwaWrap) pwaWrap.classList.remove('show');
+  document.getElementById('pwaInstallWrap').style.display = 'none';
 });
 </script>
 </body>
