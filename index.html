@@ -19,6 +19,15 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Nunito','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;}
 
+/* INSTALL BTN */
+.pwa-install-wrap{padding:0 16px 14px;display:none;}
+.pwa-install-wrap.show{display:block;}
+.pwa-install-btn{width:100%;background:linear-gradient(135deg,#34d399,#059669);border:none;border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;color:#fff;box-shadow:0 4px 20px rgba(52,211,153,.3);}
+.pwa-install-btn-icon{font-size:2rem;flex-shrink:0;}
+.pwa-install-btn-text{flex:1;text-align:left;}
+.pwa-install-btn-title{font-size:1rem;font-weight:900;margin-bottom:2px;}
+.pwa-install-btn-sub{font-size:.8rem;opacity:.85;}
+
 /* BOTTOM NAV */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--white);border-top:1px solid var(--border);display:flex;box-shadow:0 -4px 20px rgba(67,97,238,.08);}
 .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 12px;cursor:pointer;font-size:.82rem;font-weight:700;color:var(--text3);transition:all .2s;border:none;background:none;font-family:inherit;gap:4px;position:relative;}
@@ -143,6 +152,18 @@ body{font-family:'Nunito','Noto Sans JP',sans-serif;background:var(--bg);color:v
   <div style="font-size:1.2rem;opacity:.7;">→</div>
 </a>
 
+<!-- Nút cài app chủ động -->
+<div class="pwa-install-wrap" id="pwaInstallWrap">
+  <button class="pwa-install-btn" id="pwaInstallBtn">
+    <span class="pwa-install-btn-icon">📲</span>
+    <div class="pwa-install-btn-text">
+      <div class="pwa-install-btn-title">Cài app về máy</div>
+      <div class="pwa-install-btn-sub">Dùng offline · Không cần mạng · Nhanh hơn</div>
+    </div>
+    <span style="font-size:1.4rem;opacity:.8">→</span>
+  </button>
+</div>
+
 <div class="section-label">📚 Các mục học</div>
 <div class="subjects-grid">
   <a class="subject-card active-subj" href="n3-grammarnew.html">
@@ -242,7 +263,32 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/n3-jlpt-app/sw.js");
   });
 }
-// Cho phép Chrome tự hiện popup cài app (1 lần duy nhất)
+
+// Bắt sự kiện beforeinstallprompt → hiện nút cài app
+let deferredPrompt = null;
+const pwaWrap = document.getElementById('pwaInstallWrap');
+const pwaBtn = document.getElementById('pwaInstallBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (pwaWrap) pwaWrap.classList.add('show'); // hiện nút
+});
+
+if (pwaBtn) {
+  pwaBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt(); // trigger popup cài app thật của Chrome
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    if (pwaWrap) pwaWrap.classList.remove('show'); // ẩn nút sau khi cài
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  if (pwaWrap) pwaWrap.classList.remove('show');
+});
 </script>
 </body>
 </html>
