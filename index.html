@@ -89,6 +89,24 @@ body{font-family:'Nunito','Noto Sans JP',sans-serif;background:var(--bg);color:v
 .install-sub{font-size:.78rem;color:var(--text2);}
 .install-btn{background:var(--green);color:#1e1e1e;border:none;border-radius:10px;padding:8px 16px;font-size:.85rem;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap;}
 .install-close{background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;padding:4px;flex-shrink:0;}
+
+.dl-btn-wrap{padding:0 16px 14px;}
+.dl-btn{width:100%;background:linear-gradient(135deg,#34d399,#059669);border:none;border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;color:#fff;box-shadow:0 4px 20px rgba(52,211,153,.3);}
+.dl-btn-icon{font-size:2rem;flex-shrink:0;}
+.dl-btn-text{flex:1;text-align:left;}
+.dl-btn-title{font-size:1rem;font-weight:900;margin-bottom:2px;}
+.dl-btn-sub{font-size:.8rem;opacity:.85;}
+.install-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:flex-end;justify-content:center;}
+.install-modal.show{display:flex;}
+.install-sheet{background:#2a2a2a;border-radius:20px 20px 0 0;padding:28px 20px 48px;width:100%;max-width:480px;}
+.install-sheet h3{font-size:1.15rem;font-weight:900;margin-bottom:6px;text-align:center;}
+.install-sheet p{font-size:.85rem;color:#b0b0b0;text-align:center;margin-bottom:20px;}
+.install-steps{display:flex;flex-direction:column;gap:14px;margin-bottom:24px;}
+.install-step{display:flex;gap:12px;align-items:flex-start;}
+.step-num{width:30px;height:30px;border-radius:50%;background:#34d399;color:#1e1e1e;font-weight:900;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.step-text{font-size:.9rem;color:#e8e8e8;line-height:1.55;}
+.step-text strong{color:#34d399;}
+.modal-close{width:100%;background:#404040;border:none;border-radius:12px;padding:14px;color:#e8e8e8;font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit;}
 </style>
 <link rel="manifest" href="/n3-jlpt-app/manifest.json">
 <meta name="theme-color" content="#4361ee">
@@ -97,8 +115,6 @@ body{font-family:'Nunito','Noto Sans JP',sans-serif;background:var(--bg);color:v
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="N3 学習">
 <link rel="apple-touch-icon" href="/n3-jlpt-app/icon-192.png">
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>eruda.init();</script>
 </head>
 <body>
 
@@ -155,9 +171,7 @@ body{font-family:'Nunito','Noto Sans JP',sans-serif;background:var(--bg);color:v
 </a>
 
 
-<div class="install-banner" id="installBanner">
-  <div class="install-icon">📲</div>
-  <div class="install-text">
+<div class="install-text">
     <div class="install-title">Cài app về máy</div>
     <div class="install-sub">Dùng offline · Nhanh hơn · Không cần mạng</div>
   </div>
@@ -165,6 +179,37 @@ body{font-family:'Nunito','Noto Sans JP',sans-serif;background:var(--bg);color:v
   <button class="install-close" id="installClose">✕</button>
 </div>
 
+<div class="dl-btn-wrap">
+  <button class="dl-btn" onclick="showInstallGuide()">
+    <span class="dl-btn-icon">📲</span>
+    <div class="dl-btn-text">
+      <div class="dl-btn-title">Tải app về máy</div>
+      <div class="dl-btn-sub">Dùng offline · Không cần mạng · Nhanh hơn</div>
+    </div>
+    <span style="font-size:1.4rem;opacity:.8">→</span>
+  </button>
+</div>
+<div class="install-modal" id="installModal">
+  <div class="install-sheet">
+    <h3>📲 Cài app về máy</h3>
+    <p>Chọn cách phù hợp với trình duyệt của bạn</p>
+    <div class="install-steps">
+      <div class="install-step">
+        <div class="step-num">1</div>
+        <div class="step-text">Nhấn vào <strong>⋮ (3 chấm)</strong> góc trên phải trình duyệt</div>
+      </div>
+      <div class="install-step">
+        <div class="step-num">2</div>
+        <div class="step-text">Tìm mục <strong>"Thêm vào màn hình chính"</strong> hoặc <strong>"Cài đặt ứng dụng"</strong></div>
+      </div>
+      <div class="install-step">
+        <div class="step-num">3</div>
+        <div class="step-text">Nhấn <strong>Thêm / Cài đặt</strong> → App có icon riêng trên màn hình ✓</div>
+      </div>
+    </div>
+    <button class="modal-close" onclick="closeInstallGuide()">Đã hiểu rồi</button>
+  </div>
+</div>
 <div class="section-label">📚 Các mục học</div>
 <div class="subjects-grid">
   <a class="subject-card active-subj" href="n3-grammarnew.html">
@@ -299,6 +344,24 @@ window.addEventListener('appinstalled', () => {
   if (installBanner) installBanner.classList.remove('show');
   deferredPrompt = null;
 });
+
+
+function showInstallGuide() {
+  if (window._deferredPrompt) {
+    window._deferredPrompt.prompt();
+    window._deferredPrompt.userChoice.then(() => { window._deferredPrompt = null; });
+    return;
+  }
+  document.getElementById('installModal').classList.add('show');
+}
+function closeInstallGuide() {
+  document.getElementById('installModal').classList.remove('show');
+}
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  window._deferredPrompt = e;
+});
+window.addEventListener('appinstalled', () => { window._deferredPrompt = null; });
 
 </script>
 </body>
