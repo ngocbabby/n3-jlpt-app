@@ -5,12 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Luyện Đọc Hiểu N3 | KOSEI</title>
 <style>
-:root{--xanh:#34d399;--xanh2:rgba(52,211,153,.1);--do:#f87171;--do2:rgba(248,113,113,.1);--vang2:#2a2a2a;--xam:#a0a0a0;--nen:#1e1e1e;--vien:#404040;--bong:rgba(0,0,0,.4)}
+:root{--xanh:#2d6a4f;--xanh2:#d8f3dc;--do:#c1121f;--do2:#ffe5e5;--vang2:#fef3c7;--xam:#5a5f7a;--nen:#fffffe;--vien:rgba(0,0,0,0.1);--bong:rgba(0,0,0,.08)}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',Arial,sans-serif;background:#1e1e1e;color:#e8e8e8;min-height:100vh;font-size:16px}
+html{font-size:16px;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#1e1e1e;color:#0f0e17;min-height:100vh;font-size:16px}
 header{background:#2a2a2a;color:#fff;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 6px var(--bong)}
 header h1{font-size:1rem;font-weight:700}
-header h1 small{display:block;font-size:.72rem;color:#a8d5b8;font-weight:400;margin-top:1px}
+header h1 small{display:block;font-size:.85rem;color:#a8d5b8;font-weight:400;margin-top:1px}
 #diem-hien{font-size:.85rem;color:#a8d5b8;white-space:nowrap}
 #thanh-tien-do{width:120px;height:5px;background:rgba(255,255,255,.2);border-radius:3px}
 #thanh-fill{height:100%;background:#5dba7d;border-radius:3px;transition:width .3s;width:0}
@@ -25,7 +26,7 @@ main{max-width:780px;margin:0 auto;padding:20px 14px}
 .the-phan .icon{font-size:2rem;margin-bottom:8px}
 .the-phan h3{font-size:1.05rem;color:#1a3a2a;margin-bottom:3px}
 .the-phan .ten-jp{font-size:.78rem;color:var(--xam);margin-bottom:8px}
-.huy-hieu{display:inline-block;font-size:.72rem;padding:2px 10px;border-radius:99px;background:#1e1e1e;color:var(--xam);border:1px solid var(--vien)}
+.huy-hieu{display:inline-block;font-size:.85rem;padding:2px 10px;border-radius:99px;background:#1e1e1e;color:var(--xam);border:1px solid var(--vien)}
 #man-ds{display:none}
 .ds-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
 .nut-back{background:none;border:1px solid #ccc;border-radius:8px;padding:5px 12px;cursor:pointer;font-size:.83rem;color:var(--xam);transition:all .2s}
@@ -41,7 +42,7 @@ main{max-width:780px;margin:0 auto;padding:20px 14px}
 .so-bai.dung{background:var(--xanh2);border-color:var(--xanh);color:var(--xanh)}
 .so-bai.sai{background:var(--do2);border-color:var(--do);color:var(--do)}
 .item-cau-hoi{font-size:.85rem;color:#444;flex:1;min-width:0}
-.loai-badge{font-size:.68rem;padding:2px 7px;border-radius:99px;background:var(--xanh2);color:var(--xanh);border:1px solid #b2d8c0;white-space:nowrap;margin-left:auto}
+.loai-badge{font-size:.85rem;padding:2px 7px;border-radius:99px;background:var(--xanh2);color:var(--xanh);border:1px solid #b2d8c0;white-space:nowrap;margin-left:auto}
 #man-bai{display:none}
 .bai-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
 .bai-meta{font-size:.8rem;color:var(--xam)}
@@ -59,7 +60,7 @@ main{max-width:780px;margin:0 auto;padding:20px 14px}
 .nut-dap-an:disabled{cursor:default}
 .so-lua-chon{min-width:24px;height:24px;border-radius:50%;background:#eee;color:var(--xam);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0;margin-top:2px}
 .dap-an-noi{flex:1}
-.dap-an-jp{font-family:'Hiragino Mincho ProN','Yu Mincho',serif;font-size:.93rem;color:#e8e8e8}
+.dap-an-jp{font-family:'Hiragino Mincho ProN','Yu Mincho',serif;font-size:.93rem;color:#0f0e17}
 .dap-an-vi{font-size:.82rem;color:#b0c4b0;margin-top:3px;font-style:italic}
 .nut-dap-an.dung{background:var(--xanh2);border-color:var(--xanh)}
 .nut-dap-an.dung .so-lua-chon{background:var(--xanh);color:#fff}
@@ -97,7 +98,7 @@ main{max-width:780px;margin:0 auto;padding:20px 14px}
 .nut-dich:hover{background:#4a9a6a;color:#fff;}
 .ban-dich-van{display:none;margin-top:10px;background:#f0f7f2;border-left:3px solid #4a9a6a;border-radius:0 8px 8px 0;padding:12px 14px;font-size:.88rem;line-height:1.8;color:#1a3a2a;}
 .ban-dich-van.hien{display:block;}
-.dich-dang-tai{color:#888;font-style:italic;}
+.dich-dang-tai{color:#5a5f7a;font-style:italic;}
 </style>
 <link rel="manifest" href="/n3-jlpt-app/manifest.json">
 <meta name="theme-color" content="#4361ee">
@@ -111,7 +112,7 @@ main{max-width:780px;margin:0 auto;padding:20px 14px}
 <header>
   <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
     <button onclick="location.href='reading.html'" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;padding:4px 10px;font-size:.8rem;cursor:pointer;white-space:nowrap;">← Về Đọc Hiểu</button>
-    <h1 style="font-size:.95rem;">📖 Luyện Đọc Hiểu N3<small style="display:block;font-size:.68rem;color:#a8d5b8;font-weight:400;margin-top:1px;">短文・中文・長文・情報検索</small></h1>
+    <h1 style="font-size:.95rem;">📖 Luyện Đọc Hiểu N3<small style="display:block;font-size:.85rem;color:#a8d5b8;font-weight:400;margin-top:1px;">短文・中文・長文・情報検索</small></h1>
   </div>
   <div id="thanh-tien-do"><div id="thanh-fill"></div></div>
   <div id="diem-hien">0 / 0 đúng</div>
@@ -634,7 +635,7 @@ function hienDanhSach(ds){
       <div class="so-bai ${cls}">${b.id}</div>
       <div class="item-cau-hoi">
         <div style="font-size:.87rem;margin-bottom:2px">${b.cau.substring(0,50)}${b.cau.length>50?'…':''}</div>
-        <div style="font-size:.74rem;color:var(--xam)">${b.van.replace(/\n/g,' ').substring(0,42)}…</div>
+        <div style="font-size:.85rem;color:var(--xam)">${b.van.replace(/\n/g,' ').substring(0,42)}…</div>
       </div>
       <div class="loai-badge">${b.tenLoai}</div>
     </div>`;
