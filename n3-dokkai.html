@@ -60,7 +60,7 @@ main{max-width:780px;margin:0 auto;padding:20px 14px}
 .so-lua-chon{min-width:24px;height:24px;border-radius:50%;background:#eee;color:var(--xam);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0;margin-top:2px}
 .dap-an-noi{flex:1}
 .dap-an-jp{font-family:'Hiragino Mincho ProN','Yu Mincho',serif;font-size:.93rem;color:#e8e8e8}
-.dap-an-vi{font-size:.78rem;color:#888;margin-top:2px}
+.dap-an-vi{font-size:.82rem;color:#b0c4b0;margin-top:3px;font-style:italic}
 .nut-dap-an.dung{background:var(--xanh2);border-color:var(--xanh)}
 .nut-dap-an.dung .so-lua-chon{background:var(--xanh);color:#fff}
 .nut-dap-an.dung .dap-an-vi{color:#2a6040}
@@ -92,6 +92,12 @@ main{max-width:780px;margin:0 auto;padding:20px 14px}
 .nut-ve-home{background:#2a2a2a;color:var(--xam);border:1px solid #ccc;border-radius:10px;padding:12px 20px;cursor:pointer;font-size:.95rem;margin-top:18px}
 .nut-ve-home:hover{background:#2a2a2a;color:#fff}
 @media(max-width:560px){.van-ban{font-size:.93rem}.nut-dap-an{font-size:.84rem}#thanh-tien-do{display:none}}
+
+.nut-dich{display:block;margin:12px auto 0;background:transparent;border:1.5px solid #4a9a6a;color:#4a9a6a;border-radius:8px;padding:8px 18px;font-size:.85rem;cursor:pointer;font-family:inherit;font-weight:700;}
+.nut-dich:hover{background:#4a9a6a;color:#fff;}
+.ban-dich-van{display:none;margin-top:10px;background:#f0f7f2;border-left:3px solid #4a9a6a;border-radius:0 8px 8px 0;padding:12px 14px;font-size:.88rem;line-height:1.8;color:#1a3a2a;}
+.ban-dich-van.hien{display:block;}
+.dich-dang-tai{color:#888;font-style:italic;}
 </style>
 <link rel="manifest" href="/n3-jlpt-app/manifest.json">
 <meta name="theme-color" content="#4361ee">
@@ -143,6 +149,8 @@ main{max-width:780px;margin:0 auto;padding:20px 14px}
   <div class="the-bai">
     <div class="nhan-van">📖 Bài đọc tiếng Nhật</div>
     <div class="van-ban" id="van-ban"></div>
+    <button class="nut-dich" id="nut-dich" onclick="dichDoanVan()" style="display:none">🌐 Xem bản dịch tiếng Việt</button>
+    <div class="ban-dich-van" id="ban-dich-van"></div>
     <div class="so-cau" id="so-cau"></div>
     <div class="cau-hoi" id="cau-hoi"></div>
     <div class="meo-box" id="meo-box"></div>
@@ -646,6 +654,10 @@ function hienBai(){
   document.getElementById('nhan-phan').textContent=tenPhan[b.phan];
   document.getElementById('nhan-loai').textContent=b.tenLoai;
   document.getElementById('van-ban').textContent=b.van;
+  document.getElementById('nut-dich').style.display='block';
+  document.getElementById('ban-dich-van').classList.remove('hien');
+  document.getElementById('ban-dich-van').innerHTML='';
+  document.getElementById('nut-dich').textContent='🌐 Xem bản dịch tiếng Việt';
   document.getElementById('so-cau').textContent=`Câu ${b.id}`;
   document.getElementById('cau-hoi').textContent=b.cau;
   document.getElementById('meo-box').innerHTML=`<b>🎯 Mẹo làm đề</b>${b.meo}`;
@@ -716,6 +728,60 @@ if ("serviceWorker" in navigator) {
       .catch(function(e) { console.log("SW error:", e); });
   });
 }
+
+let cachedTranslations = {};
+
+async function dichDoanVan() {
+  const b = dsBaiHienTai[viTriHienTai];
+  const nutDich = document.getElementById('nut-dich');
+  const divDich = document.getElementById('ban-dich-van');
+
+  // Toggle nếu đã hiện
+  if (divDich.classList.contains('hien')) {
+    divDich.classList.remove('hien');
+    nutDich.textContent = '🌐 Xem bản dịch tiếng Việt';
+    return;
+  }
+
+  // Dùng cache nếu đã dịch rồi
+  if (cachedTranslations[b.id]) {
+    divDich.innerHTML = cachedTranslations[b.id];
+    divDich.classList.add('hien');
+    nutDich.textContent = '🙈 Ẩn bản dịch';
+    return;
+  }
+
+  // Gọi API dịch
+  nutDich.textContent = '⏳ Đang dịch...';
+  nutDich.disabled = true;
+  divDich.innerHTML = '<span class="dich-dang-tai">Đang dịch đoạn văn...</span>';
+  divDich.classList.add('hien');
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 800,
+        messages: [{
+          role: 'user',
+          content: `Dịch đoạn văn tiếng Nhật sau sang tiếng Việt tự nhiên, dễ hiểu. Chỉ trả về bản dịch, không giải thích:\n\n${b.van}`
+        }]
+      })
+    });
+    const data = await res.json();
+    const dich = data.content[0].text;
+    cachedTranslations[b.id] = dich;
+    divDich.innerHTML = dich.replace(/\n/g, '<br>');
+    nutDich.textContent = '🙈 Ẩn bản dịch';
+  } catch(e) {
+    divDich.innerHTML = '<span style="color:#c0392b">Không thể dịch. Vui lòng thử lại.</span>';
+    nutDich.textContent = '🌐 Xem bản dịch tiếng Việt';
+  }
+  nutDich.disabled = false;
+}
+
 </script>
 </body>
 </html>
