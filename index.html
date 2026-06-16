@@ -5,39 +5,20 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 <title>N3 学習アプリ – Home</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Nunito:wght@400;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Sans:wght@400;500;600;700;800&display=swap');
 :root{
-  --bg:#1e1e1e;--white:#2a2a2a;--surface:#2a2a2a;
-  --p:#60a5fa;--p2:#3b82f6;--p-light:rgba(96,165,250,.12);
-  --green:#34d399;--green-l:rgba(52,211,153,.1);
-  --red:#f87171;--yellow:#fbbf24;
-  --purple:#a78bfa;--orange:#fb923c;--orange-l:rgba(251,146,60,.1);
-  --text:#e8e8e8;--text2:#b0b0b0;--text3:#787878;
-  --border:#404040;--shadow:0 2px 12px rgba(0,0,0,.4);
+  --bg:#fffffe;--white:#fffffe;--surface:#faf8f4;
+  --p:#1d4ed8;--p2:#1e40af;--p-light:#e0f0ff;
+  --green:#2d6a4f;--green-l:#d8f3dc;
+  --red:#c1121f;--yellow:#b45309;
+  --purple:#7c3aed;--orange:#e85d04;--orange-l:#ffddd2;
+  --text:#0f0e17;--text2:#3a3f5a;--text3:#5a5574;
+  --border:rgba(0,0,0,0.1);--shadow:0 2px 12px rgba(0,0,0,.08);
   --r:16px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Nunito','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;}
-
-/* INSTALL BTN */
-.pwa-install-wrap{padding:0 16px 14px;}
-.pwa-install-btn{width:100%;background:linear-gradient(135deg,#34d399,#059669);border:none;border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;color:#fff;box-shadow:0 4px 20px rgba(52,211,153,.3);}
-.pwa-install-btn-icon{font-size:2rem;flex-shrink:0;}
-.pwa-install-btn-text{flex:1;text-align:left;}
-.pwa-install-btn-title{font-size:1rem;font-weight:900;margin-bottom:2px;}
-.pwa-install-btn-sub{font-size:.8rem;opacity:.85;}
-/* INSTALL MODAL */
-.install-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:flex-end;justify-content:center;}
-.install-modal.show{display:flex;}
-.install-sheet{background:#2a2a2a;border-radius:20px 20px 0 0;padding:28px 20px 48px;width:100%;max-width:480px;}
-.install-sheet h3{font-size:1.15rem;font-weight:900;margin-bottom:6px;text-align:center;}
-.install-sheet p{font-size:.85rem;color:#b0b0b0;text-align:center;margin-bottom:20px;}
-.install-steps{display:flex;flex-direction:column;gap:14px;margin-bottom:24px;}
-.install-step{display:flex;gap:12px;align-items:flex-start;}
-.step-num{width:30px;height:30px;border-radius:50%;background:#34d399;color:#1e1e1e;font-weight:900;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
-.step-text{font-size:.9rem;color:#e8e8e8;line-height:1.55;}
-.step-text strong{color:#34d399;}
-.modal-close{width:100%;background:#404040;border:none;border-radius:12px;padding:14px;color:#e8e8e8;font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit;}
+html{font-size:15px;}
+body{font-family:'DM Sans','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;}
 
 /* BOTTOM NAV */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--white);border-top:1px solid var(--border);display:flex;box-shadow:0 -4px 20px rgba(67,97,238,.08);}
@@ -50,7 +31,7 @@ body{font-family:'Nunito','Noto Sans JP',sans-serif;background:var(--bg);color:v
 ::-webkit-scrollbar-thumb{background:#c9d0f0;border-radius:4px;}
 
 /* HOME */
-.home-hero{padding:28px 20px 16px;background:linear-gradient(180deg,#252535 0%,var(--bg) 100%);}
+.home-hero{padding:28px 20px 16px;background:linear-gradient(180deg,#f0ede6 0%,var(--bg) 100%);}
 .hero-greeting{font-size:.82rem;color:var(--text2);font-weight:600;margin-bottom:4px;}
 .hero-title{font-size:1.5rem;font-weight:900;line-height:1.2;margin-bottom:6px;}
 .hero-title span{color:var(--p);}
@@ -100,6 +81,33 @@ body{font-family:'Nunito','Noto Sans JP',sans-serif;background:var(--bg);color:v
 .cd-bar{height:5px;background:var(--surface);border-radius:4px;overflow:hidden;}
 .cd-bar-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--p));border-radius:4px;}
 
+/* INSTALL BUTTON */
+.install-banner{display:none;background:linear-gradient(135deg,#1a3a2a,#1e2a3a);border:1.5px solid var(--green);border-radius:var(--r);margin:0 16px 14px;padding:14px 16px;align-items:center;gap:12px;}
+.install-banner.show{display:flex;}
+.install-icon{font-size:1.8rem;flex-shrink:0;}
+.install-text{flex:1;}
+.install-title{font-size:.92rem;font-weight:800;color:var(--green);margin-bottom:2px;}
+.install-sub{font-size:.78rem;color:var(--text2);}
+.install-btn{background:var(--green);color:#1e1e1e;border:none;border-radius:10px;padding:8px 16px;font-size:.85rem;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.install-close{background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;padding:4px;flex-shrink:0;}
+
+.dl-btn-wrap{padding:0 16px 14px;}
+.dl-btn{width:100%;background:linear-gradient(135deg,#34d399,#059669);border:none;border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:inherit;color:#fff;box-shadow:0 4px 20px rgba(52,211,153,.3);}
+.dl-btn-icon{font-size:2rem;flex-shrink:0;}
+.dl-btn-text{flex:1;text-align:left;}
+.dl-btn-title{font-size:1rem;font-weight:900;margin-bottom:2px;}
+.dl-btn-sub{font-size:.8rem;opacity:.85;}
+.install-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:flex-end;justify-content:center;}
+.install-modal.show{display:flex;}
+.install-sheet{background:#2a2a2a;border-radius:20px 20px 0 0;padding:28px 20px 48px;width:100%;max-width:480px;}
+.install-sheet h3{font-size:1.15rem;font-weight:900;margin-bottom:6px;text-align:center;}
+.install-sheet p{font-size:.85rem;color:#b0b0b0;text-align:center;margin-bottom:20px;}
+.install-steps{display:flex;flex-direction:column;gap:14px;margin-bottom:24px;}
+.install-step{display:flex;gap:12px;align-items:flex-start;}
+.step-num{width:30px;height:30px;border-radius:50%;background:#34d399;color:#1e1e1e;font-weight:900;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.step-text{font-size:.9rem;color:#e8e8e8;line-height:1.55;}
+.step-text strong{color:#34d399;}
+.modal-close{width:100%;background:#404040;border:none;border-radius:12px;padding:14px;color:#e8e8e8;font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit;}
 </style>
 <link rel="manifest" href="/n3-jlpt-app/manifest.json">
 <meta name="theme-color" content="#4361ee">
@@ -163,41 +171,46 @@ body{font-family:'Nunito','Noto Sans JP',sans-serif;background:var(--bg);color:v
   <div style="font-size:1.2rem;opacity:.7;">→</div>
 </a>
 
-<!-- Nút cài app chủ động -->
-<div class="pwa-install-wrap" id="pwaInstallWrap">
-  <button class="pwa-install-btn" id="pwaInstallBtn">
-    <span class="pwa-install-btn-icon">📲</span>
-    <div class="pwa-install-btn-text">
-      <div class="pwa-install-btn-title">Cài app về máy</div>
-      <div class="pwa-install-btn-sub">Dùng offline · Không cần mạng · Nhanh hơn</div>
+
+<div class="install-text">
+    <div class="install-title">Cài app về máy</div>
+    <div class="install-sub">Dùng offline · Nhanh hơn · Không cần mạng</div>
+  </div>
+  <button class="install-btn" id="installBtn">Cài đặt</button>
+  <button class="install-close" id="installClose">✕</button>
+</div>
+
+<div class="dl-btn-wrap">
+  <button class="dl-btn" onclick="showInstallGuide()">
+    <span class="dl-btn-icon">📲</span>
+    <div class="dl-btn-text">
+      <div class="dl-btn-title">Tải app về máy</div>
+      <div class="dl-btn-sub">Dùng offline · Không cần mạng · Nhanh hơn</div>
     </div>
     <span style="font-size:1.4rem;opacity:.8">→</span>
   </button>
 </div>
-
-<!-- Modal hướng dẫn cài -->
 <div class="install-modal" id="installModal">
   <div class="install-sheet">
     <h3>📲 Cài app về máy</h3>
-    <p>Làm theo 3 bước đơn giản sau</p>
+    <p>Chọn cách phù hợp với trình duyệt của bạn</p>
     <div class="install-steps">
       <div class="install-step">
         <div class="step-num">1</div>
-        <div class="step-text">Bấm vào <strong>⋮ (3 chấm)</strong> góc trên phải Chrome</div>
+        <div class="step-text">Nhấn vào <strong>⋮ (3 chấm)</strong> góc trên phải trình duyệt</div>
       </div>
       <div class="install-step">
         <div class="step-num">2</div>
-        <div class="step-text">Chọn <strong>"Cài đặt ứng dụng"</strong> hoặc <strong>"Thêm vào màn hình chính"</strong></div>
+        <div class="step-text">Tìm mục <strong>"Thêm vào màn hình chính"</strong> hoặc <strong>"Cài đặt ứng dụng"</strong></div>
       </div>
       <div class="install-step">
         <div class="step-num">3</div>
-        <div class="step-text">Bấm <strong>Cài đặt</strong> → App xuất hiện trên màn hình như app thật ✓</div>
+        <div class="step-text">Nhấn <strong>Thêm / Cài đặt</strong> → App có icon riêng trên màn hình ✓</div>
       </div>
     </div>
-    <button class="modal-close" onclick="document.getElementById('installModal').classList.remove('show')">Đã hiểu rồi</button>
+    <button class="modal-close" onclick="closeInstallGuide()">Đã hiểu rồi</button>
   </div>
 </div>
-
 <div class="section-label">📚 Các mục học</div>
 <div class="subjects-grid">
   <a class="subject-card active-subj" href="n3-grammarnew.html">
@@ -294,36 +307,63 @@ updateStats();
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function() {
-    navigator.serviceWorker.register("/n3-jlpt-app/sw.js");
+    navigator.serviceWorker.register("/n3-jlpt-app/sw.js")
+      .then(function(r) { console.log("SW registered OK"); })
+      .catch(function(e) { console.log("SW error:", e); });
   });
 }
 
+// PWA Install Button
 let deferredPrompt = null;
+const installBanner = document.getElementById('installBanner');
+const installBtn = document.getElementById('installBtn');
+const installClose = document.getElementById('installClose');
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
-  deferredPrompt = e; // lưu lại để dùng khi bấm nút
+  deferredPrompt = e;
+  if (installBanner) installBanner.classList.add('show');
 });
 
-document.getElementById('pwaInstallBtn').addEventListener('click', async () => {
-  if (deferredPrompt) {
-    // Chrome sẵn sàng → trigger popup cài app thật
+if (installBtn) {
+  installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     deferredPrompt = null;
-    if (outcome === 'accepted') {
-      document.getElementById('pwaInstallWrap').style.display = 'none';
-    }
-  } else {
-    // Chrome chưa sẵn sàng → hiện hướng dẫn manual
-    document.getElementById('installModal').classList.add('show');
-  }
-});
+    if (installBanner) installBanner.classList.remove('show');
+  });
+}
+
+if (installClose) {
+  installClose.addEventListener('click', () => {
+    if (installBanner) installBanner.classList.remove('show');
+  });
+}
 
 window.addEventListener('appinstalled', () => {
+  if (installBanner) installBanner.classList.remove('show');
   deferredPrompt = null;
-  document.getElementById('pwaInstallWrap').style.display = 'none';
 });
+
+
+function showInstallGuide() {
+  if (window._deferredPrompt) {
+    window._deferredPrompt.prompt();
+    window._deferredPrompt.userChoice.then(() => { window._deferredPrompt = null; });
+    return;
+  }
+  document.getElementById('installModal').classList.add('show');
+}
+function closeInstallGuide() {
+  document.getElementById('installModal').classList.remove('show');
+}
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  window._deferredPrompt = e;
+});
+window.addEventListener('appinstalled', () => { window._deferredPrompt = null; });
+
 </script>
 </body>
 </html>
