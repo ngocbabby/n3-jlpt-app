@@ -3643,7 +3643,9 @@ function renderPassage(){
 
   // passage text
   document.getElementById('passage-content').innerHTML=
-    `<div class="passage-text"><h4>${p.typeLabel||p.type}</h4>${formatText(p.text)}</div>`;
+    `<div class="passage-text"><h4>${p.typeLabel||p.type}</h4>${formatText(p.text)}</div>
+    <button id="btn-dich-van" onclick="dichDoanVanReading(this)" style="margin:10px 0 0;background:transparent;border:1.5px solid #4a9a6a;color:#4a9a6a;border-radius:8px;padding:7px 16px;font-size:.82rem;cursor:pointer;font-family:inherit;font-weight:700">🌐 Xem bản dịch tiếng Việt</button>
+    <div id="div-dich-van" style="display:none;margin-top:8px;background:rgba(74,154,106,0.1);border-left:3px solid #4a9a6a;border-radius:0 8px 8px 0;padding:12px 14px;font-size:.88rem;line-height:1.8;color:#d0ecd8"></div>`;
 
   // questions
   const qc=document.getElementById('questions-content');
@@ -3722,10 +3724,12 @@ function buildQuestion(q){
     return `<button class="${cls}" ${sub?'disabled':''} onclick="pick('${q.id}',${i})">${i+1}. ${c}</button>`;
   }).join('');
   let explain='';
-  if(sub){
+  if(sub || chosen!==undefined){
     const ok=(chosen===q.answer);
     const head = chosen===undefined ? '⚪ Chưa trả lời.' : (ok?'✅ Chính xác!':'❌ Sai rồi.');
-    explain=`<div class="explain-box"><strong>${head}</strong>${q.explain||''}</div>`;
+    const explainVi = q.explainVi ? `<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.15);font-size:.82rem;color:#b8d4b8">${q.explainVi}</div>` : '';
+    const btnDich = `<button onclick="dichGiaiThich(this,'${q.id}')" style="margin-top:8px;background:transparent;border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);border-radius:6px;padding:4px 12px;font-size:.78rem;cursor:pointer;font-family:inherit">🌐 Dịch giải thích</button><div class="dich-giaithich" style="display:none;margin-top:6px;font-size:.82rem;color:#b8d4b8;line-height:1.6"></div>`;
+    explain=`<div class="explain-box"><strong>${head}</strong><div style="margin-top:6px">${q.explain||''}</div>${explainVi}${!q.explainVi && q.explain ? btnDich : ''}</div>`;
   }
   card.innerHTML=`
     <div class="q-num">問${q.num}</div>
@@ -3842,6 +3846,91 @@ if ("serviceWorker" in navigator) {
       .catch(function(e) { console.log("SW error:", e); });
   });
 }
+
+// Cache bản dịch
+const _dichCache = {};
+
+async function dichDoanVanReading(btn) {
+  const p = session.passages[session.idx];
+  const divDich = document.getElementById('div-dich-van');
+  if (!divDich) return;
+
+  if (divDich.style.display !== 'none') {
+    divDich.style.display = 'none';
+    btn.textContent = '🌐 Xem bản dịch tiếng Việt';
+    return;
+  }
+
+  if (_dichCache[p.id]) {
+    divDich.innerHTML = _dichCache[p.id];
+    divDich.style.display = 'block';
+    btn.textContent = '🙈 Ẩn bản dịch';
+    return;
+  }
+
+  btn.textContent = '⏳ Đang dịch...';
+  btn.disabled = true;
+  divDich.innerHTML = '<i>Đang dịch...</i>';
+  divDich.style.display = 'block';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 800,
+        messages: [{role:'user', content:`Dịch đoạn văn tiếng Nhật sau sang tiếng Việt tự nhiên, dễ hiểu. Chỉ trả về bản dịch:\n\n${p.text}`}]
+      })
+    });
+    const data = await res.json();
+    const dich = data.content[0].text;
+    _dichCache[p.id] = dich.replace(/\n/g,'<br>');
+    divDich.innerHTML = _dichCache[p.id];
+    btn.textContent = '🙈 Ẩn bản dịch';
+  } catch(e) {
+    divDich.innerHTML = '<span style="color:#e88">Không thể dịch. Kiểm tra kết nối mạng.</span>';
+    btn.textContent = '🌐 Xem bản dịch tiếng Việt';
+  }
+  btn.disabled = false;
+}
+
+async function dichGiaiThich(btn, qid) {
+  const q = findQuestion(qid);
+  if (!q) return;
+  const divDich = btn.nextElementSibling;
+
+  if (divDich.style.display !== 'none') {
+    divDich.style.display = 'none';
+    btn.textContent = '🌐 Dịch giải thích';
+    return;
+  }
+
+  btn.textContent = '⏳ Đang dịch...';
+  btn.disabled = true;
+  divDich.style.display = 'block';
+  divDich.textContent = 'Đang dịch...';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 400,
+        messages: [{role:'user', content:`Dịch giải thích đáp án tiếng Nhật sau sang tiếng Việt ngắn gọn, rõ ràng. Chỉ trả về bản dịch:\n\n${q.explain}`}]
+      })
+    });
+    const data = await res.json();
+    divDich.textContent = data.content[0].text;
+    btn.textContent = '🙈 Ẩn';
+  } catch(e) {
+    divDich.textContent = 'Không thể dịch.';
+    btn.textContent = '🌐 Dịch giải thích';
+  }
+  btn.disabled = false;
+}
+
 </script>
 </body>
 </html>
