@@ -4234,7 +4234,7 @@ function renderPassage(){
   // passage text
   document.getElementById('passage-content').innerHTML=
     `<div class="passage-text"><h4>${p.typeLabel||p.type}</h4>${formatText(p.text)}</div>` +
-    (p.textVi ? `<button onclick="toggleDich(this)" style="margin:10px 0 0;background:transparent;border:1.5px solid #4a9a6a;color:#4a9a6a;border-radius:8px;padding:7px 16px;font-size:.82rem;cursor:pointer;font-family:inherit;font-weight:700">🌐 Xem bản dịch tiếng Việt</button><div style="display:none;margin-top:8px;background:rgba(74,154,106,0.1);border-left:3px solid #4a9a6a;border-radius:0 8px 8px 0;padding:12px 14px;font-size:.88rem;line-height:1.8;color:#a0d4b0">${p.textVi.replace(/\n/g,'<br>')}</div>` : ``)
+    (p.textVi && session.submitted ? `<button onclick="toggleDich(this)" style="margin:10px 0 0;background:transparent;border:1.5px solid #4a9a6a;color:#4a9a6a;border-radius:8px;padding:7px 16px;font-size:.82rem;cursor:pointer;font-family:inherit;font-weight:700">🌐 Xem bản dịch tiếng Việt</button><div style="display:none;margin-top:8px;background:rgba(74,154,106,0.1);border-left:3px solid #4a9a6a;border-radius:0 8px 8px 0;padding:12px 14px;font-size:.88rem;line-height:1.8;color:#a0d4b0">${p.textVi.replace(/\n/g,'<br>')}</div>` : ``)
 ;
 
   // questions
