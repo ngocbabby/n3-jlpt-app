@@ -4314,7 +4314,7 @@ function buildQuestion(q){
     return `<button class="${cls}" ${sub?'disabled':''} onclick="pick('${q.id}',${i})">${i+1}. ${c}</button>`;
   }).join('');
   let explain='';
-  if(sub || chosen!==undefined){
+  if(sub){
     const ok=(chosen===q.answer);
     const head = chosen===undefined ? '⚪ Chưa trả lời.' : (ok?'✅ Chính xác!':'❌ Sai rồi.');
     const viPart = q.explainVi ? `<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.15);font-size:.82rem;color:#1a3a2a;line-height:1.6">🇻🇳 ${q.explainVi}</div>` : '';
