@@ -19,17 +19,17 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Baloo 2','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;overflow-x:hidden;}
-body::before{display:none;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(124,58,237,.12) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(56,189,248,.06) 0%,transparent 50%);pointer-events:none;z-index:0;}
 
 /* TOPBAR */
 .topbar{background:#ffffff;padding:16px 16px 12px;position:sticky;top:0;z-index:200;border-bottom:1px solid var(--border);}
 .topbar-row{display:flex;align-items:center;gap:10px;margin-bottom:2px;}
-.back-btn{background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.25);color:#7c3aed;border-radius:8px;padding:5px 10px;font-size:.9rem;cursor:pointer;font-family:inherit;font-weight:700;}
-.topbar h1{font-size:.95rem;font-weight:900;color:#0f0e17;}
-.topbar-sub{font-size:.9rem;color:#5a5f7a;}
+.back-btn{background:rgba(167,139,250,.2);border:1px solid rgba(167,139,250,.3);color:var(--neon);border-radius:8px;padding:5px 10px;font-size:.78rem;cursor:pointer;font-family:inherit;font-weight:700;}
+.topbar h1{font-size:.95rem;font-weight:900;color:#fff;}
+.topbar-sub{font-size:.85rem;color:rgba(255,255,255,.55);}
 
 /* TABS */
-.tab-bar{display:flex;background:#ffffff;border-bottom:2px solid var(--border);position:sticky;top:58px;z-index:100;}
+.tab-bar{display:flex;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:58px;z-index:100;}
 .tab-btn{flex:1;padding:11px 4px;border:none;background:none;font-family:inherit;font-size:.85rem;font-weight:800;color:var(--text3);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;}
 .tab-btn.active{color:var(--p);border-bottom-color:var(--p);}
 
@@ -42,7 +42,7 @@ body::before{display:none;}
 .mn-head:active{opacity:.85;}
 .mn-head.open{border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom-color:var(--p2);}
 .mn-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-.mn-label{flex:1;font-size:.9rem;font-weight:800;color:var(--text);min-width:0;word-break:keep-all;overflow-wrap:break-word;}
+.mn-label{flex:1;min-width:0;word-break:keep-all;overflow-wrap:break-word;font-size:.8rem;font-weight:800;color:#fff;}
 .mn-count{font-size:.6rem;color:var(--text3);background:rgba(255,255,255,.06);padding:2px 7px;border-radius:8px;flex-shrink:0;}
 .mn-arr{font-size:.8rem;color:var(--text3);transition:transform .25s;flex-shrink:0;}
 .mn-head.open .mn-arr{transform:rotate(90deg);}
@@ -56,9 +56,9 @@ body::before{display:none;}
 .pt{width:100%;border-collapse:collapse;font-size:.85rem;}
 .pt tr{border-bottom:1px solid rgba(45,47,78,.6);}
 .pt tr:last-child{border-bottom:none;}
-.pt td{padding:8px 11px;vertical-align:top;line-height:1.55;overflow-wrap:break-word;}
-.pt td:first-child{width:28%;font-family:'Noto Sans JP',sans-serif;color:var(--neon);font-weight:700;font-size:.88rem;}
-.pt td:nth-child(2){color:var(--text2);overflow-wrap:break-word;}
+.pt td{padding:8px 11px;vertical-align:top;line-height:1.55;}
+.pt td:first-child{width:38%;font-family:'Noto Sans JP',sans-serif;color:var(--neon);font-weight:700;font-size:.75rem;}
+.pt td:nth-child(2){color:var(--text2);}
 .pt td:last-child{width:30px;padding:6px 8px;}
 .pt .eg{display:block;color:var(--text3);font-size:.85rem;margin-top:2px;font-style:italic;}
 .pt .tip{display:block;color:var(--orange);font-size:.85rem;margin-top:2px;}
@@ -78,9 +78,9 @@ body::before{display:none;}
 .rad-char{font-family:'Noto Sans JP',sans-serif;font-size:1.5rem;color:var(--yellow);min-width:36px;text-align:center;line-height:1.2;flex-shrink:0;}
 .rad-body{flex:1;}
 .rad-name{font-size:.85rem;font-weight:800;color:var(--text2);margin-bottom:3px;}
-.rad-words{font-family:'Noto Sans JP',sans-serif;font-size:.88rem;color:var(--neon);line-height:1.8;}
+.rad-words{font-family:'Noto Sans JP',sans-serif;font-size:.75rem;color:var(--neon);line-height:1.8;}
 .rad-vn{font-size:.85rem;color:var(--text3);}
-.snd-btn{width:28px;height:28px;border-radius:7px;border:none;background:var(--p2);color:var(--text);font-size:.88rem;cursor:pointer;flex-shrink:0;margin-top:4px;}
+.snd-btn{width:28px;height:28px;border-radius:7px;border:none;background:var(--p2);color:#fff;font-size:.75rem;cursor:pointer;flex-shrink:0;margin-top:4px;}
 
 /* ── VERB PAIR TABLE ── */
 .vp{width:100%;border-collapse:collapse;font-size:.85rem;}
@@ -102,7 +102,7 @@ body::before{display:none;}
 /* ── ADVERB ROW ── */
 .adv-row{display:flex;align-items:flex-start;gap:8px;padding:8px 11px;border-bottom:1px solid rgba(45,47,78,.5);}
 .adv-row:last-child{border-bottom:none;}
-.adv-jp{font-family:'Noto Sans JP',sans-serif;font-size:.9rem;font-weight:800;color:var(--neon);min-width:90px;}
+.adv-jp{font-family:'Noto Sans JP',sans-serif;font-size:.82rem;font-weight:800;color:var(--neon);min-width:90px;}
 .adv-body{flex:1;}
 .adv-mean{font-size:.85rem;color:var(--text2);}
 .adv-eg{font-size:.85rem;color:var(--text3);font-style:italic;margin-top:2px;}
@@ -113,18 +113,18 @@ body::before{display:none;}
 .ring-svg{transform:rotate(-90deg);}
 .ring-bg{fill:none;stroke:var(--border);stroke-width:5;}
 .ring-fill{fill:none;stroke:var(--p);stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .5s;}
-.ring-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.88rem;font-weight:900;color:var(--p);}
-.plan-info h3{font-size:.9rem;font-weight:800;margin-bottom:2px;color:var(--text);}
+.ring-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:900;color:var(--p);}
+.plan-info h3{font-size:.83rem;font-weight:800;margin-bottom:2px;color:#fff;}
 .plan-info p{font-size:.85rem;color:var(--text3);}
 .day-card{background:var(--card);border-radius:var(--r);margin-bottom:8px;overflow:hidden;border:1px solid var(--border);transition:border-color .2s;}
 .day-card.done{border-color:var(--green2);}
 .day-header{display:flex;align-items:center;gap:10px;padding:11px 13px;cursor:pointer;}
 .day-badge{width:38px;height:38px;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900;flex-shrink:0;font-size:.85rem;line-height:1.3;}
 .day-info{flex:1;min-width:0;}
-.day-title{font-size:.8rem;font-weight:800;margin-bottom:1px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.day-title{font-size:.8rem;font-weight:800;margin-bottom:1px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .day-sub{font-size:.6rem;color:var(--text3);}
 .check-btn{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);background:none;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text3);transition:all .15s;}
-.check-btn.done{background:var(--green2);border-color:var(--green2);color:var(--text);}
+.check-btn.done{background:var(--green2);border-color:var(--green2);color:#fff;}
 .day-body{display:none;padding:0 13px 13px;border-top:1px solid var(--border);}
 .day-card.open .day-body{display:block;}
 .task-list{display:flex;flex-direction:column;gap:6px;margin-top:9px;}
@@ -141,7 +141,7 @@ body::before{display:none;}
 .bnav-icon{font-size:1.15rem;}
 
 /* play button */
-.pb{width:28px;height:28px;border-radius:7px;border:none;background:var(--p2);color:var(--text);font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s;}
+.pb{width:28px;height:28px;border-radius:7px;border:none;background:var(--p2);color:#fff;font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s;}
 .pb:active{transform:scale(.88);}
 
   ruby { ruby-align: center; }
@@ -164,7 +164,6 @@ body::before{display:none;}
 <meta name="theme-color" content="#4361ee">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="N3 学習">
 <link rel="apple-touch-icon" href="/n3-jlpt-app/icon-192.png">
 </head>
@@ -204,7 +203,7 @@ body::before{display:none;}
     <table class="pt">
       <tr><td>こと <span class="eg">koto</span></td><td>Sự việc trừu tượng — không nhìn thấy được<span class="eg">〜ことがある・〜ことにする・〜ことになる・〜ことができる</span><span class="eg"><ruby>日本語<rt>にほんご</rt></ruby>を<ruby>話<rt>はな</rt></ruby>せることができる。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Có thể nói được tiếng Nhật.</span></td><td><button class="pb" onclick="speak('ことがある。ことにする。ことになる。')">🔊</button></td></tr>
       <tr><td>もの <span class="eg">mono</span></td><td>Lẽ tất nhiên / vật — điều hiển nhiên phải vậy<span class="eg">〜ものだ・〜ものの・〜ものなら・〜というものだ</span><span class="eg"><ruby>子供<rt>こども</rt></ruby>は<ruby>元気<rt>げんき</rt></ruby>なものだ。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Trẻ con vốn dĩ rất năng động.</span></td><td><button class="pb" onclick="speak('そういうものだ。買ったものの使っていない。')">🔊</button></td></tr>
-      <tr><td>はず <span class="eg">hazu</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Mua rồi nhưng chưa dùng lần nào.</span></td><td>Lẽ ra / đáng ra — kỳ vọng logic nhưng thực tế khác<span class="eg">〜はずだ・〜はずがない・〜はずだったのに</span><span class="eg"><ruby>彼<rt>かれ</rt></ruby>は<ruby>来<rt>く</rt></ruby>るはずだ。<ruby>約束<rt>やくそく</rt></ruby>したから。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Anh ấy chắc sẽ đến. Vì đã hứa rồi.</span></td><td><button class="pb" onclick="speak('来るはずだ。そんなはずがない。')">🔊</button></td></tr>
+      <tr><td>はず <span class="eg">hazu</span></td><td>Lẽ ra / đáng ra — kỳ vọng logic nhưng thực tế khác<span class="eg">〜はずだ・〜はずがない・〜はずだったのに</span><span class="eg"><ruby>彼<rt>かれ</rt></ruby>は<ruby>来<rt>く</rt></ruby>るはずだ。<ruby>約束<rt>やくそく</rt></ruby>したから。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Anh ấy chắc sẽ đến. Vì đã hứa rồi.</span></td><td><button class="pb" onclick="speak('来るはずだ。そんなはずがない。')">🔊</button></td></tr>
       <tr><td>わけ <span class="eg">wake</span></td><td>Lý do / nghĩa là — giải thích hoặc phủ nhận logic<span class="eg">〜わけだ・〜わけがない・〜わけにはいかない・〜わけではない</span><span class="eg"><ruby>病気<rt>びょうき</rt></ruby>だから、<ruby>学校<rt>がっこう</rt></ruby>を<ruby>休<rt>やす</rt></ruby>むわけにはいかない。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Dù bệnh cũng không thể nghỉ học được.</span></td><td><button class="pb" onclick="speak('そういうわけだ。寝るわけにはいかない。')">🔊</button></td></tr>
       <tr><td>ところ <span class="eg">tokoro</span></td><td>Thời điểm / tình huống — đang làm / vừa xong / sắp<span class="eg">〜ているところだ・〜たところ・〜ところに</span><span class="eg"><ruby>今<rt>いま</rt></ruby><ruby>食<rt>た</rt></ruby>べているところだ。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Tôi đang ăn đây.</span></td><td><button class="pb" onclick="speak('今食べているところだ。来たところです。')">🔊</button></td></tr>
     </table>
@@ -226,9 +225,9 @@ body::before{display:none;}
       <tr><td>〜ながら（逆接）</td><td>Biết rõ A mà vẫn làm B (cùng chủ ngữ, trái kỳ vọng)<span class="eg"><ruby>知り<rt>しり</rt></ruby>ながら<ruby>黙っ<rt>だまっ</rt></ruby>ていた。<ruby>悪い<rt>わるい</rt></ruby>と<ruby>思い<rt>おもい</rt></ruby>ながら<ruby>続け<rt>つづけ</rt></ruby>た。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Biết rõ nhưng vẫn im lặng. Biết là sai nhưng vẫn tiếp tục.</span></td><td><button class="pb" onclick="speak('知りながら黙っていた。')">🔊</button></td></tr>
       <tr><td>〜ものの</td><td>Làm A rồi nhưng kết quả không như mong (tiếc)<span class="eg"><ruby>買っ<rt>かっ</rt></ruby>たものの、<ruby>一<rt>いち</rt></ruby><ruby>度<rt>ど</rt></ruby>も<ruby>使っ<rt>つかっ</rt></ruby>ていない。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Mua rồi nhưng chưa dùng lần nào.</span></td><td><button class="pb" onclick="speak('買ったものの、一度も使っていない。')">🔊</button></td></tr>
       <tr><td>〜にもかかわらず</td><td>Bất chấp A, B vẫn xảy ra (nhấn mạnh mạnh)<span class="eg"><ruby>雨<rt>あめ</rt></ruby>にもかかわらず、みんな<ruby>来<rt>き</rt></ruby>てくれた。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Dù trời mưa nhưng mọi người vẫn đến.</span></td><td><button class="pb" onclick="speak('雨にもかかわらず、みんな来てくれた。')">🔊</button></td></tr>
-      <tr><td>〜くせに</td><td>Rõ ràng là A, vậy mà B — trách móc, khinh<span class="tip">⚠️ Dùng khi bực bội / khinh thường — không dùng trung tính</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Dù trời mưa nhưng mọi người vẫn đến.</span><span class="eg"><ruby>知っ<rt>しっ</rt></ruby>ているくせに<ruby>教え<rt>おしえ</rt></ruby>てくれない。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Rõ ràng biết mà không chịu chỉ cho.</span></td><td><button class="pb" onclick="speak('知っているくせに教えてくれない。')">🔊</button></td></tr>
-      <tr><td>〜反面</td><td>Mặt này A, mặt khác B — hai mặt của cùng sự việc<span class="eg"><ruby>便利<rt>べんり</rt></ruby>な<ruby>反面<rt>はんめん</rt></ruby>、<ruby>危険<rt>きけん</rt></ruby>もある。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Rõ ràng biết mà không chịu chỉ cho.</span></td><td><button class="pb" onclick="speak('便利な反面、危険もある。')">🔊</button></td></tr>
-      <tr><td>〜一方（で）</td><td>Trong khi A thì B — đối lập song song hai đối tượng<span class="eg"><ruby>兄<rt>あに</rt></ruby>は<ruby>明るい<rt>あかるい</rt></ruby><ruby>一方<rt>いっぽう</rt></ruby>、<ruby>弟<rt>おとうと</rt></ruby>は<ruby>内気<rt>うちき</rt></ruby>だ。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Tiện lợi nhưng mặt khác cũng có nguy hiểm.</span></td><td><button class="pb" onclick="speak('兄は明るい一方、弟は内気だ。')">🔊</button></td></tr>
+      <tr><td>〜くせに</td><td>Rõ ràng là A, vậy mà B — trách móc, khinh<span class="tip">⚠️ Dùng khi bực bội / khinh thường — không dùng trung tính</span><span class="eg"><ruby>知っ<rt>しっ</rt></ruby>ているくせに<ruby>教え<rt>おしえ</rt></ruby>てくれない。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Rõ ràng biết mà không chịu chỉ cho.</span></td><td><button class="pb" onclick="speak('知っているくせに教えてくれない。')">🔊</button></td></tr>
+      <tr><td>〜反面</td><td>Mặt này A, mặt khác B — hai mặt của cùng sự việc<span class="eg"><ruby>便利<rt>べんり</rt></ruby>な<ruby>反面<rt>はんめん</rt></ruby>、<ruby>危険<rt>きけん</rt></ruby>もある。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Tiện lợi nhưng mặt khác cũng có nguy hiểm.</span></td><td><button class="pb" onclick="speak('便利な反面、危険もある。')">🔊</button></td></tr>
+      <tr><td>〜一方（で）</td><td>Trong khi A thì B — đối lập song song hai đối tượng<span class="eg"><ruby>兄<rt>あに</rt></ruby>は<ruby>明るい<rt>あかるい</rt></ruby><ruby>一方<rt>いっぽう</rt></ruby>、<ruby>弟<rt>おとうと</rt></ruby>は<ruby>内気<rt>うちき</rt></ruby>だ。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Anh thì hoạt bát, trong khi em lại nhút nhát.</span></td><td><button class="pb" onclick="speak('兄は明るい一方、弟は内気だ。')">🔊</button></td></tr>
     </table>
   </div>
 </div>
@@ -237,7 +236,7 @@ body::before{display:none;}
 
 <div class="mn-wrap">
   <div class="mn-head" onclick="tog(this)">
-    <span class="mn-dot" style="background:#34d399"></span><span class="eg" style="color:#7a8299;font-size:.82em">→ Anh thì hoạt bát, trong khi em thì nhút nhát.</span>
+    <span class="mn-dot" style="background:#34d399"></span>
     <span class="mn-label">時間・タイミング (7 mẫu)</span>
     <span class="mn-count">うちに・間に・たびに…</span>
     <span class="mn-arr">›</span>
@@ -246,11 +245,11 @@ body::before{display:none;}
     <table class="pt">
       <tr><td>〜うちに①</td><td>Tranh thủ làm trong khi điều kiện còn tốt (trước khi thay đổi)<span class="eg"><ruby>若い<rt>わかい</rt></ruby>うちに<ruby>旅行<rt>りょこう</rt></ruby>しよう。<ruby>熱い<rt>あつい</rt></ruby>うちに<ruby>食べ<rt>たべ</rt></ruby>て。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Hãy đi du lịch khi còn trẻ. Ăn đi khi còn nóng.</span></td><td><button class="pb" onclick="speak('若いうちに旅行しよう。')">🔊</button></td></tr>
       <tr><td>〜うちに②</td><td>Đang làm A thì B tự xảy ra — không chủ ý<span class="eg"><ruby>話し<rt>はなし</rt></ruby>ているうちに<ruby>仲良く<rt>なかよく</rt></ruby>なった。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Trong lúc nói chuyện thì trở nên thân thiết.</span></td><td><button class="pb" onclick="speak('話しているうちに仲良くなった。')">🔊</button></td></tr>
-      <tr><td>〜間（に）</td><td>Trong khoảng thời gian A xảy ra, B cũng xảy ra<span class="eg"><ruby>留守<rt>るす</rt></ruby>の<ruby>間<rt>あいだ</rt></ruby>に<ruby>荷物<rt>にもつ</rt></ruby>が<ruby>届い<rt>とどい</rt></ruby>た。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Trong lúc nói chuyện thì trở nên thân thiết.</span></td><td><button class="pb" onclick="speak('留守の間に荷物が届いた。')">🔊</button></td></tr>
-      <tr><td>〜たびに</td><td>Mỗi khi A thì luôn B (lặp đi lặp lại đều đặn)<span class="eg"><ruby>会う<rt>あう</rt></ruby>たびに<ruby>背<rt>せ</rt></ruby>が<ruby>高く<rt>たかく</rt></ruby>なる。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Trong lúc vắng nhà thì hàng đã được giao.</span></td><td><button class="pb" onclick="speak('会うたびに背が高くなる。')">🔊</button></td></tr>
-      <tr><td>〜とたん（に）</td><td>Ngay khi vừa A thì B xảy ra tức thì — không khoảng cách<span class="eg"><ruby>外<rt>そと</rt></ruby>に<ruby>出<rt>で</rt></ruby>たとたん、<ruby>雨<rt>あめ</rt></ruby>が<ruby>降っ<rt>ふっ</rt></ruby>た。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Mỗi lần gặp lại thấy cao thêm.</span></td><td><button class="pb" onclick="speak('外に出たとたん、雨が降った。')">🔊</button></td></tr>
-      <tr><td>〜ば〜ほど</td><td>Càng A càng B — tỉ lệ thuận tuyệt đối<span class="eg"><ruby>練習<rt>れんしゅう</rt></ruby>すればするほど<ruby>上手く<rt>うまく</rt></ruby>なる。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Vừa bước ra ngoài là trời đổ mưa ngay.</span></td><td><button class="pb" onclick="speak('練習すればするほど上手くなる。')">🔊</button></td></tr>
-      <tr><td>〜をきっかけに</td><td>Nhân dịp A / Bắt đầu từ sự kiện A làm cột mốc<span class="eg"><ruby>転職<rt>てんしょく</rt></ruby>をきっかけに<ruby>上京<rt>じょうきょう</rt></ruby>した。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Càng luyện tập nhiều càng giỏi hơn.</span></td><td><button class="pb" onclick="speak('転職をきっかけに上京した。')">🔊</button></td></tr>
+      <tr><td>〜間（に）</td><td>Trong khoảng thời gian A xảy ra, B cũng xảy ra<span class="eg"><ruby>留守<rt>るす</rt></ruby>の<ruby>間<rt>あいだ</rt></ruby>に<ruby>荷物<rt>にもつ</rt></ruby>が<ruby>届い<rt>とどい</rt></ruby>た。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Trong lúc vắng nhà thì hàng đã được giao.</span></td><td><button class="pb" onclick="speak('留守の間に荷物が届いた。')">🔊</button></td></tr>
+      <tr><td>〜たびに</td><td>Mỗi khi A thì luôn B (lặp đi lặp lại đều đặn)<span class="eg"><ruby>会う<rt>あう</rt></ruby>たびに<ruby>背<rt>せ</rt></ruby>が<ruby>高く<rt>たかく</rt></ruby>なる。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Mỗi lần gặp lại thấy cao thêm.</span></td><td><button class="pb" onclick="speak('会うたびに背が高くなる。')">🔊</button></td></tr>
+      <tr><td>〜とたん（に）</td><td>Ngay khi vừa A thì B xảy ra tức thì — không khoảng cách<span class="eg"><ruby>外<rt>そと</rt></ruby>に<ruby>出<rt>で</rt></ruby>たとたん、<ruby>雨<rt>あめ</rt></ruby>が<ruby>降っ<rt>ふっ</rt></ruby>た。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Vừa bước ra ngoài là trời đổ mưa ngay.</span></td><td><button class="pb" onclick="speak('外に出たとたん、雨が降った。')">🔊</button></td></tr>
+      <tr><td>〜ば〜ほど</td><td>Càng A càng B — tỉ lệ thuận tuyệt đối<span class="eg"><ruby>練習<rt>れんしゅう</rt></ruby>すればするほど<ruby>上手く<rt>うまく</rt></ruby>なる。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Càng luyện tập nhiều càng giỏi hơn.</span></td><td><button class="pb" onclick="speak('練習すればするほど上手くなる。')">🔊</button></td></tr>
+      <tr><td>〜をきっかけに</td><td>Nhân dịp A / Bắt đầu từ sự kiện A làm cột mốc<span class="eg"><ruby>転職<rt>てんしょく</rt></ruby>をきっかけに<ruby>上京<rt>じょうきょう</rt></ruby>した。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Nhân cơ hội đổi việc đã lên Tokyo.</span></td><td><button class="pb" onclick="speak('転職をきっかけに上京した。')">🔊</button></td></tr>
     </table>
   </div>
 </div>
@@ -259,7 +258,7 @@ body::before{display:none;}
 
 <div class="mn-wrap">
   <div class="mn-head" onclick="tog(this)">
-    <span class="mn-dot" style="background:#fbbf24"></span><span class="eg" style="color:#7a8299;font-size:.82em">→ Nhân cơ hội đổi việc đã lên Tokyo.</span>
+    <span class="mn-dot" style="background:#fbbf24"></span>
     <span class="mn-label">たら・なら・ば・と (4 dạng + 2 mẫu)</span>
     <span class="mn-count">hay nhầm nhất</span>
     <span class="mn-arr">›</span>
@@ -268,11 +267,11 @@ body::before{display:none;}
     <div class="pt-head">Quy tắc 1 câu — đọc 1 lần nhớ mãi</div>
     <table class="pt">
       <tr><td>〜たら</td><td>Nếu/khi A xảy ra xong thì B — dùng được hầu hết mọi trường hợp<span class="eg"><ruby>家<rt>いえ</rt></ruby>に<ruby>帰っ<rt>かえっ</rt></ruby>たら、<ruby>連絡<rt>れんらく</rt></ruby>してください。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Về đến nhà thì liên lạc cho tôi nhé.</span></td><td><button class="pb" onclick="speak('家に帰ったら、連絡してください。')">🔊</button></td></tr>
-      <tr><td>〜なら</td><td>B đưa ra trước A thực sự xảy ra — phản hồi điều người kia nói<span class="tip">→ "Nếu anh đã nói vậy thì tôi…"</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Về đến nhà thì liên lạc cho tôi nhé.</span><span class="eg"><ruby>日本<rt>にっぽん</rt></ruby>に<ruby>行く<rt>いく</rt></ruby>なら、<ruby>京都<rt>きょうと</rt></ruby>に<ruby>寄っ<rt>よっ</rt></ruby>てほしい。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Nếu đi Nhật thì ghé Kyoto nhé.</span></td><td><button class="pb" onclick="speak('日本に行くなら、京都に寄ってほしい。')">🔊</button></td></tr>
-      <tr><td>〜ば</td><td>Điều kiện lý tưởng / giả định — miễn là A thì B<span class="eg">お<ruby>金<rt>かね</rt></ruby>があれば、<ruby>旅行<rt>りょこう</rt></ruby>したい。さえ〜ばも<ruby>同じ<rt>おなじ</rt></ruby>。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Nếu đi Nhật thì ghé Kyoto nhé.</span></td><td><button class="pb" onclick="speak('お金があれば、旅行したい。')">🔊</button></td></tr>
-      <tr><td>〜と</td><td>Tự nhiên / tất yếu — A thì luôn luôn B (quy luật, hướng dẫn)<span class="eg"><ruby>春<rt>はる</rt></ruby>になると、<ruby>桜<rt>さくら</rt></ruby>が<ruby>咲く<rt>さく</rt></ruby>。ここを<ruby>押す<rt>おす</rt></ruby>と、ドアが<ruby>開く<rt>ひらく</rt></ruby>。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Nếu có tiền thì muốn đi du lịch. さえ〜ば cũng tương tự.</span></td><td><button class="pb" onclick="speak('春になると、桜が咲く。')">🔊</button></td></tr>
-      <tr><td>〜さえ〜ば</td><td>Chỉ cần A là đủ / miễn là A thì OK<span class="eg"><ruby>練習<rt>れんしゅう</rt></ruby>さえすれば<ruby>合格<rt>ごうかく</rt></ruby>できる。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Khi xuân đến thì hoa anh đào nở. Nhấn đây thì cửa mở.</span></td><td><button class="pb" onclick="speak('練習さえすれば合格できる。')">🔊</button></td></tr>
-      <tr><td>〜ては・〜では</td><td>Nếu cứ A mãi thì không ổn — phê phán hành vi<span class="eg"><ruby>毎日<rt>まいにち</rt></ruby><ruby>遅刻<rt>ちこく</rt></ruby>しては<ruby>困る<rt>こまる</rt></ruby>。そんな<ruby>態度<rt>たいど</rt></ruby>では<ruby>失礼<rt>しつれい</rt></ruby>だ。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Chỉ cần luyện tập là có thể đậu.</span></td><td><button class="pb" onclick="speak('毎日遅刻しては困る。')">🔊</button></td></tr>
+      <tr><td>〜なら</td><td>B đưa ra trước A thực sự xảy ra — phản hồi điều người kia nói<span class="tip">→ "Nếu anh đã nói vậy thì tôi…"</span><span class="eg"><ruby>日本<rt>にっぽん</rt></ruby>に<ruby>行く<rt>いく</rt></ruby>なら、<ruby>京都<rt>きょうと</rt></ruby>に<ruby>寄っ<rt>よっ</rt></ruby>てほしい。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Nếu đi Nhật thì ghé Kyoto nhé.</span></td><td><button class="pb" onclick="speak('日本に行くなら、京都に寄ってほしい。')">🔊</button></td></tr>
+      <tr><td>〜ば</td><td>Điều kiện lý tưởng / giả định — miễn là A thì B<span class="eg">お<ruby>金<rt>かね</rt></ruby>があれば、<ruby>旅行<rt>りょこう</rt></ruby>したい。さえ〜ばも<ruby>同じ<rt>おなじ</rt></ruby>。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Nếu có tiền thì muốn đi du lịch. さえ〜ば cũng tương tự.</span></td><td><button class="pb" onclick="speak('お金があれば、旅行したい。')">🔊</button></td></tr>
+      <tr><td>〜と</td><td>Tự nhiên / tất yếu — A thì luôn luôn B (quy luật, hướng dẫn)<span class="eg"><ruby>春<rt>はる</rt></ruby>になると、<ruby>桜<rt>さくら</rt></ruby>が<ruby>咲く<rt>さく</rt></ruby>。ここを<ruby>押す<rt>おす</rt></ruby>と、ドアが<ruby>開く<rt>ひらく</rt></ruby>。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Khi xuân đến thì hoa anh đào nở. Nhấn đây thì cửa mở.</span></td><td><button class="pb" onclick="speak('春になると、桜が咲く。')">🔊</button></td></tr>
+      <tr><td>〜さえ〜ば</td><td>Chỉ cần A là đủ / miễn là A thì OK<span class="eg"><ruby>練習<rt>れんしゅう</rt></ruby>さえすれば<ruby>合格<rt>ごうかく</rt></ruby>できる。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Chỉ cần luyện tập là có thể đậu.</span></td><td><button class="pb" onclick="speak('練習さえすれば合格できる。')">🔊</button></td></tr>
+      <tr><td>〜ては・〜では</td><td>Nếu cứ A mãi thì không ổn — phê phán hành vi<span class="eg"><ruby>毎日<rt>まいにち</rt></ruby><ruby>遅刻<rt>ちこく</rt></ruby>しては<ruby>困る<rt>こまる</rt></ruby>。そんな<ruby>態度<rt>たいど</rt></ruby>では<ruby>失礼<rt>しつれい</rt></ruby>だ。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Ngày nào cũng đi trễ thì không được. Thái độ như vậy là thất lễ.</span></td><td><button class="pb" onclick="speak('毎日遅刻しては困る。')">🔊</button></td></tr>
     </table>
   </div>
 </div>
@@ -281,7 +280,7 @@ body::before{display:none;}
 
 <div class="mn-wrap">
   <div class="mn-head" onclick="tog(this)">
-    <span class="mn-dot" style="background:#f87171"></span><span class="eg" style="color:#7a8299;font-size:.82em">→ Ngày nào cũng đi trễ thì không được. Thái độ như vậy là thất lễ.</span>
+    <span class="mn-dot" style="background:#f87171"></span>
     <span class="mn-label">受身・使役・てもらう (5 mẫu)</span>
     <span class="mn-count">⚠️ 80% là 迷惑受身</span>
     <span class="mn-arr">›</span>
@@ -290,8 +289,8 @@ body::before{display:none;}
     <div class="pt-head">Người Việt hay dịch bị động Nhật = trung tính như tiếng Anh → SAI! N3 chủ yếu là bị thiệt</div>
     <table class="pt">
       <tr><td>〜（ら）れる<br>迷惑受身</td><td>Bị ai làm gì mà mình khổ/thiệt — dù không nhắm vào mình<span class="tip">→ Gặp られた không rõ chủ thể → dịch "bị... làm phiền"</span><span class="eg"><ruby>雨<rt>あめ</rt></ruby>に<ruby>降ら<rt>ふら</rt></ruby>れた。<ruby>子供<rt>こども</rt></ruby>に<ruby>泣か<rt>なか</rt></ruby>れて<ruby>眠れ<rt>ねむれ</rt></ruby>なかった。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Bị mưa ướt. Bị con khóc suốt không ngủ được.</span></td><td><button class="pb" onclick="speak('雨に降られた。子供に泣かれて眠れなかった。')">🔊</button></td></tr>
-      <tr><td>〜させる</td><td>Bắt / cho phép ai làm gì — sai khiến (chủ động)<span class="eg"><ruby>子供<rt>こども</rt></ruby>に<ruby>野菜<rt>やさい</rt></ruby>を<ruby>食べ<rt>たべ</rt></ruby>させた。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Bị mưa ướt. Bị con khóc không ngủ được.</span></td><td><button class="pb" onclick="speak('子供に野菜を食べさせた。')">🔊</button></td></tr>
-      <tr><td>〜させられる</td><td>Bị bắt phải làm gì — khổ nhất (bị động + sai khiến)<span class="eg"><ruby>上司<rt>じょうし</rt></ruby>に<ruby>残業<rt>ざんぎょう</rt></ruby>させられた。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Bắt con ăn rau.</span></td><td><button class="pb" onclick="speak('上司に残業させられた。')">🔊</button></td></tr>
+      <tr><td>〜させる</td><td>Bắt / cho phép ai làm gì — sai khiến (chủ động)<span class="eg"><ruby>子供<rt>こども</rt></ruby>に<ruby>野菜<rt>やさい</rt></ruby>を<ruby>食べ<rt>たべ</rt></ruby>させた。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Bắt con ăn rau.</span></td><td><button class="pb" onclick="speak('子供に野菜を食べさせた。')">🔊</button></td></tr>
+      <tr><td>〜させられる</td><td>Bị bắt phải làm gì — khổ nhất (bị động + sai khiến)<span class="eg"><ruby>上司<rt>じょうし</rt></ruby>に<ruby>残業<rt>ざんぎょう</rt></ruby>させられた。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Bị sếp bắt làm thêm giờ.</span></td><td><button class="pb" onclick="speak('上司に残業させられた。')">🔊</button></td></tr>
       <tr><td>〜てもらう</td><td>Được ai làm cho mình (ân huệ nhận vào)<span class="eg"><ruby>友達<rt>ともだち</rt></ruby>に<ruby>手伝っ<rt>てつだっ</rt></ruby>てもらった。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Được bạn bè giúp đỡ.</span></td><td><button class="pb" onclick="speak('友達に手伝ってもらった。')">🔊</button></td></tr>
       <tr><td>〜てくれる</td><td>Ai đó làm cho mình (ân huệ từ ngoài vào)<span class="eg"><ruby>先生<rt>せんせい</rt></ruby>が<ruby>説明<rt>せつめい</rt></ruby>してくれた。</span><span class="eg" style="color:#7a8299;font-size:.82em">→ Thầy/cô đã giải thích cho mình.</span></td><td><button class="pb" onclick="speak('先生が説明してくれた。')">🔊</button></td></tr>
     </table>
@@ -500,11 +499,11 @@ body::before{display:none;}
     <div class="adv-row"><span class="adv-jp">ついに</span><div class="adv-body"><div class="adv-mean">Cuối cùng cũng... (sau thời gian dài)</div><div class="adv-eg">ついに合格した！ついに夢が叶った！</div></div><button class="snd-btn" onclick="speak('ついに合格した！')">🔊</button></div>
     <div class="adv-row"><span class="adv-jp">なんとか</span><div class="adv-body"><div class="adv-mean">Bằng cách nào đó / Gắng gượng được</div><div class="adv-eg">なんとか間に合った。なんとかなる。</div></div><button class="snd-btn" onclick="speak('なんとか間に合った。')">🔊</button></div>
     <div class="pt-head">Nhóm TẦN SUẤT / PHẠM VI</div>
-    <div class="adv-row"><span class="adv-jp"><ruby>必ず<rt>かならず</rt></ruby>しも〜ない</span><div class="adv-body"><div class="adv-mean">Không nhất thiết là... (không tuyệt đối)</div><div class="adv-eg">高くても必ずしも良いとは限らない。</div></div><button class="snd-btn" onclick="speak('高くても必ずしも良いとは限らない。')">🔊</button></div>
+    <div class="adv-row"><span class="adv-jp">必ずしも〜ない</span><div class="adv-body"><div class="adv-mean">Không nhất thiết là... (không tuyệt đối)</div><div class="adv-eg">高くても必ずしも良いとは限らない。</div></div><button class="snd-btn" onclick="speak('高くても必ずしも良いとは限らない。')">🔊</button></div>
     <div class="adv-row"><span class="adv-jp">めったに〜ない</span><div class="adv-body"><div class="adv-mean">Hiếm khi... (rất ít khi xảy ra)</div><div class="adv-eg">めったに風邪をひかない。</div></div><button class="snd-btn" onclick="speak('めったに風邪をひかない。')">🔊</button></div>
-    <div class="adv-row"><span class="adv-jp">いつの<ruby>間<rt>あいだ</rt></ruby>にか</span><div class="adv-body"><div class="adv-mean">Không biết từ lúc nào... (bất ngờ nhận ra)</div><div class="adv-eg">いつの間にか眠ってしまった。</div></div><button class="snd-btn" onclick="speak('いつの間にか眠ってしまった。')">🔊</button></div>
+    <div class="adv-row"><span class="adv-jp">いつの間にか</span><div class="adv-body"><div class="adv-mean">Không biết từ lúc nào... (bất ngờ nhận ra)</div><div class="adv-eg">いつの間にか眠ってしまった。</div></div><button class="snd-btn" onclick="speak('いつの間にか眠ってしまった。')">🔊</button></div>
     <div class="adv-row"><span class="adv-jp">あいにく</span><div class="adv-body"><div class="adv-mean">Không may là... / Tiếc là... (xin lỗi lịch sự)</div><div class="adv-eg">あいにく、本日は休業です。</div></div><button class="snd-btn" onclick="speak('あいにく、本日は休業です。')">🔊</button></div>
-    <div class="adv-row"><span class="adv-jp">もう<ruby>少し<rt>すこし</rt></ruby>で</span><div class="adv-body"><div class="adv-mean">Suýt nữa thì... (thiếu một chút)</div><div class="adv-eg">もう少しで遅刻するところだった。</div></div><button class="snd-btn" onclick="speak('もう少しで遅刻するところだった。')">🔊</button></div>
+    <div class="adv-row"><span class="adv-jp">もう少しで</span><div class="adv-body"><div class="adv-mean">Suýt nữa thì... (thiếu một chút)</div><div class="adv-eg">もう少しで遅刻するところだった。</div></div><button class="snd-btn" onclick="speak('もう少しで遅刻するところだった。')">🔊</button></div>
   </div>
 </div>
 
@@ -568,47 +567,11 @@ body::before{display:none;}
   <div class="mn-body">
     <div class="pt-head">Cùng âm On'yomi → cùng gốc Hán-Việt → nghe âm đoán nghĩa ngay!</div>
     <div class="onyomi-cards">
-
-      <div class="oc-card">
-        <div class="oc-top">
-          <div class="oc-kana">けい</div>
-          <div class="oc-romaji">kinh / kế / hình / hệ / kính</div>
-          <button class="pb" onclick="speak('経験、計画、形式、関係、敬語。')">🔊</button>
-        </div>
-        <div class="oc-kanji">経(kinh)・計(kế)・形(hình)・系(hệ)・敬(kính)</div>
-        <div class="oc-ex"><ruby>経験<rt>けいけん</rt></ruby>・<ruby>計画<rt>けいかく</rt></ruby>・<ruby>形式<rt>けいしき</rt></ruby>・<ruby>関係<rt>かんけい</rt></ruby>・<ruby>敬語<rt>けいご</rt></ruby></div>
-      </div>
-
-      <div class="oc-card">
-        <div class="oc-top">
-          <div class="oc-kana">かん</div>
-          <div class="oc-romaji">cảm / quan / quản / hoàn</div>
-          <button class="pb" onclick="speak('感謝、関係、管理、観光、習慣。')">🔊</button>
-        </div>
-        <div class="oc-kanji">感(cảm)・関(quan)・管(quản)・観(quan)・慣(quán)</div>
-        <div class="oc-ex"><ruby>感謝<rt>かんしゃ</rt></ruby>・<ruby>関係<rt>かんけい</rt></ruby>・<ruby>管理<rt>かんり</rt></ruby>・<ruby>観光<rt>かんこう</rt></ruby>・<ruby>習慣<rt>しゅうかん</rt></ruby></div>
-      </div>
-
-      <div class="oc-card">
-        <div class="oc-top">
-          <div class="oc-kana">せい</div>
-          <div class="oc-romaji">sinh / thành / chính / thanh / chế</div>
-          <button class="pb" onclick="speak('学生、成功、正しい、清潔。')">🔊</button>
-        </div>
-        <div class="oc-kanji">生(sinh)・成(thành)・正(chính)・清(thanh)・制(chế)</div>
-        <div class="oc-ex"><ruby>学生<rt>がくせい</rt></ruby>・<ruby>成功<rt>せいこう</rt></ruby>・<ruby>正しい<rt>ただしい</rt></ruby>・<ruby>清潔<rt>せいけつ</rt></ruby>・<ruby>制度<rt>せいど</rt></ruby></div>
-      </div>
+      <div class="oc-card"><div class="oc-top"><div class="oc-kana">けい</div><div class="oc-romaji">kinh / kế / hình / hệ / kính</div><button class="pb" onclick="speak('経験、計画、形式、関係、敬語。')">🔊</button></div><div class="oc-kanji">経(kinh)・計(kế)・形(hình)・系(hệ)・敬(kính)</div><div class="oc-ex"><ruby>経験<rt>けいけん</rt></ruby>・<ruby>計画<rt>けいかく</rt></ruby>・<ruby>形式<rt>けいしき</rt></ruby>・<ruby>関係<rt>かんけい</rt></ruby>・<ruby>敬語<rt>けいご</rt></ruby></div></div>
+      <div class="oc-card"><div class="oc-top"><div class="oc-kana">かん</div><div class="oc-romaji">cảm / quan / quản / hoàn</div><button class="pb" onclick="speak('感謝、関係、管理、観光、習慣。')">🔊</button></div><div class="oc-kanji">感(cảm)・関(quan)・管(quản)・観(quan)・慣(quán)</div><div class="oc-ex"><ruby>感謝<rt>かんしゃ</rt></ruby>・<ruby>関係<rt>かんけい</rt></ruby>・<ruby>管理<rt>かんり</rt></ruby>・<ruby>観光<rt>かんこう</rt></ruby>・<ruby>習慣<rt>しゅうかん</rt></ruby></div></div>
+      <div class="oc-card"><div class="oc-top"><div class="oc-kana">せい</div><div class="oc-romaji">sinh / thành / chính / thanh / chế</div><button class="pb" onclick="speak('学生、成功、正しい、清潔。')">🔊</button></div><div class="oc-kanji">生(sinh)・成(thành)・正(chính)・清(thanh)・制(chế)</div><div class="oc-ex"><ruby>学生<rt>がくせい</rt></ruby>・<ruby>成功<rt>せいこう</rt></ruby>・<ruby>正しい<rt>ただしい</rt></ruby>・<ruby>清潔<rt>せいけつ</rt></ruby>・<ruby>制度<rt>せいど</rt></ruby></div></div>
       
-      <div class="oc-card">
-        <div class="oc-top">
-          <div class="oc-kana">しゃ</div>
-          <div class="oc-romaji">xã / giả / tạ / tả / xạ</div>
-          <button class="pb" onclick="speak('社会、医者、謝る、写真。')">🔊</button>
-        </div>
-        <div class="oc-kanji">社(xã)・者(giả)・謝(tạ)・写(tả)・射(xạ)</div>
-        <div class="oc-ex"><ruby>社会<rt>しゃかい</rt></ruby>・<ruby>医者<rt>いしゃ</rt></ruby>・<ruby>謝る<rt>あやまる</rt></ruby>・<ruby>写真<rt>しゃしん</rt></ruby>・<ruby>射撃<rt>しゃげき</rt></ruby></div>
-      </div>
-
+      <div class="oc-card"><div class="oc-top"><div class="oc-kana">しゃ</div><div class="oc-romaji">xã / giả / tạ / tả / xạ</div><button class="pb" onclick="speak('社会、医者、謝る、写真。')">🔊</button></div><div class="oc-kanji">社(xã)・者(giả)・謝(tạ)・写(tả)・射(xạ)</div><div class="oc-ex"><ruby>社会<rt>しゃかい</rt></ruby>・<ruby>医者<rt>いしゃ</rt></ruby>・<ruby>謝る<rt>あやまる</rt></ruby>・<ruby>写真<rt>しゃしん</rt></ruby>・<ruby>射撃<rt>しゃげき</rt></ruby></div></div>
     </div>
   </div>
 </div>
