@@ -151,6 +151,14 @@ body::before{display:none;}
     font-family: inherit;
     font-weight: 500;
   }
+
+.onyomi-cards{display:flex;flex-direction:column;gap:10px;padding:10px 0;}
+.oc-card{background:var(--card2);border-radius:10px;padding:12px 14px;border:1px solid var(--border);}
+.oc-top{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.oc-kana{font-size:1.3rem;font-weight:900;color:var(--neon);min-width:48px;}
+.oc-romaji{flex:1;font-size:.78rem;color:var(--text3);font-style:italic;}
+.oc-kanji{font-size:.85rem;color:var(--text2);margin-bottom:6px;line-height:1.6;}
+.oc-ex{font-size:.85rem;color:var(--text3);line-height:2.2;}
 </style>
 <link rel="manifest" href="/n3-jlpt-app/manifest.json">
 <meta name="theme-color" content="#4361ee">
@@ -559,12 +567,49 @@ body::before{display:none;}
   </div>
   <div class="mn-body">
     <div class="pt-head">Cùng âm On'yomi → cùng gốc Hán-Việt → nghe âm đoán nghĩa ngay!</div>
-    <table class="pt">
-      <tr><td>けい<br><span class="eg">kinh/kế/hình/hệ/kính</span></td><td>経(kinh)・計(kế)・形(hình)・系(hệ)・敬(kính)<span class="eg"><ruby>経験<rt>けいけん</rt></ruby>・<ruby>計画<rt>けいかく</rt></ruby>・<ruby>形式<rt>けいしき</rt></ruby>・<ruby>関係<rt>かんけい</rt></ruby>・<ruby>敬語<rt>けいご</rt></ruby></span></td><td><button class="pb" onclick="speak('経験、計画、形式、関係、敬語。')">🔊</button></td></tr>
-      <tr><td>かん<br><span class="eg">cảm/quan/quản/hoàn</span></td><td>感(cảm)・関(quan)・管(quản)・観(quan)・慣(quán)<span class="eg"><ruby>感謝<rt>かんしゃ</rt></ruby>・<ruby>関係<rt>かんけい</rt></ruby>・<ruby>管理<rt>かんり</rt></ruby>・<ruby>観光<rt>かんこう</rt></ruby>・<ruby>習慣<rt>しゅうかん</rt></ruby></span></td><td><button class="pb" onclick="speak('感謝、関係、管理、観光、習慣。')">🔊</button></td></tr>
-      <tr><td>せい<br><span class="eg">sinh/thành/chính/thanh</span></td><td>生(sinh)・成(thành)・正(chính)・清(thanh)・制(chế)<span class="eg"><ruby>学生<rt>がくせい</rt></ruby>・<ruby>成功<rt>せいこう</rt></ruby>・<ruby>正しい<rt>ただしい</rt></ruby>・<ruby>清潔<rt>せいけつ</rt></ruby>・<ruby>制度<rt>せいど</rt></ruby></span></td><td><button class="pb" onclick="speak('学生、成功、正しい、清潔。')">🔊</button></td></tr>
-      <tr><td>しゃ<br><span class="eg">xã/giả/tạ/tả</span></td><td>社(xã)・者(giả)・謝(tạ)・写(tả)・射(xạ)<span class="eg"><ruby>社会<rt>しゃかい</rt></ruby>・<ruby>医者<rt>いしゃ</rt></ruby>・<ruby>謝る<rt>あやまる</rt></ruby>・<ruby>写真<rt>しゃしん</rt></ruby>・<ruby>射撃<rt>しゃげき</rt></ruby></span></td><td><button class="pb" onclick="speak('社会、医者、謝る、写真。')">🔊</button></td></tr>
-    </table>
+    <div class="onyomi-cards">
+
+      <div class="oc-card">
+        <div class="oc-top">
+          <div class="oc-kana">けい</div>
+          <div class="oc-romaji">kinh / kế / hình / hệ / kính</div>
+          <button class="pb" onclick="speak('経験、計画、形式、関係、敬語。')">🔊</button>
+        </div>
+        <div class="oc-kanji">経(kinh)・計(kế)・形(hình)・系(hệ)・敬(kính)</div>
+        <div class="oc-ex"><ruby>経験<rt>けいけん</rt></ruby>・<ruby>計画<rt>けいかく</rt></ruby>・<ruby>形式<rt>けいしき</rt></ruby>・<ruby>関係<rt>かんけい</rt></ruby>・<ruby>敬語<rt>けいご</rt></ruby></div>
+      </div>
+
+      <div class="oc-card">
+        <div class="oc-top">
+          <div class="oc-kana">かん</div>
+          <div class="oc-romaji">cảm / quan / quản / hoàn</div>
+          <button class="pb" onclick="speak('感謝、関係、管理、観光、習慣。')">🔊</button>
+        </div>
+        <div class="oc-kanji">感(cảm)・関(quan)・管(quản)・観(quan)・慣(quán)</div>
+        <div class="oc-ex"><ruby>感謝<rt>かんしゃ</rt></ruby>・<ruby>関係<rt>かんけい</rt></ruby>・<ruby>管理<rt>かんり</rt></ruby>・<ruby>観光<rt>かんこう</rt></ruby>・<ruby>習慣<rt>しゅうかん</rt></ruby></div>
+      </div>
+
+      <div class="oc-card">
+        <div class="oc-top">
+          <div class="oc-kana">せい</div>
+          <div class="oc-romaji">sinh / thành / chính / thanh / chế</div>
+          <button class="pb" onclick="speak('学生、成功、正しい、清潔。')">🔊</button>
+        </div>
+        <div class="oc-kanji">生(sinh)・成(thành)・正(chính)・清(thanh)・制(chế)</div>
+        <div class="oc-ex"><ruby>学生<rt>がくせい</rt></ruby>・<ruby>成功<rt>せいこう</rt></ruby>・<ruby>正しい<rt>ただしい</rt></ruby>・<ruby>清潔<rt>せいけつ</rt></ruby>・<ruby>制度<rt>せいど</rt></ruby></div>
+      </div>
+      
+      <div class="oc-card">
+        <div class="oc-top">
+          <div class="oc-kana">しゃ</div>
+          <div class="oc-romaji">xã / giả / tạ / tả / xạ</div>
+          <button class="pb" onclick="speak('社会、医者、謝る、写真。')">🔊</button>
+        </div>
+        <div class="oc-kanji">社(xã)・者(giả)・謝(tạ)・写(tả)・射(xạ)</div>
+        <div class="oc-ex"><ruby>社会<rt>しゃかい</rt></ruby>・<ruby>医者<rt>いしゃ</rt></ruby>・<ruby>謝る<rt>あやまる</rt></ruby>・<ruby>写真<rt>しゃしん</rt></ruby>・<ruby>射撃<rt>しゃげき</rt></ruby></div>
+      </div>
+
+    </div>
   </div>
 </div>
 
