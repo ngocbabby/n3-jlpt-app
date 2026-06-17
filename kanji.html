@@ -809,7 +809,7 @@ function renderScan(){
     d.className='kc'+(done?' done':'');
     d.style.animationDelay=(i*.03)+'s';
     d.innerHTML=
-    '<div class="kc-illus"><svg viewBox="0 0 120 80" style="width:100%;height:100%">'+k.svgData||''+'</svg></div>'+
+    '<div class="kc-illus"><svg viewBox="0 0 120 80" style="width:100%;height:100%">'+(k.svgData||'')+'</svg></div>'+
     '<div class="ktop"><span class="kidx">'+(s+i+1)+'</span><span class="khot">'+(k.freq>=2?'★頻出':'')+'</span></div>'+
     '<span class="kk">'+k.k+'</span>'+
     '<div class="khv">'+k.hv+'</div>'+
