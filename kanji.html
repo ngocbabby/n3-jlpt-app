@@ -808,19 +808,18 @@ function renderScan(){
     const d=document.createElement('div');
     d.className='kc'+(done?' done':'');
     d.style.animationDelay=(i*.03)+'s';
-    d.innerHTML=`<div class="kc-illus"><svg viewBox="0 0 120 80" style="width:100%;height:100%">${getKanjiSVG(k.memoType)}</svg></div><div class="ktop"><span class="kidx">${s+i+1}</span><span class="khot">${k.freq>=2?'★頻出':''}</span></div>
-<span class="kk">${k.k}</span>
-<div class="khv">${k.hv}</div>
-<div class="kvn">${k.vn}</div>
-<div class="kwords">
-  <div class="kw on"><span class="kwr">${k.on.word}</span><span class="kwf">${k.on.read}</span><span class="kwm">${k.on.meaning}</span></div>
-  ${k.kun.word ? '<div class=\"kw kun\"><span class=\"kwr\">'+k.kun.word+'</span><span class=\"kwf\">'+k.kun.read+'</span><span class=\"kwm\">'+k.kun.meaning+'</span></div>' : k.kun.meaning ? '<div class=\"kw note\"><span class=\"kwf\" style=\"font-size:.65rem;color:var(--muted)\">'+k.kun.meaning+'</span></div>' : ''}
-</div>
-${k.memo ? `<div class="kc-memo"><div class="kc-memo-label">💡 MẸO NHỚ</div><div class="kc-memo-text">${k.memo}</div></div>` : ''}
-<div class="kc-action">
-  <button class="kc-btn-sound">🔊</button>
-  <button class="kc-btn-done">✓</button>
-</div>`;
+    d.innerHTML=
+    '<div class="kc-illus"><svg viewBox="0 0 120 80" style="width:100%;height:100%">'+getKanjiSVG(k.memoType)+'</svg></div>'+
+    '<div class="ktop"><span class="kidx">'+(s+i+1)+'</span><span class="khot">'+(k.freq>=2?'★頻出':'')+'</span></div>'+
+    '<span class="kk">'+k.k+'</span>'+
+    '<div class="khv">'+k.hv+'</div>'+
+    '<div class="kvn">'+k.vn+'</div>'+
+    '<div class="kwords">'+
+      '<div class="kw on"><span class="kwr">'+k.on.word+'</span><span class="kwf">'+k.on.read+'</span><span class="kwm">'+k.on.meaning+'</span></div>'+
+      (k.kun.word ? '<div class="kw kun"><span class="kwr">'+k.kun.word+'</span><span class="kwf">'+k.kun.read+'</span><span class="kwm">'+k.kun.meaning+'</span></div>' : k.kun.meaning ? '<div class="kw note"><span class="kwf" style="font-size:.65rem;color:var(--muted)">'+k.kun.meaning+'</span></div>' : '')+
+    '</div>'+
+    (k.memo ? '<div class="kc-memo"><div class="kc-memo-label">💡 MẸO NHỚ</div><div class="kc-memo-text">'+k.memo+'</div></div>' : '')+
+    '<div class="kc-action"><button class="kc-btn-sound">🔊</button><button class="kc-btn-done">✓</button></div>';
     d.onclick=(e)=>{
       if(e.target.closest('.kc-btn-sound')||e.target.closest('.kc-btn-done')) return;
       TTS.synth&&TTS.synth.cancel();
