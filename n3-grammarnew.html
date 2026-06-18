@@ -2584,6 +2584,206 @@ const GRAMMAR_EXAM_DATA = [
       },
     ],
   }
+  ,
+  {
+    id: 13,
+    title: "補充２: Giáo trình N3 còn thiếu",
+    subtitle: "かわりに · べきだ · づらい · っぽい · によると · そうに · たらどうか...",
+    cat: ["joken","hyogen","keigo"],
+    color: "#0369a1",
+    grammars: [
+      {
+        pattern: "〜かわりに",
+        meaning: "Thay vì... / Đổi lại... (thay thế hoặc bù đắp)",
+        structure: "V-る／V-た／N-の ＋ かわりに",
+        examples: [
+          { jp: "今日は私が料理をするかわりに、皿洗いはお願いね。", vn: "Hôm nay thay vì tôi nấu ăn, thì rửa bát nhờ cậu nhé." },
+          { jp: "車で行くかわりに、電車で行きましょう。", vn: "Thay vì đi xe hơi, hãy đi tàu điện." },
+        ],
+        tip: "かわりに = thay thế (A thay vì B) hoặc bù đắp (làm A để đổi lại B). Phân biệt với ではなく (không phải là).",
+      },
+      {
+        pattern: "〜べきだ／べきではない",
+        meaning: "Phải... / Nên... (nghĩa vụ về mặt đạo đức, lẽ phải)",
+        structure: "V-る ＋ べきだ／べきではない（するべき→すべき）",
+        examples: [
+          { jp: "約束は守るべきだ。", vn: "Phải tuân thủ lời hứa." },
+          { jp: "おもちゃはまず安全であるべきだ。", vn: "Đồ chơi trước tiên phải đảm bảo an toàn." },
+        ],
+        tip: "べきだ = lẽ phải, nghĩa vụ đạo đức. Mạnh hơn ほうがいい. Phủ định: べきではない. するべき = すべき.",
+      },
+      {
+        pattern: "〜たらどうか／〜たらどうですか",
+        meaning: "Sao không... thử? / Tại sao không...? (đề xuất, lời khuyên nhẹ)",
+        structure: "V-たら ＋ どうか／どうですか",
+        examples: [
+          { jp: "疲れているなら、少し休んだらどうですか。", vn: "Nếu mệt thì sao không nghỉ một chút?" },
+          { jp: "先生に相談したらどうか。", vn: "Sao không thử bàn với thầy giáo?" },
+        ],
+        tip: "たらどうか = lời khuyên nhẹ nhàng, không áp đặt. Lịch sự hơn: たらどうでしょうか. So sánh: ほうがいい (khuyên mạnh hơn).",
+      },
+      {
+        pattern: "〜てもらいたい／〜させてもらいたい",
+        meaning: "Muốn nhờ ai làm... / Muốn được phép làm... (yêu cầu lịch sự)",
+        structure: "V-て ＋ もらいたい／いただきたい",
+        examples: [
+          { jp: "この書類を明日までに確認してもらいたいのですが。", vn: "Tôi muốn nhờ anh xác nhận tài liệu này trước ngày mai." },
+          { jp: "少し早退させてもらいたいのですが。", vn: "Tôi muốn được phép về sớm một chút." },
+        ],
+        tip: "てもらいたい = muốn nhờ (lịch sự). Formal hơn: ていただきたい. させてもらいたい = muốn được phép tự làm.",
+      },
+      {
+        pattern: "〜といい（１）〜といい（２）",
+        meaning: "Dù là... hay là... (đưa ví dụ để nhấn mạnh tất cả đều như vậy)",
+        structure: "N1 といい N2 といい、〜",
+        examples: [
+          { jp: "デザインといい、品質といい、この商品は最高だ。", vn: "Dù là thiết kế hay chất lượng, sản phẩm này đều tuyệt vời." },
+          { jp: "料理といい掃除といい、彼女は完璧な主婦だ。", vn: "Dù là nấu ăn hay dọn dẹp, cô ấy đều là người nội trợ hoàn hảo." },
+        ],
+        tip: "N1 といい N2 といい = đưa ra 2 ví dụ để nói cả hai đều như vậy. Mang sắc thái khen ngợi hoặc phê phán.",
+      },
+      {
+        pattern: "〜Ｖ-通す",
+        meaning: "Làm đến cùng / Kiên trì đến hết (không bỏ dở giữa chừng)",
+        structure: "V-「ます」 ＋ 通す",
+        examples: [
+          { jp: "終電を逃して、駅から家まで2時間歩き通した。", vn: "Lỡ chuyến tàu cuối, tôi đã đi bộ từ ga về nhà suốt 2 tiếng." },
+          { jp: "うそを一生隠し通すことはできない。", vn: "Không thể giấu dối suốt cả đời được." },
+        ],
+        tip: "通す = làm từ đầu đến cuối không dừng. Hay dùng: 歩き通す、やり通す、泣き通す、信じ通す。",
+      },
+      {
+        pattern: "〜づらい",
+        meaning: "Khó... (về mặt tâm lý, cảm thấy ngại/khó xử khi làm)",
+        structure: "V-「ます」 ＋ づらい",
+        examples: [
+          { jp: "あの話はうそだった。でも、あの人には本当のことを言いづらいです。", vn: "Chuyện đó là nói dối. Nhưng khó mà nói thật với người đó quá." },
+          { jp: "個人的なことなので、職場の人には頼みづらいです。", vn: "Vì là chuyện cá nhân nên ngại nhờ người ở chỗ làm." },
+        ],
+        tip: "づらい = khó về mặt tâm lý/cảm xúc. Phân biệt: にくい (khó về mặt vật lý/kỹ thuật). Ví dụ: 読みにくい (chữ khó đọc) vs 言いづらい (ngại nói).",
+      },
+      {
+        pattern: "〜っぽい",
+        meaning: "Có vẻ... / Mang tính chất... (có đặc điểm giống cái gì đó)",
+        structure: "N／V-「ます」 ＋ っぽい",
+        examples: [
+          { jp: "彼女はわがままばかり言って、子どもっぽい人だ。", vn: "Cô ấy toàn đòi hỏi, là người con nít tính." },
+          { jp: "弟はあきっぽくて、なんでも途中でやめてしまう。", vn: "Em trai tôi hay chán nản, cái gì cũng bỏ dở giữa chừng." },
+        ],
+        tip: "っぽい = có tính chất/đặc điểm của. Thường mang sắc thái tiêu cực nhẹ. Hay dùng: 子どもっぽい、飽きっぽい、忘れっぽい、水っぽい。",
+      },
+      {
+        pattern: "〜によると／によれば",
+        meaning: "Theo như... / Theo thông tin từ... (dẫn nguồn tin)",
+        structure: "N ＋ によると／によれば、〜そうだ／〜らしい",
+        examples: [
+          { jp: "天気予報によれば、明日は晴れるらしい。", vn: "Theo như dự báo thời tiết, ngày mai có vẻ sẽ nắng." },
+          { jp: "さっきのニュースによると、大きな地震があったそうだ。", vn: "Theo như tin tức lúc nãy, nghe nói đã có động đất lớn." },
+        ],
+        tip: "によると／によれば = trích dẫn nguồn. Cuối câu thường có そうだ／らしい. Phân biệt: によって (nguyên nhân/phương tiện).",
+      },
+      {
+        pattern: "〜から〜にかけて",
+        meaning: "Từ... đến... (khoảng thời gian/không gian không rõ ranh giới)",
+        structure: "N（時間・場所）から N（時間・場所）にかけて",
+        examples: [
+          { jp: "今週から来週にかけて蒸し暑い天気になるでしょう。", vn: "Từ tuần này đến tuần sau thời tiết sẽ oi bức." },
+          { jp: "中部地方から近畿地方にかけて台風の被害が出た。", vn: "Từ vùng Chubu đến vùng Kinki đã có thiệt hại do bão." },
+        ],
+        tip: "から〜にかけて = phạm vi không rõ ranh giới chính xác. Khác với から〜まで (ranh giới rõ ràng).",
+      },
+      {
+        pattern: "〜そうに／〜そうな／〜そうもない",
+        meaning: "Có vẻ... / Trông như... / Không có vẻ... (nhận xét từ quan sát)",
+        structure: "V-「ます」／A-い ＋ そうに／そうな／そうもない",
+        examples: [
+          { jp: "彼は何か言いたそうに私を見ていた。", vn: "Anh ấy nhìn tôi như có vẻ muốn nói gì đó." },
+          { jp: "この仕事は今日中に終わりそうもない。", vn: "Công việc này có vẻ không xong trong hôm nay đâu." },
+        ],
+        tip: "そうに = có vẻ (trạng từ). そうな = có vẻ (tính từ). そうもない = không có vẻ, khó mà. Phân biệt: らしい (nghe nói), ようだ (quan sát).",
+      },
+      {
+        pattern: "〜たら〜た（発見）",
+        meaning: "Khi... thì phát hiện... (kết quả bất ngờ sau hành động)",
+        structure: "V-たら、V-た（phát hiện điều gì đó）",
+        examples: [
+          { jp: "家に帰ったら、誰もいなかった。", vn: "Khi về nhà thì không có ai cả." },
+          { jp: "窓を開けたら、きれいな虹が見えた。", vn: "Khi mở cửa sổ ra thì thấy cầu vồng đẹp." },
+        ],
+        tip: "たら〜た = dùng たら để diễn tả việc phát hiện bất ngờ sau khi làm xong hành động. Không dùng được với ば hay と trong trường hợp này.",
+      },
+      {
+        pattern: "〜も〜ば〜も",
+        meaning: "Vừa... vừa... (liệt kê nhiều đặc điểm, thường khen hoặc chê đều)",
+        structure: "N1 も A-ければ N2 も A / N1 も V-ば N2 も V",
+        examples: [
+          { jp: "彼女は頭もよければ、性格もいい。", vn: "Cô ấy vừa thông minh vừa có tính cách tốt." },
+          { jp: "この店は値段も高ければ、サービスも悪い。", vn: "Cửa hàng này vừa đắt tiền vừa dịch vụ tệ." },
+        ],
+        tip: "も〜ば〜も = liệt kê 2 đặc điểm cùng chiều (đều tốt hoặc đều xấu). Cấu trúc đối xứng.",
+      },
+      {
+        pattern: "〜ことは〜が",
+        meaning: "... thì đúng là... nhưng (thừa nhận một phần, nhưng có nhưng)",
+        structure: "V-ることは V-る が、〜",
+        examples: [
+          { jp: "日本語が話せることは話せるが、まだ上手じゃない。", vn: "Nói tiếng Nhật thì nói được đấy, nhưng chưa giỏi." },
+          { jp: "行くことは行くが、遅くなるかもしれない。", vn: "Đi thì đi đấy, nhưng có thể sẽ muộn." },
+        ],
+        tip: "ことは〜が = thừa nhận một phần sự thật nhưng đưa ra điều kiện hoặc hạn chế. Giống như 'thì... đấy, nhưng...'",
+      },
+      {
+        pattern: "〜てばかりいる",
+        meaning: "Cứ mãi... / Chỉ toàn... (làm một việc liên tục, thường mang ý chê)",
+        structure: "V-て ＋ ばかりいる",
+        examples: [
+          { jp: "彼は遊んでばかりいて、全然勉強しない。", vn: "Anh ta cứ mãi chơi, không chịu học hành gì cả." },
+          { jp: "心配してばかりいても仕方がない。", vn: "Cứ mãi lo lắng cũng chẳng ích gì." },
+        ],
+        tip: "てばかりいる = hành động lặp đi lặp lại quá mức, thường mang ý phê phán. So sánh: てばかりだ (cùng nghĩa, ngắn hơn).",
+      },
+      {
+        pattern: "〜連用中止形",
+        meaning: "Dừng ở thể liên dụng để nối hai hành động (như 〜て nhưng trang trọng hơn)",
+        structure: "V-「ます」（bỏ ます）, V-「ます」（bỏ ます）, 〜",
+        examples: [
+          { jp: "朝起き、顔を洗い、朝ごはんを食べた。", vn: "Sáng dậy, rửa mặt, rồi ăn sáng." },
+          { jp: "ドアを開け、中に入った。", vn: "Mở cửa ra rồi bước vào trong." },
+        ],
+        tip: "連用中止形 = dạng thức trung gian nối các hành động, dùng trong văn viết trang trọng hoặc văn học. Tương đương 〜て trong văn nói.",
+      },
+      {
+        pattern: "〜助詞＋の（名詞修飾）",
+        meaning: "Trợ từ + の để biến cụm động từ thành cụm danh từ",
+        structure: "N ＋ 助詞 ＋ の ＋ N（省略động từ）",
+        examples: [
+          { jp: "恋人との約束を忘れた。", vn: "Tôi đã quên lời hẹn với người yêu." },
+          { jp: "科学についての雑誌を読む。", vn: "Đọc tạp chí về khoa học." },
+        ],
+        tip: "助詞+の = rút gọn mệnh đề quan hệ. 恋人とする約束→恋人との約束. Hay gặp: へのプレゼント、からのメール、についての説明。",
+      },
+      {
+        pattern: "〜命令形と／なと（伝言）",
+        meaning: "Bảo rằng hãy... / Nói rằng đừng... (truyền đạt lệnh, lời nhắn)",
+        structure: "V-命令形 と ／ V-な と ＋ 言われた／言った",
+        examples: [
+          { jp: "医者にお酒を飲むなといわれた。", vn: "Tôi đã bị bác sĩ nói rằng không được uống rượu." },
+          { jp: "先生にもっと勉強しろと言われた。", vn: "Tôi đã bị thầy giáo nói rằng hãy học bài chăm hơn." },
+        ],
+        tip: "命令形と言う = truyền đạt lời lệnh trực tiếp. Hay dùng: しろと言われた, するなと言われた, するようにと言われた.",
+      },
+      {
+        pattern: "〜に比べて",
+        meaning: "So sánh với... / So với... (đặt hai thứ cạnh nhau để so sánh)",
+        structure: "N ＋ に比べて／に比べると",
+        examples: [
+          { jp: "試験問題は昨年に比べて、易しくなった。", vn: "Đề thi so với năm ngoái đã dễ hơn rồi." },
+          { jp: "店で買うのに比べて、通信販売は便利だが欠点もある。", vn: "So với mua ở cửa hàng, mua qua mạng tiện lợi nhưng cũng có nhược điểm." },
+        ],
+        tip: "に比べて = so sánh trực tiếp giữa hai thứ. So sánh: より (hơn - một chiều), に比べて (so sánh hai chiều).",
+      },
+    ],
+  }
 ];
 
 // Thêm 7 đề còn thiếu từ Drive
