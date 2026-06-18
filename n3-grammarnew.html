@@ -3323,31 +3323,56 @@ function speakText(text, lang, rate) {
   window.speechSynthesis.speak(u);
 }
 
+function cleanJP(text) {
+  // Bỏ <rt>furigana</rt> — chỉ giữ kanji bên trong <ruby>
+  return text
+    .replace(/<rt>[^<]*<\/rt>/g, '')   // xóa furigana
+    .replace(/<[^>]+>/g, '')            // xóa các tag HTML còn lại
+    .replace(/[〜（）／「」。、！？]/g, ' ') // xóa ký tự đặc biệt
+    .trim();
+}
+
+function cleanVN(text) {
+  // Xóa hết HTML, giữ chữ Việt thuần
+  return text.replace(/<[^>]+>/g, '').trim();
+}
+
 function readGrammarCard(g) {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   const queue = [];
-  // 1. Pattern
-  queue.push({ text: g.pattern.replace(/[〜（）／]/g,' '), lang:'ja-JP', rate:0.85 });
-  // 2. Structure
-  if (g.structure) queue.push({ text: g.structure.replace(/[（）／＋Ｖ]/g,' '), lang:'ja-JP', rate:0.8 });
-  // 3. Meaning
-  queue.push({ text: g.meaning, lang:'vi-VN', rate:0.9 });
-  // 4. Examples JP + VN
+
+  // 1. Pattern — chỉ đọc phần JP (bỏ ký tự đặc biệt)
+  const patternClean = cleanJP(g.pattern);
+  if (patternClean) queue.push({ text: patternClean, lang:'ja-JP', rate:0.85 });
+
+  // 2. Structure — chỉ đọc JP
+  if (g.structure) {
+    const structClean = g.structure.replace(/[（）／＋Ｖ：]/g,' ').trim();
+    if (structClean) queue.push({ text: structClean, lang:'ja-JP', rate:0.8 });
+  }
+
+  // 3. Meaning — tiếng Việt thuần
+  queue.push({ text: cleanVN(g.meaning), lang:'vi-VN', rate:0.9 });
+
+  // 4. Ví dụ: JP (đã bỏ furigana) → VN (thuần)
   if (g.examples) g.examples.forEach(ex => {
-    const jpClean = ex.jp.replace(/<[^>]+>/g,'');
-    queue.push({ text: jpClean, lang:'ja-JP', rate:0.8 });
-    queue.push({ text: ex.vn, lang:'vi-VN', rate:0.9 });
+    const jpClean = cleanJP(ex.jp);
+    const vnClean = cleanVN(ex.vn);
+    if (jpClean) queue.push({ text: jpClean, lang:'ja-JP', rate:0.8 });
+    if (vnClean) queue.push({ text: vnClean, lang:'vi-VN', rate:0.9 });
   });
-  // 5. Tip
-  if (g.tip) queue.push({ text: g.tip, lang:'vi-VN', rate:0.9 });
+
+  // 5. Tip — tiếng Việt
+  if (g.tip) queue.push({ text: cleanVN(g.tip), lang:'vi-VN', rate:0.9 });
 
   let i = 0;
   function next() {
     if (i >= queue.length) return;
     const u = new SpeechSynthesisUtterance(queue[i].text);
-    u.lang = queue[i].lang; u.rate = queue[i].rate;
-    u.onend = () => { i++; setTimeout(next, 350); };
+    u.lang = queue[i].lang;
+    u.rate = queue[i].rate;
+    u.onend = () => { i++; setTimeout(next, 400); };
     window.speechSynthesis.speak(u);
   }
   next();
