@@ -138,12 +138,15 @@ body {
     border-radius: 16px;
     border: 1px solid var(--border);
     overflow: hidden;
-    transition: transform 0.2s, box-shadow 0.2s;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
   }
-  .lesson-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 32px rgba(37,99,235,0.10);
+  /* hover chỉ trên desktop, không apply khi lướt mobile */
+  @media (hover: hover) {
+    .lesson-card:hover {
+      box-shadow: 0 4px 20px rgba(37,99,235,0.12);
+    }
   }
   .lesson-header {
     padding: 14px 18px;
@@ -194,6 +197,7 @@ body {
     border-left: 3px solid;
     position: relative;
     overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
   }
   .grammar-node::before {
     content: '';
@@ -207,11 +211,12 @@ body {
   }
 
   .grammar-pattern {
-    font-size: 1.0rem;
-    font-weight: 700;
+    font-size: 1.05rem;
+    font-weight: 800;
     font-family: 'Noto Serif JP', serif;
     line-height: 1.4;
     margin-bottom: 6px;
+    letter-spacing: 0.01em;
   }
   .meaning-tag {
     display: inline-block;
