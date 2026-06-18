@@ -3332,10 +3332,10 @@ function isJapanese(ch) {
 // Tách chuỗi hỗn hợp JP+VN thành mảng {text, lang}
 function splitMixed(raw) {
   // Bỏ furigana <rt>...</rt>, giữ kanji
-  const text = raw
+  let text = raw
     .replace(/<rt>[^<]*<\/rt>/g, '')
     .replace(/<[^>]+>/g, '')
-    .replace(/[〜「」。、！？＝→]/g, ' ')
+    .replace(/[〜「」。、！？]/g, ' ')  // chỉ bỏ ký tự JP đặc biệt
     .replace(/\s+/g, ' ').trim();
 
   const parts = [];
@@ -3343,10 +3343,16 @@ function splitMixed(raw) {
   let curLang = null;
 
   for (const ch of text) {
-    if (ch === ' ' || ch === '＋' || ch === '+') {
-      if (cur.trim()) parts.push({ text: cur.trim(), lang: curLang });
-      cur = '';
-      curLang = null;
+    // Ranh giới tự nhiên: space, +, ＋, =, ;, :, →
+    if (' ＋+'.includes(ch)) {
+      if (cur.trim()) parts.push({ text: cur.trim(), lang: curLang || 'vi-VN' });
+      cur = ''; curLang = null;
+      continue;
+    }
+    // Dấu = ; : → là ranh giới, flush rồi reset
+    if ('=;:→'.includes(ch)) {
+      if (cur.trim()) parts.push({ text: cur.trim(), lang: curLang || 'vi-VN' });
+      cur = ''; curLang = null;
       continue;
     }
     const jp = isJapanese(ch);
@@ -3354,17 +3360,17 @@ function splitMixed(raw) {
     if (curLang === null) curLang = lang;
     if (lang !== curLang) {
       if (cur.trim()) parts.push({ text: cur.trim(), lang: curLang });
-      cur = ch;
-      curLang = lang;
+      cur = ch; curLang = lang;
     } else {
       cur += ch;
     }
   }
-  if (cur.trim()) parts.push({ text: cur.trim(), lang: curLang });
+  if (cur.trim()) parts.push({ text: cur.trim(), lang: curLang || 'vi-VN' });
 
   // Gộp các phần liền kề cùng ngôn ngữ
   const merged = [];
   for (const p of parts) {
+    if (p.text.trim().length === 0) continue;
     if (merged.length && merged[merged.length-1].lang === p.lang) {
       merged[merged.length-1].text += ' ' + p.text;
     } else {
