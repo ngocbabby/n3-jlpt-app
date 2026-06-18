@@ -814,6 +814,16 @@ const LESSONS = [
         tip: "まるで = nhấn mạnh sự so sánh, cường điệu. ようだ (quan sát thực tế) vs まるでようだ (so sánh ẩn dụ).",
       },
       {
+        pattern: "〜そうに／〜そうな／〜そうもない",
+        meaning: "Có vẻ... / Trông như... / Không có vẻ... (nhận xét từ quan sát)",
+        structure: "V-「ます」／A-い ＋ そうに／そうな／そうもない",
+        examples: [
+          { jp: "<ruby>彼は<rt>かれは</rt></ruby><ruby>何か<rt>なにか</rt></ruby><ruby>言い<rt>いい</rt></ruby>たそうに<ruby>私<rt>わたし</rt></ruby>を<ruby>見て<rt>みて</rt></ruby>いた。", vn: "Anh ấy nhìn tôi như có vẻ muốn nói gì đó." },
+          { jp: "この<ruby>仕事<rt>しごと</rt></ruby>は<ruby>今日中<rt>きょうじゅう</rt></ruby>に<ruby>終わり<rt>おわり</rt></ruby>そうもない。", vn: "Công việc này có vẻ không xong trong hôm nay đâu." },
+        ],
+        tip: "そうに = có vẻ (trạng từ). そうな = có vẻ (tính từ). そうもない = không có vẻ, khó mà. Phân biệt: らしい (nghe nói), ようだ (quan sát).",
+      },
+      {
         pattern: "必ずしも〜とは限らない",
         meaning: "Không phải cứ... là nhất thiết... (phủ định suy nghĩ tuyệt đối)",
         structure: "必ずしも ＋ 普通形 ＋ とは限らない",
@@ -1019,6 +1029,16 @@ const LESSONS = [
         tip: "るところだった = suýt xảy ra nhưng không xảy ra. Phân biệt: たところだ (vừa mới xong).",
       },
       {
+        pattern: "〜たら〜た（発見）",
+        meaning: "Khi... thì phát hiện... (kết quả bất ngờ sau hành động)",
+        structure: "V-たら、V-た（phát hiện điều gì đó）",
+        examples: [
+          { jp: "<ruby>家<rt>いえ</rt></ruby>に<ruby>帰っ<rt>かえっ</rt></ruby>たら、<ruby>誰も<rt>だれも</rt></ruby>いなかった。", vn: "Khi về nhà thì không có ai cả." },
+          { jp: "<ruby>窓<rt>まど</rt></ruby>を<ruby>開け<rt>ひらけ</rt></ruby>たら、きれいな<ruby>虹<rt>にじ</rt></ruby>が<ruby>見え<rt>みえ</rt></ruby>た。", vn: "Khi mở cửa sổ ra thì thấy cầu vồng đẹp." },
+        ],
+        tip: "たら〜た = dùng たら để diễn tả việc phát hiện bất ngờ sau khi làm xong hành động. Không dùng được với ば hay と trong trường hợp này.",
+      },
+      {
         pattern: "〜てくる（変化）",
         meaning: "... đã/đang (thay đổi đến hiện tại) / Dần dần trở nên... (biến đổi hướng về phía hiện tại)",
         structure: "Ｖて＋くる",
@@ -1135,6 +1155,36 @@ const LESSONS = [
         tip: "切る = làm đến tận cùng, hết sạch. Hay dùng: 食べ切る、使い切る、疲れ切る (mệt bở hơi tai).",
       },
       {
+        pattern: "〜Ｖ-通す",
+        meaning: "Làm đến cùng / Kiên trì đến hết (không bỏ dở giữa chừng)",
+        structure: "V-「ます」 ＋ 通す",
+        examples: [
+          { jp: "<ruby>終電<rt>しゅうでん</rt></ruby>を<ruby>逃し<rt>のがし</rt></ruby>て、<ruby>駅<rt>えき</rt></ruby>から<ruby>家<rt>いえ</rt></ruby>まで2<ruby>時間<rt>じかん</rt></ruby><ruby>歩き<rt>あるき</rt></ruby><ruby>通し<rt>とうし</rt></ruby>た。", vn: "Lỡ chuyến tàu cuối, tôi đã đi bộ từ ga về nhà suốt 2 tiếng." },
+          { jp: "うそを<ruby>一生<rt>いっしょう</rt></ruby><ruby>隠し<rt>かくし</rt></ruby><ruby>通す<rt>とうす</rt></ruby>ことはできない。", vn: "Không thể giấu dối suốt cả đời được." },
+        ],
+        tip: "通す = làm từ đầu đến cuối không dừng. Hay dùng: 歩き通す、やり通す、泣き通す、信じ通す。",
+      },
+      {
+        pattern: "〜づらい",
+        meaning: "Khó... (về mặt tâm lý, cảm thấy ngại/khó xử khi làm)",
+        structure: "V-「ます」 ＋ づらい",
+        examples: [
+          { jp: "あの<ruby>話<rt>はなし</rt></ruby>はうそだった。でも、あの<ruby>人<rt>にん</rt></ruby>には<ruby>本当<rt>ほんとう</rt></ruby>のことを<ruby>言い<rt>いい</rt></ruby>づらいです。", vn: "Chuyện đó là nói dối. Nhưng khó mà nói thật với người đó quá." },
+          { jp: "<ruby>個人的な<rt>こじんてきな</rt></ruby>ことなので、<ruby>職場<rt>しょくば</rt></ruby>の<ruby>人<rt>にん</rt></ruby>には<ruby>頼み<rt>たのみ</rt></ruby>づらいです。", vn: "Vì là chuyện cá nhân nên ngại nhờ người ở chỗ làm." },
+        ],
+        tip: "づらい = khó về mặt tâm lý/cảm xúc. Phân biệt: にくい (khó về mặt vật lý/kỹ thuật). Ví dụ: 読みにくい (chữ khó đọc) vs 言いづらい (ngại nói).",
+      },
+      {
+        pattern: "〜っぽい",
+        meaning: "Có vẻ... / Mang tính chất... (có đặc điểm giống cái gì đó)",
+        structure: "N／V-「ます」 ＋ っぽい",
+        examples: [
+          { jp: "<ruby>彼女<rt>かのじょ</rt></ruby>はわがままばかり<ruby>言って<rt>いって</rt></ruby>、<ruby>子ども<rt>こども</rt></ruby>っぽい<ruby>人<rt>にん</rt></ruby>だ。", vn: "Cô ấy toàn đòi hỏi, là người con nít tính." },
+          { jp: "<ruby>弟<rt>おとうと</rt></ruby>はあきっぽくて、なんでも<ruby>途中<rt>とちゅう</rt></ruby>でやめてしまう。", vn: "Em trai tôi hay chán nản, cái gì cũng bỏ dở giữa chừng." },
+        ],
+        tip: "っぽい = có tính chất/đặc điểm của. Thường mang sắc thái tiêu cực nhẹ. Hay dùng: 子どもっぽい、飽きっぽい、忘れっぽい、水っぽい。",
+      },
+      {
         pattern: "〜Ａ-み",
         meaning: "Chuyển tính từ thành danh từ chỉ cảm giác/trạng thái",
         structure: "A-「い」 ＋ み",
@@ -1143,6 +1193,26 @@ const LESSONS = [
           { jp: "<ruby>田中<rt>たなか</rt></ruby>さんの<ruby>強み<rt>つよみ</rt></ruby>は２カ<ruby>国語<rt>こくご</rt></ruby>が<ruby>話せ<rt>はなせ</rt></ruby>るということです。", vn: "Điểm mạnh của anh Tanaka là có thể nói được 2 ngoại ngữ." },
         ],
         tip: "〜み = danh từ hóa: 悲しい→悲しみ、弱い→弱み、痛い→痛み、深い→深み。Không phải tất cả tính từ đều dùng được み。",
+      },
+      {
+        pattern: "〜助詞＋の（名詞修飾）",
+        meaning: "Trợ từ + の để biến cụm động từ thành cụm danh từ",
+        structure: "N ＋ 助詞 ＋ の ＋ N（省略động từ）",
+        examples: [
+          { jp: "<ruby>恋人<rt>こいびと</rt></ruby>との<ruby>約束<rt>やくそく</rt></ruby>を<ruby>忘れ<rt>わすれ</rt></ruby>た。", vn: "Tôi đã quên lời hẹn với người yêu." },
+          { jp: "<ruby>科学<rt>かがく</rt></ruby>についての<ruby>雑誌<rt>ざっし</rt></ruby>を<ruby>読む<rt>よむ</rt></ruby>。", vn: "Đọc tạp chí về khoa học." },
+        ],
+        tip: "助詞+の = rút gọn mệnh đề quan hệ. 恋人とする約束→恋人との約束. Hay gặp: へのプレゼント、からのメール、についての説明。",
+      },
+      {
+        pattern: "〜連用中止形",
+        meaning: "Dừng ở thể liên dụng để nối hai hành động (như 〜て nhưng trang trọng hơn)",
+        structure: "V-「ます」（bỏ ます）, V-「ます」（bỏ ます）, 〜",
+        examples: [
+          { jp: "<ruby>朝起き<rt>あさおき</rt></ruby>、<ruby>顔<rt>かお</rt></ruby>を<ruby>洗い<rt>あらい</rt></ruby>、<ruby>朝ごはん<rt>あさごはん</rt></ruby>を<ruby>食べた<rt>たべた</rt></ruby>。", vn: "Sáng dậy, rửa mặt, rồi ăn sáng." },
+          { jp: "ドアを<ruby>開け<rt>ひらけ</rt></ruby>、<ruby>中に<rt>なかに</rt></ruby><ruby>入っ<rt>いっっ</rt></ruby>た。", vn: "Mở cửa ra rồi bước vào trong." },
+        ],
+        tip: "連用中止形 = dạng thức trung gian nối các hành động, dùng trong văn viết trang trọng hoặc văn học. Tương đương 〜て trong văn nói.",
       },
     ],
   }
@@ -1300,6 +1370,26 @@ const LESSONS = [
         tip: "たびに nhấn mạnh tính LẶP ĐI LẶP LẠI. Kết quả Y không phải là hệ quả tất yếu của X.",
       },
       {
+        pattern: "〜かわりに",
+        meaning: "Thay vì... / Đổi lại... (thay thế hoặc bù đắp)",
+        structure: "V-る／V-た／N-の ＋ かわりに",
+        examples: [
+          { jp: "<ruby>今日は<rt>こんにちは</rt></ruby><ruby>私<rt>わたし</rt></ruby>が<ruby>料理<rt>りょうり</rt></ruby>をするかわりに、<ruby>皿洗い<rt>さらあらい</rt></ruby>はお<ruby>願い<rt>ねがい</rt></ruby>ね。", vn: "Hôm nay thay vì tôi nấu ăn, thì rửa bát nhờ cậu nhé." },
+          { jp: "<ruby>車<rt>くるま</rt></ruby>で<ruby>行く<rt>いく</rt></ruby>かわりに、<ruby>電車<rt>でんしゃ</rt></ruby>で<ruby>行き<rt>いき</rt></ruby>ましょう。", vn: "Thay vì đi xe hơi, hãy đi tàu điện." },
+        ],
+        tip: "かわりに = thay thế (A thay vì B) hoặc bù đắp (làm A để đổi lại B). Phân biệt với ではなく (không phải là).",
+      },
+      {
+        pattern: "〜から〜にかけて",
+        meaning: "Từ... đến... (khoảng thời gian/không gian không rõ ranh giới)",
+        structure: "N（時間・場所）から N（時間・場所）にかけて",
+        examples: [
+          { jp: "<ruby>今週<rt>こんしゅう</rt></ruby>から<ruby>来週<rt>らいしゅう</rt></ruby>にかけて<ruby>蒸し暑い<rt>むしあつい</rt></ruby><ruby>天気<rt>てんき</rt></ruby>になるでしょう。", vn: "Từ tuần này đến tuần sau thời tiết sẽ oi bức." },
+          { jp: "<ruby>中部地方<rt>ちゅうぶちほう</rt></ruby>から<ruby>近畿地方<rt>きんきちほう</rt></ruby>にかけて<ruby>台風<rt>たいふう</rt></ruby>の<ruby>被害<rt>ひがい</rt></ruby>が<ruby>出た<rt>でた</rt></ruby>。", vn: "Từ vùng Chubu đến vùng Kinki đã có thiệt hại do bão." },
+        ],
+        tip: "から〜にかけて = phạm vi không rõ ranh giới chính xác. Khác với から〜まで (ranh giới rõ ràng).",
+      },
+      {
         pattern: "〜について",
         meaning: "Về... / Liên quan đến... (đề cập chủ đề thảo luận, nghiên cứu)",
         structure: "N ＋ について（は・も・の）",
@@ -1414,6 +1504,26 @@ const LESSONS = [
           { jp: "<ruby>頑張<rt>がんば</rt></ruby>れば<ruby>頑張<rt>がんば</rt></ruby>るほど<ruby>給料<rt>きゅうりょう</rt></ruby>がもらえる<ruby>会社<rt>かいしゃ</rt></ruby>で<ruby>働<rt>はたら</rt></ruby>きたいです。", vn: "Tôi muốn làm ở công ty mà càng cố gắng thì lương càng cao." },
         ],
         tip: "ば〜ほど = mối quan hệ tỷ lệ thuận. Cả X và Y cùng loại từ!",
+      },
+      {
+        pattern: "〜に比べて",
+        meaning: "So sánh với... / So với... (đặt hai thứ cạnh nhau để so sánh)",
+        structure: "N ＋ に比べて／に比べると",
+        examples: [
+          { jp: "<ruby>試験問題<rt>しけんもんだい</rt></ruby>は<ruby>昨年<rt>さくねん</rt></ruby>に<ruby>比べ<rt>くらべ</rt></ruby>て、<ruby>易しく<rt>やさしく</rt></ruby>なった。", vn: "Đề thi so với năm ngoái đã dễ hơn rồi." },
+          { jp: "<ruby>店<rt>みせ</rt></ruby>で<ruby>買う<rt>かう</rt></ruby>のに<ruby>比べ<rt>くらべ</rt></ruby>て、<ruby>通信販売<rt>つうしんはんばい</rt></ruby>は<ruby>便利<rt>べんり</rt></ruby>だが<ruby>欠点<rt>けってん</rt></ruby>もある。", vn: "So với mua ở cửa hàng, mua qua mạng tiện lợi nhưng cũng có nhược điểm." },
+        ],
+        tip: "に比べて = so sánh trực tiếp giữa hai thứ. So sánh: より (hơn - một chiều), に比べて (so sánh hai chiều).",
+      },
+      {
+        pattern: "〜も〜ば〜も",
+        meaning: "Vừa... vừa... (liệt kê nhiều đặc điểm, thường khen hoặc chê đều)",
+        structure: "N1 も A-ければ N2 も A / N1 も V-ば N2 も V",
+        examples: [
+          { jp: "<ruby>彼女<rt>かのじょ</rt></ruby>は<ruby>頭<rt>あたま</rt></ruby>もよければ、<ruby>性格<rt>せいかく</rt></ruby>もいい。", vn: "Cô ấy vừa thông minh vừa có tính cách tốt." },
+          { jp: "この<ruby>店<rt>みせ</rt></ruby>は<ruby>値段<rt>ねだん</rt></ruby>も<ruby>高け<rt>たかけ</rt></ruby>れば、サービスも<ruby>悪い<rt>わるい</rt></ruby>。", vn: "Cửa hàng này vừa đắt tiền vừa dịch vụ tệ." },
+        ],
+        tip: "も〜ば〜も = liệt kê 2 đặc điểm cùng chiều (đều tốt hoặc đều xấu). Cấu trúc đối xứng.",
       },
     ],
   }
@@ -1542,6 +1652,36 @@ const LESSONS = [
         ],
         tip: "〜のに ở cuối = tiếc nuối, thất vọng. Thực tế NGƯỢC với điều muốn.",
       },
+      {
+        pattern: "〜べきだ／べきではない",
+        meaning: "Phải... / Nên... (nghĩa vụ về mặt đạo đức, lẽ phải)",
+        structure: "V-る ＋ べきだ／べきではない（するべき→すべき）",
+        examples: [
+          { jp: "<ruby>約束<rt>やくそく</rt></ruby>は<ruby>守る<rt>まもる</rt></ruby>べきだ。", vn: "Phải tuân thủ lời hứa." },
+          { jp: "おもちゃはまず<ruby>安全<rt>あんぜん</rt></ruby>であるべきだ。", vn: "Đồ chơi trước tiên phải đảm bảo an toàn." },
+        ],
+        tip: "べきだ = lẽ phải, nghĩa vụ đạo đức. Mạnh hơn ほうがいい. Phủ định: べきではない. するべき = すべき.",
+      },
+      {
+        pattern: "〜たらどうか／〜たらどうですか",
+        meaning: "Sao không... thử? / Tại sao không...? (đề xuất, lời khuyên nhẹ)",
+        structure: "V-たら ＋ どうか／どうですか",
+        examples: [
+          { jp: "<ruby>疲れ<rt>つかれ</rt></ruby>ているなら、<ruby>少し<rt>すこし</rt></ruby><ruby>休ん<rt>やすん</rt></ruby>だらどうですか。", vn: "Nếu mệt thì sao không nghỉ một chút?" },
+          { jp: "<ruby>先生<rt>せんせい</rt></ruby>に<ruby>相談<rt>そうだん</rt></ruby>したらどうか。", vn: "Sao không thử bàn với thầy giáo?" },
+        ],
+        tip: "たらどうか = lời khuyên nhẹ nhàng, không áp đặt. Lịch sự hơn: たらどうでしょうか. So sánh: ほうがいい (khuyên mạnh hơn).",
+      },
+      {
+        pattern: "〜ことは〜が",
+        meaning: "... thì đúng là... nhưng (thừa nhận một phần, nhưng có nhưng)",
+        structure: "V-ることは V-る が、〜",
+        examples: [
+          { jp: "<ruby>日本語<rt>にほんご</rt></ruby>が<ruby>話せ<rt>はなせ</rt></ruby>ることは<ruby>話せ<rt>はなせ</rt></ruby>るが、まだ<ruby>上手<rt>じょうず</rt></ruby>じゃない。", vn: "Nói tiếng Nhật thì nói được đấy, nhưng chưa giỏi." },
+          { jp: "<ruby>行く<rt>いく</rt></ruby>ことは<ruby>行く<rt>いく</rt></ruby>が、<ruby>遅く<rt>おそく</rt></ruby>なるかもしれない。", vn: "Đi thì đi đấy, nhưng có thể sẽ muộn." },
+        ],
+        tip: "ことは〜が = thừa nhận một phần sự thật nhưng đưa ra điều kiện hoặc hạn chế. Giống kiểu: thì... đấy, nhưng...",
+      },
     ],
   }
   ,
@@ -1578,6 +1718,26 @@ const LESSONS = [
           { jp: "<ruby>先生<rt>せんせい</rt></ruby>は<ruby>明日<rt>あした</rt></ruby>レポートを<ruby>出<rt>だ</rt></ruby>しなさいって。", vn: "Thầy nói mai nộp bài luận đó." },
         ],
         tip: "って = と言った (khẩu ngữ). Rất tự nhiên trong hội thoại hằng ngày",
+      },
+      {
+        pattern: "〜によると／によれば",
+        meaning: "Theo như... / Theo thông tin từ... (dẫn nguồn tin)",
+        structure: "N ＋ によると／によれば、〜そうだ／〜らしい",
+        examples: [
+          { jp: "<ruby>天気予報<rt>てんきよほう</rt></ruby>によれば、<ruby>明日<rt>あした</rt></ruby>は<ruby>晴れ<rt>はれ</rt></ruby>るらしい。", vn: "Theo như dự báo thời tiết, ngày mai có vẻ sẽ nắng." },
+          { jp: "さっきのニュースによると、<ruby>大き<rt>おおき</rt></ruby>な<ruby>地震<rt>じしん</rt></ruby>があったそうだ。", vn: "Theo như tin tức lúc nãy, nghe nói đã có động đất lớn." },
+        ],
+        tip: "によると／によれば = trích dẫn nguồn. Cuối câu thường có そうだ／らしい. Phân biệt: によって (nguyên nhân/phương tiện).",
+      },
+      {
+        pattern: "〜命令形と／なと（伝言）",
+        meaning: "Bảo rằng hãy... / Nói rằng đừng... (truyền đạt lệnh, lời nhắn)",
+        structure: "V-命令形 と ／ V-な と ＋ 言われた／言った",
+        examples: [
+          { jp: "<ruby>医者<rt>いしゃ</rt></ruby>にお<ruby>酒<rt>さけ</rt></ruby>を<ruby>飲む<rt>のむ</rt></ruby>なといわれた。", vn: "Tôi đã bị bác sĩ nói rằng không được uống rượu." },
+          { jp: "<ruby>先生<rt>せんせい</rt></ruby>にもっと<ruby>勉強<rt>べんきょう</rt></ruby>しろと<ruby>言わ<rt>いわ</rt></ruby>れた。", vn: "Tôi đã bị thầy giáo nói rằng hãy học bài chăm hơn." },
+        ],
+        tip: "命令形と言う = truyền đạt lời lệnh trực tiếp. Hay dùng: しろと言われた, するなと言われた, するようにと言われた.",
       },
     ],
   }
@@ -1756,6 +1916,16 @@ const LESSONS = [
         ],
         tip: "ばかりだ(2) = tất cả đã chuẩn bị xong, còn mỗi việc X là xong. Nghĩa TÍCH CỰC.",
       },
+      {
+        pattern: "〜てばかりいる",
+        meaning: "Cứ mãi... / Chỉ toàn... (làm một việc liên tục, thường mang ý chê)",
+        structure: "V-て ＋ ばかりいる",
+        examples: [
+          { jp: "<ruby>彼は<rt>かれは</rt></ruby><ruby>遊んで<rt>あそんで</rt></ruby>ばかりいて、<ruby>全然<rt>ぜんぜん</rt></ruby><ruby>勉強<rt>べんきょう</rt></ruby>しない。", vn: "Anh ta cứ mãi chơi, không chịu học hành gì cả." },
+          { jp: "<ruby>心配<rt>しんぱい</rt></ruby>してばかりいても<ruby>仕方<rt>しかた</rt></ruby>がない。", vn: "Cứ mãi lo lắng cũng chẳng ích gì." },
+        ],
+        tip: "てばかりいる = hành động lặp đi lặp lại quá mức, thường mang ý phê phán. So sánh: てばかりだ (cùng nghĩa, ngắn hơn).",
+      },
     ],
   }
   ,
@@ -1804,6 +1974,16 @@ const LESSONS = [
           { jp: "もう<ruby>一度<rt>いちど</rt></ruby><ruby>説明<rt>せつめい</rt></ruby>していただけませんか。", vn: "Bạn có thể giải thích lại một lần nữa không ạ?" },
         ],
         tip: "いただけませんか = nhờ vả lịch sự. So sánh: てください < てもらえますか < ていただけませんか",
+      },
+      {
+        pattern: "〜てもらいたい／〜させてもらいたい",
+        meaning: "Muốn nhờ ai làm... / Muốn được phép làm... (yêu cầu lịch sự)",
+        structure: "V-て ＋ もらいたい／いただきたい",
+        examples: [
+          { jp: "この<ruby>書類<rt>しょるい</rt></ruby>を<ruby>明日<rt>あした</rt></ruby>までに<ruby>確認し<rt>かくにんし</rt></ruby>てもらいたいのですが。", vn: "Tôi muốn nhờ anh xác nhận tài liệu này trước ngày mai." },
+          { jp: "<ruby>少し<rt>すこし</rt></ruby><ruby>早退<rt>そうたい</rt></ruby>させてもらいたいのですが。", vn: "Tôi muốn được phép về sớm một chút." },
+        ],
+        tip: "てもらいたい = muốn nhờ (lịch sự). Formal hơn: ていただきたい. させてもらいたい = muốn được phép tự làm.",
       },
       {
         pattern: "〜ために（目的）",
@@ -1946,6 +2126,16 @@ const LESSONS = [
           { jp: "<ruby>経済成長<rt>けいざいせいちょう</rt></ruby>にともなって、<ruby>環境問題<rt>かんきょうもんだい</rt></ruby>が<ruby>深刻<rt>しんこく</rt></ruby>になった。", vn: "Cùng với tăng trưởng kinh tế, vấn đề môi trường trở nên nghiêm trọng." },
         ],
         tip: "にともなって = thay đổi kéo theo. Thường dùng trong văn viết/trang trọng. Nhấn mạnh hệ quả.",
+      },
+      {
+        pattern: "〜といい（１）〜といい（２）",
+        meaning: "Dù là... hay là... (đưa ví dụ để nhấn mạnh tất cả đều như vậy)",
+        structure: "N1 といい N2 といい、〜",
+        examples: [
+          { jp: "デザインといい、<ruby>品質<rt>ひんしつ</rt></ruby>といい、この<ruby>商品<rt>しょうひん</rt></ruby>は<ruby>最高<rt>さいこう</rt></ruby>だ。", vn: "Dù là thiết kế hay chất lượng, sản phẩm này đều tuyệt vời." },
+          { jp: "<ruby>料理<rt>りょうり</rt></ruby>といい<ruby>掃除<rt>そうじ</rt></ruby>といい、<ruby>彼女<rt>かのじょ</rt></ruby>は<ruby>完璧<rt>かんぺき</rt></ruby>な<ruby>主婦<rt>しゅふ</rt></ruby>だ。", vn: "Dù là nấu ăn hay dọn dẹp, cô ấy đều là người nội trợ hoàn hảo." },
+        ],
+        tip: "N1 といい N2 といい = đưa ra 2 ví dụ để nói cả hai đều như vậy. Mang sắc thái khen ngợi hoặc phê phán.",
       },
     ],
   }
