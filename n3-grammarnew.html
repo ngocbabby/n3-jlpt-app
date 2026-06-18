@@ -833,6 +833,15 @@ const LESSONS = [
         ],
         tip: "必ずしも〜ない = phủ định suy luận đơn giản hóa. Hay xuất hiện trong văn viết, bài luận, tranh luận.",
       },
+      {
+        pattern: "ご<ruby>存知<rt>ぞんじ</rt></ruby>のように…",
+        meaning: "Như mọi người đều biết... / Như đã nói... (mở đầu bằng điều mọi người đã biết)",
+        structure: "ご存知のように ／ ～のように／わかるように",
+        examples: [
+          { jp: "ご<ruby>存知<rt>ぞんじ</rt></ruby>のように、<ruby>来年<rt>らいねん</rt></ruby>から<ruby>海外<rt>かいがい</rt></ruby>にも<ruby>支店<rt>してん</rt></ruby>を<ruby>出<rt>だ</rt></ruby>します。", vn: "Như mọi người đã biết, từ năm sau chúng tôi sẽ mở chi nhánh ở nước ngoài." },
+        ],
+        tip: "Dùng khi muốn nhắc lại điều người nghe đã biết, tạo sự đồng thuận",
+      },
     ],
   }
   ,
@@ -1479,6 +1488,15 @@ const LESSONS = [
         tip: "くらいなら = bày tỏ sự không thích với X mạnh mẽ. Y thường là điều bất thường/cực đoan.",
       },
       {
+        pattern: "〜に<ruby>限<rt>かぎ</rt></ruby>る",
+        meaning: "...là tốt nhất / Không gì bằng... (lời khuyên chủ quan)",
+        structure: "Ｎ ／ Ｖる／ない＋に限る",
+        examples: [
+          { jp: "<ruby>夏<rt>なつ</rt></ruby>の<ruby>仕事<rt>しごと</rt></ruby><ruby>終<rt>お</rt></ruby>わりはやっぱり<ruby>冷<rt>ひ</rt></ruby>えたビールに<ruby>限<rt>かぎ</rt></ruby>るよね。", vn: "Sau giờ làm việc mùa hè thì không gì tuyệt bằng bia lạnh nhỉ!" },
+        ],
+        tip: "に限る = lời khuyên dứt khoát từ kinh nghiệm cá nhân. Mang tính chủ quan cao.",
+      },
+      {
         pattern: "〜に対して",
         meaning: "Trong khi A thì... / Đối lập với... (A và B có tính chất trái ngược)",
         structure: "普通形(Ｎだ＋な) ／ Ｎ＋に対して",
@@ -1486,6 +1504,24 @@ const LESSONS = [
           { jp: "<ruby>兄<rt>あに</rt></ruby>が<ruby>活発<rt>かっぱつ</rt></ruby>なのに<ruby>対<rt>たい</rt></ruby>して、<ruby>弟<rt>おとうと</rt></ruby>はおとなしい<ruby>性格<rt>せいかく</rt></ruby>だ。", vn: "Trong khi anh trai năng động thì em trai lại có tính cách trầm lặng." },
         ],
         tip: "に対して ở đây dùng để ĐỐI LẬP. Khác với に対して nghĩa 'hướng về ai'.",
+      },
+      {
+        pattern: "〜<ruby>反面<rt>はんめん</rt></ruby>",
+        meaning: "Mặt khác... / Nhưng ngược lại... (cùng một chủ thể có cả hai mặt tốt/xấu)",
+        structure: "普通形(Ｎだ＋である) ／ Ａだ＋な＋反面",
+        examples: [
+          { jp: "あの<ruby>店<rt>みせ</rt></ruby>の<ruby>商品<rt>しょうひん</rt></ruby>は、<ruby>安<rt>やす</rt></ruby>い<ruby>反面<rt>はんめん</rt></ruby>、<ruby>質<rt>しつ</rt></ruby>はあまりよくありません。", vn: "Hàng của cửa hàng đó rẻ nhưng ngược lại chất lượng không tốt lắm." },
+        ],
+        tip: "反面 = 'nhưng mặt khác'. X thường tốt, Y thường xấu (hoặc ngược lại)",
+      },
+      {
+        pattern: "〜<ruby>一方<rt>いっぽう</rt></ruby>（で）",
+        meaning: "Trong khi đó... / Mặt khác... (hai sự thật song song tồn tại)",
+        structure: "普通形(Ｎだ＋である) ＋一方（で）",
+        examples: [
+          { jp: "<ruby>日本<rt>にほん</rt></ruby>の<ruby>生活<rt>せいかつ</rt></ruby>は<ruby>楽<rt>たの</rt></ruby>しい<ruby>一方<rt>いっぽう</rt></ruby>で、<ruby>大変<rt>たいへん</rt></ruby>なこともある。", vn: "Cuộc sống ở Nhật vui nhưng mặt khác cũng có những điều vất vả." },
+        ],
+        compare: "反面 = trái ngược nhau (1 tốt 1 xấu); 一方 = hai thực tế song song",
       },
       {
         pattern: "〜というより",
@@ -1702,6 +1738,15 @@ const LESSONS = [
         tip: "とのことだ thường dùng trong thư từ/văn bản trang trọng hơn ということだ",
       },
       {
+        pattern: "〜と<ruby>言<rt>い</rt></ruby>われている",
+        meaning: "Được cho là... / Người ta nói rằng... (thông tin nhiều người biết)",
+        structure: "普通形＋と言われている",
+        examples: [
+          { jp: "トマトは<ruby>目<rt>め</rt></ruby>に<ruby>役<rt>やく</rt></ruby>に<ruby>立<rt>た</rt></ruby>つと<ruby>言<rt>い</rt></ruby>われている。", vn: "Cà chua được cho là tốt cho mắt." },
+        ],
+        tip: "と言われている = kiến thức chung được nhiều người tin tưởng. Không rõ nguồn cụ thể.",
+      },
+      {
         pattern: "〜とか",
         meaning: "Nghe nói... / Hình như... (thông tin nghe được, không chắc chắn)",
         structure: "普通形＋とか",
@@ -1757,6 +1802,15 @@ const LESSONS = [
           { jp: "<ruby>入学試験<rt>にゅうがくしけん</rt></ruby>なので、<ruby>簡単<rt>かんたん</rt></ruby>なわけがない。", vn: "Đây là kỳ thi đầu vào nên không thể dễ được." },
         ],
         tip: "はずがない = không thể (logic/kỳ vọng); わけがない = không thể (lý do hiển nhiên). Gần nghĩa.",
+      },
+      {
+        pattern: "〜とは<ruby>限<rt>かぎ</rt></ruby>らない",
+        meaning: "Không nhất thiết... / Chưa chắc... (không thể khẳng định tuyệt đối)",
+        structure: "普通形(だ)＋とは限らない",
+        examples: [
+          { jp: "<ruby>雑誌<rt>ざっし</rt></ruby>や<ruby>新聞<rt>しんぶん</rt></ruby>に<ruby>書<rt>か</rt></ruby>いてあることがいつも<ruby>本当<rt>ほんとう</rt></ruby>だとは<ruby>限<rt>かぎ</rt></ruby>らない。", vn: "Những gì được viết trên tạp chí hay báo chí không nhất thiết lúc nào cũng đúng." },
+        ],
+        tip: "とは限らない = 'không nhất thiết', phủ nhận suy nghĩ có vẻ đúng nhưng thực ra không tuyệt đối",
       },
       {
         pattern: "〜わけではない",
