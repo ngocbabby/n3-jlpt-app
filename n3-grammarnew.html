@@ -1978,363 +1978,7 @@ const LESSONS = [
         compare: "尊敬語（tôn kính, nâng cao người khác）：いらっしゃる、おっしゃる、なさる　vs　謙譲語（khiêm tốn, hạ thấp bản thân）：まいる、いただく、もうす",
       },
     ]
-  },
-];
-
-// Color palette for lesson numbers
-const COLORS = ["#ff6b6b","#ffd93d","#6bcb77","#4d96ff","#c77dff","#ff9a3c"];
-
-let masteredSet = new Set(JSON.parse(localStorage.getItem('n3_mastered') || '[]'));
-let activeFilter = 'all';
-let searchTerm = '';
-
-function saveMastered() {
-  try { localStorage.setItem('n3_mastered', JSON.stringify([...masteredSet])); } catch(e) {}
-}
-
-function totalGrammars() {
-  return LESSONS.reduce((s, l) => s + l.grammars.length, 0);
-}
-
-function updateProgress() {
-  const total = totalGrammars();
-  const done = masteredSet.size;
-  const pct = total > 0 ? Math.round(done / total * 100) : 0;
-  document.getElementById('progressText').textContent = `${done} / ${total} đã thuộc`;
-  document.getElementById('percentText').textContent = `${pct}%`;
-  document.getElementById('progressFill').style.width = pct + '%';
-}
-
-function buildCard(lesson, colorIdx) {
-  const color = lesson.color || COLORS[colorIdx % COLORS.length];
-  const card = document.createElement('div');
-  card.className = 'lesson-card';
-  card.dataset.cat = (lesson.cat || []).join(' ');
-  card.dataset.id = lesson.id;
-
-  // Header
-  const hdr = document.createElement('div');
-  hdr.className = 'lesson-header';
-  hdr.innerHTML = `
-    <div class="lesson-num" style="background:${color}22;color:${color}">${lesson.id}</div>
-    <div>
-      <div class="lesson-title">${lesson.title}</div>
-      <div class="lesson-subtitle">${lesson.subtitle}</div>
-    </div>
-    <div class="lesson-toggle">▼</div>
-  `;
-  hdr.addEventListener('click', () => {
-    card.classList.toggle('open');
-  });
-  card.appendChild(hdr);
-
-  // Body
-  const body = document.createElement('div');
-  body.className = 'lesson-body';
-
-  lesson.grammars.forEach((g, gi) => {
-    const nodeId = `${lesson.id}-${gi}`;
-    const isMastered = masteredSet.has(nodeId);
-
-    const node = document.createElement('div');
-    node.className = 'grammar-node';
-    node.style.borderColor = color;
-
-    let examplesHtml = '';
-    if (g.examples && g.examples.length) {
-      examplesHtml = `<div class="examples-label">📝 Ví dụ</div>`;
-      g.examples.forEach(ex => {
-        examplesHtml += `<div class="example">
-          <div class="jp">${ex.jp}</div>
-          <div class="vn">→ ${ex.vn}</div>
-        </div>`;
-      });
-    }
-
-    const tipHtml = g.tip ? `<div class="memory-tip">${g.tip}</div>` : '';
-    const compareHtml = g.compare ? `<div class="compare-note">${g.compare}</div>` : '';
-
-    node.innerHTML = `
-      <div class="grammar-pattern-row" style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
-        <div class="grammar-pattern" style="color:${color};flex:1">${g.pattern}</div>
-        <button class="g-tts-btn" title="Đọc" style="background:${color}22;border:1.5px solid ${color}44;color:${color};border-radius:8px;padding:4px 8px;font-size:.85rem;cursor:pointer;flex-shrink:0">🔊</button>
-      </div>
-      <span class="meaning-tag" style="background:${color}22;color:${color}">意味</span>
-      <div class="grammar-meaning">${g.meaning}</div>
-      ${g.structure ? `<div class="grammar-structure">📐 ${g.structure}</div>` : ''}
-      ${examplesHtml}
-      ${tipHtml}
-      ${compareHtml}
-      <button class="mastered-btn ${isMastered ? 'done' : ''}" data-nid="${nodeId}">
-        ${isMastered ? '✅ Đã thuộc' : '☐ Đánh dấu thuộc'}
-      </button>
-    `;
-
-    node.querySelector('.g-tts-btn').addEventListener('click', (e) => {
-      e.stopPropagation();
-      const btn = e.currentTarget;
-      if (window.speechSynthesis.speaking) {
-        window.speechSynthesis.cancel();
-        btn.textContent = '🔊';
-      } else {
-        readGrammarCard(g);
-        btn.textContent = '⏹';
-        const onEnd = () => { btn.textContent = '🔊'; };
-        window.speechSynthesis.addEventListener('end', onEnd, {once:true});
-      }
-    });
-
-    node.querySelector('.mastered-btn').addEventListener('click', (e) => {
-      e.stopPropagation();
-      const nid = e.currentTarget.dataset.nid;
-      if (masteredSet.has(nid)) {
-        masteredSet.delete(nid);
-        e.currentTarget.textContent = '☐ Đánh dấu thuộc';
-        e.currentTarget.classList.remove('done');
-      } else {
-        masteredSet.add(nid);
-        e.currentTarget.textContent = '✅ Đã thuộc';
-        e.currentTarget.classList.add('done');
-      }
-      saveMastered();
-      updateProgress();
-    });
-
-    body.appendChild(node);
-  });
-
-  card.appendChild(body);
-  return card;
-}
-
-function render() {
-  const grid = document.getElementById('lessonsGrid');
-  grid.innerHTML = '';
-  let shown = 0;
-  LESSONS.forEach((lesson, idx) => {
-    const catMatch = activeFilter === 'all' || (lesson.cat || []).includes(activeFilter);
-    const textMatch = searchTerm === '' ||
-      lesson.title.toLowerCase().includes(searchTerm) ||
-      lesson.subtitle.toLowerCase().includes(searchTerm) ||
-      lesson.grammars.some(g =>
-        g.pattern.includes(searchTerm) ||
-        g.meaning.toLowerCase().includes(searchTerm) ||
-        (g.tip || '').toLowerCase().includes(searchTerm)
-      );
-    if (catMatch && textMatch) {
-      grid.appendChild(buildCard(lesson, idx));
-      shown++;
-    }
-  });
-  if (shown === 0) {
-    grid.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-dim);grid-column:1/-1">🔍 Không tìm thấy kết quả phù hợp</div>';
-  }
-  updateProgress();
-}
-
-// Filter buttons
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    activeFilter = btn.dataset.cat;
-    render();
-  });
-});
-
-// Search
-document.getElementById('searchInput').addEventListener('input', (e) => {
-  searchTerm = e.target.value.toLowerCase().trim();
-  render();
-});
-
-render();
-
-// ═══════════════════════════════════════════════════
-// EXAM DATA
-// ═══════════════════════════════════════════════════
-const GRAMMAR_EXAM_DATA = [
-  {
-    id: "12-2010", label: "12/2010",
-    m1: [
-      {q:"今日は風が強くて、庭の木が今にも（　）。",opts:["折れています","折れそうです","折れたと思います","折れたんです"],ans:1,exp:"今にも〜そうです = sắp sửa... (quan sát trực tiếp)"},
-      {q:"このテレビドラマは人気が出なかった（　）、全20回の放送予定だったものが、10回で終わってしまった。",opts:["たびに","ために","なかに","ように"],ans:1,exp:"〜ために = vì lý do... (nguyên nhân)"},
-      {q:"9月の会社説明会の日程を（　）いたします。",opts:["知らせ","知らせて","お知らせ","お知らせして"],ans:2,exp:"お〜します = kính ngữ khiêm nhường (謙譲語)"},
-      {q:"子どもだ子どもだと思っていた息子も、明日から（　）大学生になります。",opts:["まだ","いつか","しだいに","とうとう"],ans:3,exp:"とうとう = cuối cùng cũng... (sau bao lâu chờ đợi)"},
-      {q:"A「沖縄旅行、どうだった？」B「沖縄は、旅行の（　）ずっと天気がよくて、毎日海で遊べたよ。」",opts:["あいだじゅう","うちには","なかで","ころまでに"],ans:0,exp:"〜あいだじゅう = suốt trong khoảng thời gian..."},
-      {q:"弟と妹がいると集中できないから、今日は二人が（　）うちに、宿題をやってしまおう。",opts:["帰ってこない","帰っていかない","帰ってこなかった","帰っていかなかった"],ans:0,exp:"〜ないうちに = trước khi... xảy ra (tranh thủ lúc chưa)"},
-      {q:"学生「先生、日本語で作文を書いたのですが、わたしの作文を（　）。」先生「ええ、いいですよ。」",opts:["見たいでしょうか","見てもよろしいでしょうか","見たらいかがですか","見ていただけませんか"],ans:3,exp:"〜ていただけませんか = xin hãy... (lịch sự nhất, nhờ vả người trên)"},
-      {q:"山下「ねえ、わたし、この問題全然わかんないんだけど、田中さん、解けた？」田中「わたしに（　）じゃない。わたしが数学苦手なの知ってるでしょ。」",opts:["解けない","解けないに違いない","解けるはずがない","解くことができない"],ans:2,exp:"〜はずがない = không thể nào... (theo lý luận là không thể)"},
-      {q:"「私たちが作ったABCこども新聞は、すべての漢字に振り仮名をつけてあるので、小学1年生からでも読める（　）。」",opts:["ことによります","ことにあります","ようになっています","ようになさっています"],ans:2,exp:"〜ようになっています = đã trở nên có thể... (kết quả sau quá trình)"},
-      {q:"上田「来週、兄の誕生日なんだけど、プレゼントに何を買おうかな。」山本「ネクタイでも買って（　）？上田さんからのプレゼント、お兄さん、喜ぶと思うよ。」",opts:["もらってもいい","もらったらどう","あげてもいい","あげたらどう"],ans:3,exp:"〜たらどう = thử... thì sao? (gợi ý nhẹ nhàng)"},
-      {q:"妻「この前の試合、あなたがけがしなかったら、優勝できたかもねえ。」夫「けがをしなかったら、4位くらいには（　）、それでもやっぱり優勝はできなかったと思うよ。」",opts:["なれたらしいし","なりたかったらしいし","なれただろうけど","なりたかったんだろうけど"],ans:2,exp:"〜ただろうけど = có lẽ đã... nhưng (giả định quá khứ không xảy ra)"},
-      {q:"先輩「さっきの会議で話に出た営業の仕事を、たぶん山川部長は、君に（　）？」後輩「えっ、そうなんでしょうか。」",opts:["やらせるつもりじゃない","やられるつもりじゃない","やらされるんじゃない","やれるんじゃない"],ans:2,exp:"〜させられる = bị ép buộc làm... (thụ động sai khiến)"},
-      {q:"わたしの気持ちは、きっとあなたにはわからないだろうし、あなたに（　）。",opts:["わかりたくもない","わかってほしくもない","わかりたくはないだろう","わかってほしくはないだろう"],ans:1,exp:"〜てほしくない = không muốn ai đó làm gì (phủ định 〜てほしい)"}
-    ]
-  },
-  {
-    id: "12-2018", label: "12/2018",
-    m1: [
-      {q:"田中「先輩、来月の発表会の準備はどうですか。」先輩「まあまあですね。田中さんも（　）、手伝ってもらえると助かるけど。」田中「もちろんです。ぜひ手伝わせてください。」",opts:["よかったら","よくなければ","よかったのに","よくなかったら"],ans:0,exp:"〜たら = nếu... (điều kiện lịch sự để đề nghị)"},
-      {q:"（アナウンス）「ただいまより、本日のコンサートを始めます。演奏（　）は、拍手でお迎えください。」",opts:["してくる人","してくる方","される人","される方"],ans:3,exp:"〜される方 = kính ngữ bị động + 方 (người biểu diễn → kính trọng)"},
-      {q:"先生「どうしたんですか。」学生「実は最近、体の調子が悪くて、薬を飲んでいるんですが、（　）ぜんぜんよくならなくて。」",opts:["飲めば飲むほど","飲んでも飲んでも","飲んだり飲まなかったりで","飲めば飲まないほど"],ans:1,exp:"〜ても〜ても = dù... đến thế nào cũng không... (nhấn mạnh nỗ lực mà không kết quả)"},
-      {q:"（職場で）「来月から始まる新しいプロジェクトは、私（　）任されることになった。」",opts:["に","を","が","で"],ans:0,exp:"〜に任される = được giao phó cho... (đối tượng nhận ủy thác)"},
-      {q:"先生「ホワイトさんは初めて相撲を見てどうでしたか。」ホワイト「試合（　）もちろん面白かったですが、観客の方々の応援の声もすごくて、感動しました。」",opts:["にとって","はもとより","によって","にしたら"],ans:1,exp:"〜はもとより = không chỉ... mà cả... (điều hiển nhiên cộng thêm)"},
-      {q:"（病院で）患者「先生、退院できますか。」医者「そうですね。あと1週間ほど（　）、退院できますよ。」",opts:["すれば","しても","するなら","するほど"],ans:0,exp:"〜ば〜できる = nếu làm thì có thể..."},
-      {q:"山田「林さん、昨日電話したんですけど、出なかったですよね。」林「すみません。昨日は一日外出していて、帰ったときには（　）。」",opts:["もう夜になっていました","まだ夜になっていません","もう夜になってきました","まだ夜になってきません"],ans:0,exp:"もう〜ていました = đã... rồi (trạng thái hoàn thành khi trở về)"},
-      {q:"（病院の受付で）受付「田中さん、ちょっとお待ちください。先生が（　）からご案内します。」田中「はい、わかりました。」",opts:["お呼びします","お呼びになります","呼んでいただきます","呼んでさしあげます"],ans:0,exp:"お〜します = kính ngữ khiêm nhường (người nói làm cho người khác)"},
-      {q:"ケビン「先週の映画、どうでした？」アン「とても感動して、（　）くらいでした。」ケビン「それはよかった。」",opts:["泣いてしまいそうになった","泣いてしまいそうになる","泣けてしまいそうになった","泣けてしまいそうになる"],ans:0,exp:"〜そうになった = suýt... (gần như đã xảy ra nhưng không)"},
-      {q:"A「今日の試合、応援に行けなくてごめん。」B「いいよ。（　）結果がよければそれで十分だから。」",opts:["応援に来てくれなくても","応援に来てくれるなら","応援に来てくれなければ","応援に来てくれるのに"],ans:0,exp:"〜なくても = dù không... cũng (điều kiện nhượng bộ)"},
-      {q:"（会社で）部長「鈴木くん、今度のプレゼン、うまくいくといいね。」鈴木「ありがとうございます。（　）ように、精一杯がんばります。」",opts:["うまくいける","うまくいきます","うまくいく","うまくいける"],ans:2,exp:"〜ように + 頑張る = cố gắng để... (mục tiêu của nỗ lực)"},
-      {q:"（電話で）客「すみません。今日の３時に予約しているんですが、30分ほど（　）んですが、大丈夫でしょうか。」",opts:["遅れそうな","遅れたような","遅れているような","遅れてしまいそうな"],ans:3,exp:"〜てしまいそうだ = có vẻ sẽ... (kết quả không mong muốn sắp xảy ra)"},
-      {q:"A「来週の旅行、楽しみだね。」B「そうだね。ただ、天気が（　）いいんだけど。」",opts:["よければ","よかったら","よくなれば","よくなったら"],ans:0,exp:"〜ければいい = nếu... thì tốt (mong muốn/điều kiện)"}
-    ]
-  },
-  {
-    id: "12-2021", label: "12/2021",
-    m1: [
-      {q:"母は、留学している兄と久しぶりに電話で話して、とてもうれしそうな顔（　）していた。",opts:["へ","が","を","の"],ans:3,exp:"顔をする = có vẻ mặt... (biểu đạt cảm xúc qua nét mặt)"},
-      {q:"長い間建設中だったABCビルが、昨日（　）完成した。",opts:["ずっと","今にも","次第に","ついに"],ans:3,exp:"ついに = cuối cùng cũng... (sau thời gian dài chờ đợi)"},
-      {q:"（電話で）店長「大下さん、急で申し訳ないんですけど、明日出勤することはできますか。」大下「午後（　）行けますが、それでも大丈夫ですか。」",opts:["でなら","からなら","へでも","まででも"],ans:1,exp:"〜からなら = nếu từ... thì (điều kiện giới hạn thời gian)"},
-      {q:"音楽会は、あすの11時からさくら広場（　）開かれます。",opts:["に対して","によって","について","において"],ans:3,exp:"〜において = tại... (chỉ địa điểm, văn phong trang trọng)"},
-      {q:"去年姉に子供が生まれた。2、3か月に1回ぐらい会っているが、会う（　）大きくなっていて、びっくりする。",opts:["たびに","うちに","間に","前に"],ans:0,exp:"〜たびに = mỗi lần... (lặp lại sự kiện)"},
-      {q:"私は10年前から同じかばんを（　）続けている。",opts:["使う","使い","使おう","使った"],ans:1,exp:"Vます形＋続ける = tiếp tục làm... (動詞連用形接続)"},
-      {q:"田中さんがわたしの方に（　）見えました。",opts:["走っていくことが","走ってくることが","走っていくのが","走ってくるのが"],ans:3,exp:"〜てくる＋のが見える = nhìn thấy ai đó đang chạy lại (hướng về phía người nói)"},
-      {q:"山田「ジョンくんは、毎日バスケットボールの練習をしているんですか。」ジョン「はい。早く試合に（　）なりたいんです。」",opts:["出られるように","出られるために","出させるように","出させるために"],ans:0,exp:"〜ように＋なりたい = muốn trở nên có thể... (mục tiêu khả năng)"},
-      {q:"今朝はすごい雨だったが、今はもう（　）",opts:["降っている","降っていない","降る","降らない"],ans:1,exp:"もう〜ていない = không còn... nữa (trạng thái đã thay đổi)"},
-      {q:"西川「あ、森さん、携帯電話がポケットから（　）よ。」森「本当だ。ありがとうございます。」",opts:["落ちるそうです","落ちそうです","落とすそうです","落としそうです"],ans:1,exp:"〜そうです = có vẻ sắp... (quan sát thấy trực tiếp, nguy cơ xảy ra)"},
-      {q:"A「今度駅前に新しいケーキ屋さんができる（　）ね。」B「本当ですか。楽しみですね。」",opts:["でしょう","といい","ほうがいい","みたいだ"],ans:3,exp:"〜みたいだ = hình như... (suy đoán từ thông tin nghe/đọc được)"},
-      {q:"この花は、上が乾いたら水をやる必要があるが、（　）。水が多いと根が腐ってしまう。",opts:["やりすぎるのもよくない","やらなくていいのがいい","やってやるのもよくない","やらないでおくのがいい"],ans:0,exp:"〜すぎる＋のもよくない = làm quá cũng không tốt"},
-      {q:"（患者が病院に電話をする）患者「すみません。10時に予約した田中と申しますが、11時に（　）。」",opts:["変えましょうか","変えたほうがいいですか","変えていただきましょう","変えていただけないでしょうか"],ans:3,exp:"〜ていただけないでしょうか = liệu có thể làm ơn... không ạ? (lịch sự tối đa)"}
-    ]
-  },
-  {
-    id: "7-2019", label: "7/2019",
-    m1: [
-      {q:"今朝、気持ちよく起きられたのは、昨晩しっかり眠れた（　）だと思う。",opts:["せい","こと","おかげ","ため"],ans:2,exp:"〜おかげだ = nhờ có... mà (nguyên nhân tốt)"},
-      {q:"新しい趣味を（　）と思って、先週から料理を習い始めた。",opts:["持とう","持つ","持つよう","持った"],ans:0,exp:"〜（よ）うと思って = nghĩ muốn làm gì đó (ý định → hành động)"},
-      {q:"A「最近、料理にはまっているって本当？」B「うん。毎日作って（　）、料理が楽しくなってきた。」",opts:["いるうちに","いるためには","いるためのに","いるだけあって"],ans:0,exp:"〜ているうちに = trong khi làm... thì dần dần... (thay đổi không nhận ra)"},
-      {q:"（駅で）A「すみません。地下鉄の乗り方を教えていただけますか。」B「ええ、いいですよ。まずここに（　）切符を買います。」",opts:["入ったとき","入る前に","入ってから","入るために"],ans:1,exp:"〜前に = trước khi... (trình tự hành động)"},
-      {q:"あの店のラーメンは、並んで（　）食べる価値がある。",opts:["でも","さえ","まで","こそ"],ans:2,exp:"〜まで = đến mức... (mức độ cực đoan, dù phải xếp hàng cũng đáng ăn)"},
-      {q:"彼女はフランス語（　）、スペイン語も話せる。",opts:["だけでなく","のほかに","に加えて","はもちろん"],ans:3,exp:"〜はもちろん = không chỉ... mà cả... (điều hiển nhiên cộng thêm)"},
-      {q:"この歌を聞く（　）、子どものころを思い出す。",opts:["ために","ものを","たびに","ことで"],ans:2,exp:"〜たびに = mỗi khi... (lặp lại sự việc)"},
-      {q:"（会社で）上司「田中さん、明日の会議の資料、準備できてる？」田中「あ、すみません。今日中に（　）。」",opts:["準備いたします","準備なさいます","準備させていただきます","準備していただきます"],ans:2,exp:"〜させていただきます = xin phép được làm... (kính ngữ khiêm nhường nhất)"},
-      {q:"A「最近、仕事が忙しくて、なかなか勉強できないんだ。」B「忙しくて大変だね。（　）、少しでも続けることが大切だよ。」",opts:["それどころか","それでも","そうしたら","それなのに"],ans:1,exp:"それでも = nhưng dù vậy... (tiếp tục bất chấp khó khăn)"},
-      {q:"A「部長、もう一度確認させてください。」B「うん。この書類を（　）いいんだよね。」",opts:["送ればかり","送るだけで","送っただけで","送れば"],ans:3,exp:"〜ればいい = chỉ cần làm... là đủ"},
-      {q:"（バス停で）乗客「すみません。市民病院に行くにはこのバス（　）乗ればいいですか。」",opts:["だけに","でさえ","にだけ","でいい"],ans:3,exp:"〜でいい = bằng... cũng được (chấp nhận phương tiện đơn giản)"},
-      {q:"今の若者は、親に（　）のが当たり前だと思っているのだろうか。",opts:["養われる","養わせる","養ってもらう","養わせてもらう"],ans:2,exp:"〜てもらう = được ai đó làm cho mình (hướng lợi ích về phía người nói)"},
-      {q:"（掲示板より）「緊急の場合は（　）警備室に連絡してください。」",opts:["すぐ","まず","必ず","ただちに"],ans:3,exp:"直ちに = ngay lập tức (văn phong trang trọng, khẩn cấp)"}
-    ]
-  },
-  {
-    id: "7-2021", label: "7/2021",
-    m1: [
-      {q:"両親に買ってもらった着物（　）大学の卒業式に出席した。",opts:["を","が","で","に"],ans:2,exp:"〜で = bằng/mặc... (phương tiện, trang phục)"},
-      {q:"本を読んでいたら、（　）5時間も経ってしまった。",opts:["そろそろ","だんだん","ようやく","いつのまにか"],ans:3,exp:"いつのまにか = không biết từ lúc nào... (không nhận ra thời gian trôi)"},
-      {q:"日わたしに（　）。今一番大切なものは、飼っている犬です。",opts:["対して","比べて","おいて","とって"],ans:3,exp:"〜にとって = đối với... (quan điểm/nhận định chủ quan của ai đó)"},
-      {q:"A「部長の田中さんとのお会いになるのは今日が初めてですね。」B「はい。山下課長（　）お目にかかったことがございませんので。」",opts:["にだけ","にしか","でしか","だけ"],ans:1,exp:"〜にしか〜ません = chỉ... mà thôi (giới hạn + phủ định)"},
-      {q:"この図書館は、入口の近くに、返す本を入れるためのブックポストがあり、図書館が開いている（　）、本を返すことができる。",opts:["ときでも","まで","間だからが","ところなら"],ans:0,exp:"〜ときでも = kể cả khi... cũng (bất kể thời gian nào)"},
-      {q:"A「今夜は晴れているから星がよく見えるよ。」B「わあ、本当だ。（　）きれいなんだろう。」",opts:["ときも","なんか","なんて","なんでも"],ans:2,exp:"なんて〜だろう = thật là... ! (cảm thán, ngạc nhiên trước điều tuyệt đẹp)"},
-      {q:"展覧会に知り合いの絵がかざられるので、わたしも見に（　）と思う。",opts:["行こうか","行かないか","行くのか","行ったか"],ans:0,exp:"〜（よ）うかと思う = đang nghĩ sẽ... (ý định chưa quyết hẳn)"},
-      {q:"夏は食べ物が悪く（　）ので、注意してください。",opts:["なりにくい","しやすい","しにくい","なりやすい"],ans:3,exp:"〜やすい = dễ... (dễ xảy ra tính chất/hiện tượng)"},
-      {q:"乗っていた電車が急に止まって、隣に立っていた人に新しい白い靴を（　）。",opts:["踏んでしまった","踏んでおいた","踏まれてしまった","踏ませておいた"],ans:2,exp:"〜れてしまった = bị... (bị động, kết quả không mong muốn)"},
-      {q:"明日からテニスの国際大会が始まる。参加する8名は皆、過去に国際大会での優勝経験があり、今回の大会は誰が（　）。",opts:["優勝しても不思議ではない","優勝したらいい。","優勝するに違いない","優勝するのではないだろうか"],ans:0,exp:"〜ても不思議ではない = dù ai thắng cũng không lạ (ai cũng có khả năng)"},
-      {q:"（駅の改札口で）妻「あ、もう10時だよ。急がないと新幹線が出発（　）。」夫「本当だ。急ごう。」",opts:["して","しとく","しちゃう","しなきゃなる"],ans:2,exp:"〜てしまう → しちゃう (khẩu ngữ) = sẽ bị... mất (kết quả không mong muốn)"},
-      {q:"山田「あ、課長、明日はどうもごちそうさまでした。おいしい物をたくさん（　）。」課長「それはよかった。またうちで食事をしよう。」",opts:["いただいていました","いただきました","めしあがっていました","めしあがりました"],ans:1,exp:"いただきました = đã được thụ hưởng ạ (khiêm nhường 謙譲語 của 食べる)"},
-      {q:"妻「明日食べに行くラーメン屋、11時半ごろから込むらしいよ。」夫「じゃあ、11時過ぎに店に着けるように早めに家を（　）ね。」妻「うん、そうね。早めに出よう。」",opts:["出るつもりかもしれない。","出たほうがいいかもしれない。","出てはいけないそうだ","出なくてもよさそうだ"],ans:1,exp:"〜たほうがいい = nên làm... (lời khuyên)"}
-    ]
-  },
-  {
-    id: "7-2022", label: "7/2022",
-    m1: [
-      {q:"友達がおいしいカレー屋があると言って連れていってくれた。友達と同じものを頼んだが、私（　）辛すぎた。",opts:["で","へ","には","より"],ans:2,exp:"〜には = đối với... (đánh giá dựa trên tiêu chuẩn cá nhân)"},
-      {q:"A「（　）絵本、知ってる？」B「うん、知ってるよ。子供のとき、大好きだった。」",opts:["「大きな家」と","「大きな家」って","「大きな家」でも","「大きな家」なんか"],ans:1,exp:"〜って = tên là... / gọi là... (khẩu ngữ của と言う)"},
-      {q:"昨日見た映画は、面白いと聞いていたのに（　）面白くなかった。",opts:["やっと","すっかり","せっかく","ちっとも"],ans:3,exp:"ちっとも〜ない = hoàn toàn không... (phủ định tuyệt đối)"},
-      {q:"近所のパン屋は、パンの種類が多い。一年中売っているパン（　）季節ごとに発売されるパンもある。",opts:["のほかに","のことで","に比べて","について"],ans:0,exp:"〜のほかに = ngoài... ra còn có... (bổ sung thông tin)"},
-      {q:"夫は、プロのサッカー選手として活動する（　）大学院でスポーツ科学を学んでいる。",opts:["点で","一方で","としたら","のだから"],ans:1,exp:"〜一方で = trong khi đó... / vừa... vừa... (hai hành động song song)"},
-      {q:"もうすぐ夏だ。（　）エアコンが問題なく動くかどうか、確認しておこうと思う。",opts:["暑くなるまで","暑くなる前に","暑くするまで","暑くする前に"],ans:1,exp:"〜前に = trước khi... (làm trước để phòng ngừa)"},
-      {q:"新しいパソコンを買って1か月（　）使っていないのに、壊れてしまった。",opts:["ごろしか","ごろだけ","ぐらいしか","ぐらいだけ"],ans:2,exp:"〜ぐらいしか〜ない = chỉ khoảng... thôi (nhấn mạnh ít ỏi)"},
-      {q:"（薬局で）店員「この薬を1日3回、食事の後に飲んでください。飲むと眠く（　）、飲んだ後、車の運転などはしないでください。」",opts:["なればいいので","なったばかりなので","なることがあるので","なってはいけないので"],ans:2,exp:"〜ことがある = đôi khi có thể... (khả năng không thường xuyên)"},
-      {q:"（インタビューで）選手「優勝できたのは皆さんの応援の（　）。ありがとうございました。」",opts:["はずです","ようです","ことです","おかげです"],ans:3,exp:"〜おかげです = nhờ có... mà (lý do tốt đẹp)"},
-      {q:"（電話で）田中「はい、営業課の田中です。」石山「会計課の石山ですが、今ちょっとよろしいですか。」田中「すみません。これから会議なんです。」田中「わかりました。では、またあとで（　）。」",opts:["かけ直します","かけ出します","かけています","かけておきます"],ans:0,exp:"かけ直す = gọi lại (làm lại hành động gọi điện)"},
-      {q:"（玄関で）妻「帰りにスーパーで卵を（　）？」夫「わかった。」",opts:["買っていってもらわない","買ってきてもらわない","買っていってくれない","買ってきてくれない"],ans:3,exp:"〜てきてくれない = giúp mang về/mua về cho tôi không? (hướng về phía người nói)"},
-      {q:"村山「中野さん、3月で会社を辞めるって本当ですか。」中野「はい、私、4月から（　）。」",opts:["留学することにしたんです","留学することにしそうです","留学したことがあるんです","留学したことがありそうです"],ans:0,exp:"〜ことにした = đã quyết định sẽ... (quyết định của bản thân)"},
-      {q:"（銀行のホームページで）キャッシュカードの暗証番号は決して他人に（　）。",opts:["知ってはいけません","知らせにくいです","知られないようにしてください","知らないほうがいいでしょう"],ans:2,exp:"〜られないようにしてください = hãy đề phòng để không bị... (cảnh báo lịch sự)"}
-    ]
-  },
-  {
-    id: "12-2022", label: "12/2022",
-    m1: [
-      {q:"（留学生が日本のホストファミリーへのお礼の手紙で）「おかげ（　）日本語の力がかなり上達しました。」",opts:["で","が","に","をもって"],ans:0,exp:"おかげで = nhờ có... mà (lý do tốt đẹp)"},
-      {q:"（掃除の案内）「掃除をするときは窓を開けて、換気をするように（　）ください。」",opts:["して","してき","しておいて","させて"],ans:0,exp:"〜するようにしてください = hãy cố gắng... (hướng dẫn, yêu cầu hành vi)"},
-      {q:"（天気予報で）「台風の影響で、沿岸地域では高波に（　）十分注意してください。」",opts:["ついて","対して","よって","おいて"],ans:1,exp:"〜に対して = đối với... / về phía... (hướng tới đối tượng cụ thể)"},
-      {q:"A「最近スポーツを始めたって聞いたけど？」B「うん。ダイエットしたくて、走り始めたんだ。走って（　）、気持ちよくなってきた。」",opts:["しまうと","みると","いると","いかないと"],ans:1,exp:"〜てみると = khi thử... thì (kết quả bất ngờ sau khi thử)"},
-      {q:"料理を作るのが好きで、料理のレシピを見（　）にはいられない。",opts:["ないで","ないでは","ないでも","ないとは"],ans:1,exp:"〜ずにはいられない / 〜ないではいられない = không thể không... (không kiềm chế được)"},
-      {q:"（大学の授業で）「では、このテーマについてグループで話し合い、一人一人が自分の意見を発表する（　）してください。」",opts:["ように","ことに","ことが","ために"],ans:1,exp:"〜ことにする = quyết định làm... (quy định, chỉ định)"},
-      {q:"「私は20年間、ずっと貿易の仕事を（　）。この経験を生かして、これからも頑張ります。」",opts:["してきました","していきました","してありました","していました"],ans:0,exp:"〜てきた = đã làm liên tục đến nay (quá khứ → hiện tại)"},
-      {q:"（職場で）「田中くん、今日のお昼はどうする？」「ちょっと体の調子が悪くて、（　）。」",opts:["食欲がないんです","食欲のないんです","食欲はないほうです","食欲なんです"],ans:0,exp:"〜んです = giải thích lý do... (説明・弁明の「んです」)"},
-      {q:"祖父は野菜だけ（　）好きで、肉はあまり食べない。",opts:["ばかりか","を通じて","がゆえに","にかけては"],ans:3,exp:"〜にかけては = khi nói đến chuyện... (lĩnh vực xuất sắc)"},
-      {q:"（コンビニで）店員「あ、だいぶ大変そうですね。袋は（　）。」客「お願いします。」",opts:["おつけしましょうか","おつけになりましょうか","つけてさしあげましょうか","つけていただきましょうか"],ans:0,exp:"おつけしましょうか = kính ngữ khiêm nhường, đề nghị phục vụ khách"},
-      {q:"体の具合が悪いので、今日のパーティーは（　）しまった。",opts:["休もうと","休もうかと","休んでも","休んでしまおうかと"],ans:1,exp:"〜（よ）うかと思う = đang nghĩ muốn... (ý định chưa chắc)"},
-      {q:"（バス停）「次のバスは、10時50分に参ります。今しばらく（　）。」",opts:["お待ちします","お待ちください","お待ちになります","お待ちになってください"],ans:1,exp:"お待ちください = xin hãy đợi ạ (lịch sự 丁寧語)"},
-      {q:"A「最近、子供が言うことを聞かなくて、どうしたらいいかわからなくて。」B「（　）ね。悩みを聞いてあげることが大切だと思うよ。」",opts:["それは大変だった","それは大変だろう","それは大変そうだ","それは大変だね"],ans:3,exp:"〜ね = cảm thông với người nghe (共感の表現)"}
-    ]
-  },
-  {
-    id: "7-2024", label: "7/2024",
-    m1: [
-      {q:"久しぶりに大学時代の友人と会って、楽しい時間（　）過ごした。",opts:["で","に","が","を"],ans:3,exp:"時間を過ごす = trải qua thời gian... (を là tân ngữ của 過ごす)"},
-      {q:"私の家の近くにはスーパーが2軒あって、（　）歩いて行けるので便利だ。",opts:["どちらから","どちらへも","どちらかでも","どちらかまで"],ans:1,exp:"どちらへも = đến cả hai (〜へも = cả hướng này cũng)"},
-      {q:"子供のころからバスが大好きだったはバスの運転手（　）働いている。",opts:["として","のほうが","にとって","のほかに"],ans:0,exp:"〜として = với tư cách là... (身分・立場)"},
-      {q:"今朝、寝坊して会議に遅れそうだったので、タクシーに乗ったが、道が込んでいて（　）遅刻してしまった。",opts:["つい","結局","次第に","ほとんど"],ans:1,exp:"結局 = rốt cuộc... (sau tất cả diễn biến, kết quả là)"},
-      {q:"この歌を（　）たびに大学時代のことを思い出す。",opts:["聞き","聞く","聞いた","聞いている"],ans:1,exp:"〜たびに = mỗi khi... (Vる形 + たびに)"},
-      {q:"（大学で）アン「国に帰りますが、帰ってからどう（　）まだ決めていません。」",opts:["するかは","するかが","することは","することが"],ans:0,exp:"どう〜かは = chuyện sẽ... như thế nào (間接疑問文 + は/が)"},
-      {q:"インターネットで買ったセーターが届いた。サイズが少し大きいかもしれないと心配していたが、実際に（　）ぴったりだった。",opts:["着てみると","着たのだから","着るとしたら","着ていることで"],ans:0,exp:"〜てみると = khi thử... thì (kết quả thực tế)"},
-      {q:"（大学で）A「ごめん、授業の後は図書館へ行くつもりなんだ。あしたレポートを（　）まだ終わってなくて。」",opts:["出したほうがよくても","出さなくてもいいのに","出してはいけなくても","出さないといけないのに"],ans:3,exp:"〜ないといけないのに = dù phải... mà vẫn... (nêu lý do kèm tình trạng)"},
-      {q:"この夏祭りは、100年以上前から、この町に住む人々によって（　）。",opts:["続けてもらえる","続けさせられる","続けられている","続けてくれている"],ans:2,exp:"〜によって〜られている = được duy trì bởi... (bị động tôn trọng, chủ thể tập thể)"},
-      {q:"A「このクッキー、おいしいね。どこで（　）？」B「さくらデパートだよ。」",opts:["買ったの","買ったよね","買ったことある","買ったんじゃない"],ans:0,exp:"〜の？ = hỏi thông tin (疑問の「の」khẩu ngữ thân mật)"},
-      {q:"（会議室で）A「この会議室、あとでまた使うので、エアコンはつけたままに（　）。」B「はい、わかりました。」",opts:["していませんか","なっていませんか","なっておいてください","なっておいてください"],ans:2,exp:"〜たままにしておく = giữ nguyên trạng thái... (để nguyên không tắt)"},
-      {q:"昨日読んだ雑誌に、「忘れることは、必ずしも（　）」と書いてあった。",opts:["悪いことなのだ","悪いことではない","悪いことのはずだ","悪いことかもしれない"],ans:1,exp:"必ずしも〜ではない = không nhất thiết là... (phủ định tương đối)"},
-      {q:"学生「先生は、ふだん何かスポーツを（　）。」先生「ええ。ゴルフにはときどき行きますよ。」",opts:["いたしますか","まいりますか","なさいますか","いらっしゃいますか"],ans:2,exp:"なさいますか = kính ngữ tôn kính (尊敬語) của する, hỏi hành động của người trên"}
-    ]
-  },
-  {
-    id: "12-2024", label: "12/2024",
-    m1: [
-      {q:"私は、自分の作ったパンをたくさんの人（　）食べてほしいと思って、パン屋を始めた。",opts:["は","に","まで","なら"],ans:1,exp:"〜に食べてほしい = muốn ai đó ăn (〜に + Vてほしい, đối tượng là に)"},
-      {q:"（研究室で）学生「先生、今、よろしいですか。来週の発表（　）、ちょっとご相談したいのですが。」先生「ええ、いいですよ。」",opts:["にとって","によると","のことで","のほか"],ans:2,exp:"〜のことで = về chuyện... (chủ đề muốn bàn luận)"},
-      {q:"いつもは宿題に2時間以上かかるが、今日は1時間（　）終わりそうだ。",opts:["ごろに","ごろで","ぐらいに","ぐらいで"],ans:3,exp:"〜ぐらいで = trong khoảng... (thời gian hoàn thành, ぐらい + で)"},
-      {q:"（家で）息子「ねえ、お母さん、おなかすいた。」母「えっ、（　）ご飯食べたばかりなのに、もうおなかすいたの？」",opts:["そろそろ","だんだん","さっき","ずっと"],ans:2,exp:"さっき = vừa nãy (chỉ thời điểm gần đây)"},
-      {q:"大事なレシートをズボンのポケットに（　）洗濯してしまった。",opts:["入れたまま","入ったまま","入れている間","入っている間"],ans:0,exp:"〜たまま = giữ nguyên trạng thái... mà làm gì (hành động không ý thức)"},
-      {q:"（駅の近くで）A「急げば、9時の電車に間に合うかもしれないよ。走ろうか。」B「いや、（　）もう間に合わないと思うよ。次の電車にしよう。」",opts:["走ってて","走ったって","走らなきゃ","走っちゃって"],ans:1,exp:"〜たって = dù có... cũng không (khẩu ngữ của 〜ても)"},
-      {q:"私はよくインターネットで買い物をするが、洋服は買わない。実際に（　）買いたいからだ。",opts:["着てみないと","着ておかないと","着てみてから","着ておいてから"],ans:2,exp:"〜てみてから = sau khi thử... rồi mới (trình tự: thử trước, mua sau)"},
-      {q:"（林さんの家で）山下「おいしそうなお料理ですね。」林「どうぞたくさん（　）ください。」山下「ありがとうございます。いただきます。」",opts:["なさって","おっしゃって","めしあがって","いらっしゃって"],ans:2,exp:"めしあがる = ăn/uống (尊敬語 của 食べる/飲む)"},
-      {q:"A「最近、寒くなって（　）ね。」B「ええ。今日は特に冷えますね。」",opts:["いました","ありました","いきました","きました"],ans:3,exp:"〜てきた = dần dần trở nên... (thay đổi theo thời gian hướng đến hiện tại)"},
-      {q:"（大学で）A「日曜日の留学生交流会、どうだったた？」B「楽しかったよ。初めてだったからちょっと緊張したけど、新しい友達もできたし、（　）。」",opts:["行ってよかったよ","行こうかと思うよ","行きたかったなあ","行けたらいいなあ"],ans:0,exp:"〜てよかった = may mà đã... / thật tốt vì đã... (hối tiếc ngược: vui vì đã làm)"},
-      {q:"（大学の事務所で）学生「すみません。ペンを（　）。」事務所の人「あ、はい。これを使ってください。」",opts:["お貸しできますか","お貸しいたしますか","貸したらいかがですか","貸していただけませんか"],ans:3,exp:"〜ていただけませんか = Nhờ/xin... được không ạ? (lịch sự cao nhất khi nhờ vả)"},
-      {q:"以前は、会社の窓から海を見ることができたが、隣に高いビルができて、（　）。",opts:["見えなくてもよくなった","見られたかもしれない","見えなくなってしまった","見られるようにならない"],ans:2,exp:"〜てしまった = đã... mất rồi (kết quả không thể đảo ngược, tiếc nuối)"},
-      {q:"（病院で）医者「この薬を五日間飲んでください。」患者「わかりました。熱が下がっても（　）。」医者「はい。五日間必ず飲んでください。」",opts:["飲んではいけませんか","飲んでいないんでしょうか","飲んでみようと思いますか","飲んだほうがいいでしょうか"],ans:3,exp:"〜たほうがいいでしょうか = có nên... không ạ? (hỏi lời khuyên lịch sự)"}
-    ]
-  },
-  {
-    id: "7-2025", label: "7/2025",
-    m1: [
-      {q:"先月東京で行われたサッカーの国際大会には、世界中（　）多くのサッカーファンが集まった。",opts:["に","で","から","まで"],ans:2,exp:"世界中から = từ khắp nơi trên thế giới đến (起点を示す「から」)"},
-      {q:"食事のマナーは国（　）違うので、私は旅行に行く前に、気をつけたほうがいいことはないか調べるようにしている。",opts:["によって","に対して","にとって","において"],ans:0,exp:"〜によって違う = khác nhau tùy theo... (原因・基準のによって)"},
-      {q:"A「もうすぐ（　）この前言ってたけど、準備は進んでる？」B「うん。」",opts:["引っ越す","引っ越すか","引っ越すって","引っ越すのを"],ans:2,exp:"〜って = là... / rằng... (khẩu ngữ của と言った: truyền đạt thông tin)"},
-      {q:"田中「山下さん、映画をよく見るそうですね。映画館で見るんですか。」山下「映画館にも行きますが、（　）、家でDVDを見ることが多いですね。」",opts:["確かに","まるで","必ずしも","どちらかというと"],ans:3,exp:"どちらかというと = nếu phải chọn thì... / nói chung là... (xu hướng)"},
-      {q:"（料理番組で）「じゃがいもは、ゆでてから皮をむいたほうが、きれいに皮がむけます。ゆでた後、熱い（　）皮をむきましょう。」",opts:["のに","うちに","ことで","とすると"],ans:1,exp:"熱いうちに = khi còn nóng (〜うちに = tranh thủ lúc còn trong trạng thái đó)"},
-      {q:"少し前にご飯を食べた（　）なのに、もうおなかがすいてきた。",opts:["せい","とき","よう","ばかり"],ans:3,exp:"〜ばかり = vừa mới... xong (hành động vừa hoàn thành không lâu)"},
-      {q:"私は小学生のころ、ゲームが大好きだった。早く家で、ゲームが（　）、毎日学校から走って帰っていた。",opts:["したくて","したくても","するためで","するためでも"],ans:0,exp:"〜たくて = vì muốn... nên (desire as reason for action)"},
-      {q:"弟の誕生日プレゼントを何にするか考えている。何を（　）、喜ぶだろうか。",opts:["くれたら","あげたら","くれるから","あげるから"],ans:1,exp:"何をあげたら = nếu tặng gì thì... (điều kiện + 喜ぶ)"},
-      {q:"（電話で）A「この前借りた小説、もう1回貸してもらえない？」B「うん、いいよ。あした、学校に（　）ね。」",opts:["持とっく","持ってる","持ってく","持っちゃう"],ans:2,exp:"持ってく = 持っていく (khẩu ngữ, sẽ mang đến)"},
-      {q:"A「来週の登山、楽しみだね。」B「うん、（　）ね。」",opts:["晴れてきた","晴れるといい","晴れるんだ","晴れてよかった"],ans:1,exp:"〜といい = thật tốt nếu... (mong muốn, hy vọng)"},
-      {q:"（市のホームページで）9月30日に絵本作家の坂本みどりさんによる講演会が開かれます。市民の方であれば、どなたでも無料で（　）。",opts:["ご参加になれます","参加いたします","ご参加になっています","参加できます"],ans:0,exp:"ご〜になれます = có thể... được ạ (kính ngữ tôn trọng + khả năng)"},
-      {q:"以前は、会社の窓から海を見ることができたが、隣に高いビルができて、（　）。",opts:["見えなくてもよくなった","見られたかもしれない","見えなくなってしまった","見られるようにならない"],ans:2,exp:"〜てしまった = đã... mất rồi (kết quả không thể đảo ngược, tiếc)"},
-      {q:"（病院で）医者「この薬を五日間飲んでください。」患者「わかりました。熱が下がっても（　）。」",opts:["飲んではいけませんか","飲んでいないんでしょうか","飲んでみようと思いますか","飲んだほうがいいでしょうか"],ans:3,exp:"〜たほうがいいでしょうか = có nên... không ạ? (xác nhận lịch sự)"}
-    ]
-  }
-  ,
+  },  ,
   {
     id: 31,
     title: "補充: Mẫu Soumatome còn thiếu",
@@ -2785,6 +2429,361 @@ const GRAMMAR_EXAM_DATA = [
     ],
   }
 ];
+
+// Color palette for lesson numbers
+const COLORS = ["#ff6b6b","#ffd93d","#6bcb77","#4d96ff","#c77dff","#ff9a3c"];
+
+let masteredSet = new Set(JSON.parse(localStorage.getItem('n3_mastered') || '[]'));
+let activeFilter = 'all';
+let searchTerm = '';
+
+function saveMastered() {
+  try { localStorage.setItem('n3_mastered', JSON.stringify([...masteredSet])); } catch(e) {}
+}
+
+function totalGrammars() {
+  return LESSONS.reduce((s, l) => s + l.grammars.length, 0);
+}
+
+function updateProgress() {
+  const total = totalGrammars();
+  const done = masteredSet.size;
+  const pct = total > 0 ? Math.round(done / total * 100) : 0;
+  document.getElementById('progressText').textContent = `${done} / ${total} đã thuộc`;
+  document.getElementById('percentText').textContent = `${pct}%`;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function buildCard(lesson, colorIdx) {
+  const color = lesson.color || COLORS[colorIdx % COLORS.length];
+  const card = document.createElement('div');
+  card.className = 'lesson-card';
+  card.dataset.cat = (lesson.cat || []).join(' ');
+  card.dataset.id = lesson.id;
+
+  // Header
+  const hdr = document.createElement('div');
+  hdr.className = 'lesson-header';
+  hdr.innerHTML = `
+    <div class="lesson-num" style="background:${color}22;color:${color}">${lesson.id}</div>
+    <div>
+      <div class="lesson-title">${lesson.title}</div>
+      <div class="lesson-subtitle">${lesson.subtitle}</div>
+    </div>
+    <div class="lesson-toggle">▼</div>
+  `;
+  hdr.addEventListener('click', () => {
+    card.classList.toggle('open');
+  });
+  card.appendChild(hdr);
+
+  // Body
+  const body = document.createElement('div');
+  body.className = 'lesson-body';
+
+  lesson.grammars.forEach((g, gi) => {
+    const nodeId = `${lesson.id}-${gi}`;
+    const isMastered = masteredSet.has(nodeId);
+
+    const node = document.createElement('div');
+    node.className = 'grammar-node';
+    node.style.borderColor = color;
+
+    let examplesHtml = '';
+    if (g.examples && g.examples.length) {
+      examplesHtml = `<div class="examples-label">📝 Ví dụ</div>`;
+      g.examples.forEach(ex => {
+        examplesHtml += `<div class="example">
+          <div class="jp">${ex.jp}</div>
+          <div class="vn">→ ${ex.vn}</div>
+        </div>`;
+      });
+    }
+
+    const tipHtml = g.tip ? `<div class="memory-tip">${g.tip}</div>` : '';
+    const compareHtml = g.compare ? `<div class="compare-note">${g.compare}</div>` : '';
+
+    node.innerHTML = `
+      <div class="grammar-pattern-row" style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+        <div class="grammar-pattern" style="color:${color};flex:1">${g.pattern}</div>
+        <button class="g-tts-btn" title="Đọc" style="background:${color}22;border:1.5px solid ${color}44;color:${color};border-radius:8px;padding:4px 8px;font-size:.85rem;cursor:pointer;flex-shrink:0">🔊</button>
+      </div>
+      <span class="meaning-tag" style="background:${color}22;color:${color}">意味</span>
+      <div class="grammar-meaning">${g.meaning}</div>
+      ${g.structure ? `<div class="grammar-structure">📐 ${g.structure}</div>` : ''}
+      ${examplesHtml}
+      ${tipHtml}
+      ${compareHtml}
+      <button class="mastered-btn ${isMastered ? 'done' : ''}" data-nid="${nodeId}">
+        ${isMastered ? '✅ Đã thuộc' : '☐ Đánh dấu thuộc'}
+      </button>
+    `;
+
+    node.querySelector('.g-tts-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const btn = e.currentTarget;
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        btn.textContent = '🔊';
+      } else {
+        readGrammarCard(g);
+        btn.textContent = '⏹';
+        const onEnd = () => { btn.textContent = '🔊'; };
+        window.speechSynthesis.addEventListener('end', onEnd, {once:true});
+      }
+    });
+
+    node.querySelector('.mastered-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const nid = e.currentTarget.dataset.nid;
+      if (masteredSet.has(nid)) {
+        masteredSet.delete(nid);
+        e.currentTarget.textContent = '☐ Đánh dấu thuộc';
+        e.currentTarget.classList.remove('done');
+      } else {
+        masteredSet.add(nid);
+        e.currentTarget.textContent = '✅ Đã thuộc';
+        e.currentTarget.classList.add('done');
+      }
+      saveMastered();
+      updateProgress();
+    });
+
+    body.appendChild(node);
+  });
+
+  card.appendChild(body);
+  return card;
+}
+
+function render() {
+  const grid = document.getElementById('lessonsGrid');
+  grid.innerHTML = '';
+  let shown = 0;
+  LESSONS.forEach((lesson, idx) => {
+    const catMatch = activeFilter === 'all' || (lesson.cat || []).includes(activeFilter);
+    const textMatch = searchTerm === '' ||
+      lesson.title.toLowerCase().includes(searchTerm) ||
+      lesson.subtitle.toLowerCase().includes(searchTerm) ||
+      lesson.grammars.some(g =>
+        g.pattern.includes(searchTerm) ||
+        g.meaning.toLowerCase().includes(searchTerm) ||
+        (g.tip || '').toLowerCase().includes(searchTerm)
+      );
+    if (catMatch && textMatch) {
+      grid.appendChild(buildCard(lesson, idx));
+      shown++;
+    }
+  });
+  if (shown === 0) {
+    grid.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-dim);grid-column:1/-1">🔍 Không tìm thấy kết quả phù hợp</div>';
+  }
+  updateProgress();
+}
+
+// Filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.cat;
+    render();
+  });
+});
+
+// Search
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  searchTerm = e.target.value.toLowerCase().trim();
+  render();
+});
+
+render();
+
+// ═══════════════════════════════════════════════════
+// EXAM DATA
+// ═══════════════════════════════════════════════════
+const GRAMMAR_EXAM_DATA = [
+  {
+    id: "12-2010", label: "12/2010",
+    m1: [
+      {q:"今日は風が強くて、庭の木が今にも（　）。",opts:["折れています","折れそうです","折れたと思います","折れたんです"],ans:1,exp:"今にも〜そうです = sắp sửa... (quan sát trực tiếp)"},
+      {q:"このテレビドラマは人気が出なかった（　）、全20回の放送予定だったものが、10回で終わってしまった。",opts:["たびに","ために","なかに","ように"],ans:1,exp:"〜ために = vì lý do... (nguyên nhân)"},
+      {q:"9月の会社説明会の日程を（　）いたします。",opts:["知らせ","知らせて","お知らせ","お知らせして"],ans:2,exp:"お〜します = kính ngữ khiêm nhường (謙譲語)"},
+      {q:"子どもだ子どもだと思っていた息子も、明日から（　）大学生になります。",opts:["まだ","いつか","しだいに","とうとう"],ans:3,exp:"とうとう = cuối cùng cũng... (sau bao lâu chờ đợi)"},
+      {q:"A「沖縄旅行、どうだった？」B「沖縄は、旅行の（　）ずっと天気がよくて、毎日海で遊べたよ。」",opts:["あいだじゅう","うちには","なかで","ころまでに"],ans:0,exp:"〜あいだじゅう = suốt trong khoảng thời gian..."},
+      {q:"弟と妹がいると集中できないから、今日は二人が（　）うちに、宿題をやってしまおう。",opts:["帰ってこない","帰っていかない","帰ってこなかった","帰っていかなかった"],ans:0,exp:"〜ないうちに = trước khi... xảy ra (tranh thủ lúc chưa)"},
+      {q:"学生「先生、日本語で作文を書いたのですが、わたしの作文を（　）。」先生「ええ、いいですよ。」",opts:["見たいでしょうか","見てもよろしいでしょうか","見たらいかがですか","見ていただけませんか"],ans:3,exp:"〜ていただけませんか = xin hãy... (lịch sự nhất, nhờ vả người trên)"},
+      {q:"山下「ねえ、わたし、この問題全然わかんないんだけど、田中さん、解けた？」田中「わたしに（　）じゃない。わたしが数学苦手なの知ってるでしょ。」",opts:["解けない","解けないに違いない","解けるはずがない","解くことができない"],ans:2,exp:"〜はずがない = không thể nào... (theo lý luận là không thể)"},
+      {q:"「私たちが作ったABCこども新聞は、すべての漢字に振り仮名をつけてあるので、小学1年生からでも読める（　）。」",opts:["ことによります","ことにあります","ようになっています","ようになさっています"],ans:2,exp:"〜ようになっています = đã trở nên có thể... (kết quả sau quá trình)"},
+      {q:"上田「来週、兄の誕生日なんだけど、プレゼントに何を買おうかな。」山本「ネクタイでも買って（　）？上田さんからのプレゼント、お兄さん、喜ぶと思うよ。」",opts:["もらってもいい","もらったらどう","あげてもいい","あげたらどう"],ans:3,exp:"〜たらどう = thử... thì sao? (gợi ý nhẹ nhàng)"},
+      {q:"妻「この前の試合、あなたがけがしなかったら、優勝できたかもねえ。」夫「けがをしなかったら、4位くらいには（　）、それでもやっぱり優勝はできなかったと思うよ。」",opts:["なれたらしいし","なりたかったらしいし","なれただろうけど","なりたかったんだろうけど"],ans:2,exp:"〜ただろうけど = có lẽ đã... nhưng (giả định quá khứ không xảy ra)"},
+      {q:"先輩「さっきの会議で話に出た営業の仕事を、たぶん山川部長は、君に（　）？」後輩「えっ、そうなんでしょうか。」",opts:["やらせるつもりじゃない","やられるつもりじゃない","やらされるんじゃない","やれるんじゃない"],ans:2,exp:"〜させられる = bị ép buộc làm... (thụ động sai khiến)"},
+      {q:"わたしの気持ちは、きっとあなたにはわからないだろうし、あなたに（　）。",opts:["わかりたくもない","わかってほしくもない","わかりたくはないだろう","わかってほしくはないだろう"],ans:1,exp:"〜てほしくない = không muốn ai đó làm gì (phủ định 〜てほしい)"}
+    ]
+  },
+  {
+    id: "12-2018", label: "12/2018",
+    m1: [
+      {q:"田中「先輩、来月の発表会の準備はどうですか。」先輩「まあまあですね。田中さんも（　）、手伝ってもらえると助かるけど。」田中「もちろんです。ぜひ手伝わせてください。」",opts:["よかったら","よくなければ","よかったのに","よくなかったら"],ans:0,exp:"〜たら = nếu... (điều kiện lịch sự để đề nghị)"},
+      {q:"（アナウンス）「ただいまより、本日のコンサートを始めます。演奏（　）は、拍手でお迎えください。」",opts:["してくる人","してくる方","される人","される方"],ans:3,exp:"〜される方 = kính ngữ bị động + 方 (người biểu diễn → kính trọng)"},
+      {q:"先生「どうしたんですか。」学生「実は最近、体の調子が悪くて、薬を飲んでいるんですが、（　）ぜんぜんよくならなくて。」",opts:["飲めば飲むほど","飲んでも飲んでも","飲んだり飲まなかったりで","飲めば飲まないほど"],ans:1,exp:"〜ても〜ても = dù... đến thế nào cũng không... (nhấn mạnh nỗ lực mà không kết quả)"},
+      {q:"（職場で）「来月から始まる新しいプロジェクトは、私（　）任されることになった。」",opts:["に","を","が","で"],ans:0,exp:"〜に任される = được giao phó cho... (đối tượng nhận ủy thác)"},
+      {q:"先生「ホワイトさんは初めて相撲を見てどうでしたか。」ホワイト「試合（　）もちろん面白かったですが、観客の方々の応援の声もすごくて、感動しました。」",opts:["にとって","はもとより","によって","にしたら"],ans:1,exp:"〜はもとより = không chỉ... mà cả... (điều hiển nhiên cộng thêm)"},
+      {q:"（病院で）患者「先生、退院できますか。」医者「そうですね。あと1週間ほど（　）、退院できますよ。」",opts:["すれば","しても","するなら","するほど"],ans:0,exp:"〜ば〜できる = nếu làm thì có thể..."},
+      {q:"山田「林さん、昨日電話したんですけど、出なかったですよね。」林「すみません。昨日は一日外出していて、帰ったときには（　）。」",opts:["もう夜になっていました","まだ夜になっていません","もう夜になってきました","まだ夜になってきません"],ans:0,exp:"もう〜ていました = đã... rồi (trạng thái hoàn thành khi trở về)"},
+      {q:"（病院の受付で）受付「田中さん、ちょっとお待ちください。先生が（　）からご案内します。」田中「はい、わかりました。」",opts:["お呼びします","お呼びになります","呼んでいただきます","呼んでさしあげます"],ans:0,exp:"お〜します = kính ngữ khiêm nhường (người nói làm cho người khác)"},
+      {q:"ケビン「先週の映画、どうでした？」アン「とても感動して、（　）くらいでした。」ケビン「それはよかった。」",opts:["泣いてしまいそうになった","泣いてしまいそうになる","泣けてしまいそうになった","泣けてしまいそうになる"],ans:0,exp:"〜そうになった = suýt... (gần như đã xảy ra nhưng không)"},
+      {q:"A「今日の試合、応援に行けなくてごめん。」B「いいよ。（　）結果がよければそれで十分だから。」",opts:["応援に来てくれなくても","応援に来てくれるなら","応援に来てくれなければ","応援に来てくれるのに"],ans:0,exp:"〜なくても = dù không... cũng (điều kiện nhượng bộ)"},
+      {q:"（会社で）部長「鈴木くん、今度のプレゼン、うまくいくといいね。」鈴木「ありがとうございます。（　）ように、精一杯がんばります。」",opts:["うまくいける","うまくいきます","うまくいく","うまくいける"],ans:2,exp:"〜ように + 頑張る = cố gắng để... (mục tiêu của nỗ lực)"},
+      {q:"（電話で）客「すみません。今日の３時に予約しているんですが、30分ほど（　）んですが、大丈夫でしょうか。」",opts:["遅れそうな","遅れたような","遅れているような","遅れてしまいそうな"],ans:3,exp:"〜てしまいそうだ = có vẻ sẽ... (kết quả không mong muốn sắp xảy ra)"},
+      {q:"A「来週の旅行、楽しみだね。」B「そうだね。ただ、天気が（　）いいんだけど。」",opts:["よければ","よかったら","よくなれば","よくなったら"],ans:0,exp:"〜ければいい = nếu... thì tốt (mong muốn/điều kiện)"}
+    ]
+  },
+  {
+    id: "12-2021", label: "12/2021",
+    m1: [
+      {q:"母は、留学している兄と久しぶりに電話で話して、とてもうれしそうな顔（　）していた。",opts:["へ","が","を","の"],ans:3,exp:"顔をする = có vẻ mặt... (biểu đạt cảm xúc qua nét mặt)"},
+      {q:"長い間建設中だったABCビルが、昨日（　）完成した。",opts:["ずっと","今にも","次第に","ついに"],ans:3,exp:"ついに = cuối cùng cũng... (sau thời gian dài chờ đợi)"},
+      {q:"（電話で）店長「大下さん、急で申し訳ないんですけど、明日出勤することはできますか。」大下「午後（　）行けますが、それでも大丈夫ですか。」",opts:["でなら","からなら","へでも","まででも"],ans:1,exp:"〜からなら = nếu từ... thì (điều kiện giới hạn thời gian)"},
+      {q:"音楽会は、あすの11時からさくら広場（　）開かれます。",opts:["に対して","によって","について","において"],ans:3,exp:"〜において = tại... (chỉ địa điểm, văn phong trang trọng)"},
+      {q:"去年姉に子供が生まれた。2、3か月に1回ぐらい会っているが、会う（　）大きくなっていて、びっくりする。",opts:["たびに","うちに","間に","前に"],ans:0,exp:"〜たびに = mỗi lần... (lặp lại sự kiện)"},
+      {q:"私は10年前から同じかばんを（　）続けている。",opts:["使う","使い","使おう","使った"],ans:1,exp:"Vます形＋続ける = tiếp tục làm... (動詞連用形接続)"},
+      {q:"田中さんがわたしの方に（　）見えました。",opts:["走っていくことが","走ってくることが","走っていくのが","走ってくるのが"],ans:3,exp:"〜てくる＋のが見える = nhìn thấy ai đó đang chạy lại (hướng về phía người nói)"},
+      {q:"山田「ジョンくんは、毎日バスケットボールの練習をしているんですか。」ジョン「はい。早く試合に（　）なりたいんです。」",opts:["出られるように","出られるために","出させるように","出させるために"],ans:0,exp:"〜ように＋なりたい = muốn trở nên có thể... (mục tiêu khả năng)"},
+      {q:"今朝はすごい雨だったが、今はもう（　）",opts:["降っている","降っていない","降る","降らない"],ans:1,exp:"もう〜ていない = không còn... nữa (trạng thái đã thay đổi)"},
+      {q:"西川「あ、森さん、携帯電話がポケットから（　）よ。」森「本当だ。ありがとうございます。」",opts:["落ちるそうです","落ちそうです","落とすそうです","落としそうです"],ans:1,exp:"〜そうです = có vẻ sắp... (quan sát thấy trực tiếp, nguy cơ xảy ra)"},
+      {q:"A「今度駅前に新しいケーキ屋さんができる（　）ね。」B「本当ですか。楽しみですね。」",opts:["でしょう","といい","ほうがいい","みたいだ"],ans:3,exp:"〜みたいだ = hình như... (suy đoán từ thông tin nghe/đọc được)"},
+      {q:"この花は、上が乾いたら水をやる必要があるが、（　）。水が多いと根が腐ってしまう。",opts:["やりすぎるのもよくない","やらなくていいのがいい","やってやるのもよくない","やらないでおくのがいい"],ans:0,exp:"〜すぎる＋のもよくない = làm quá cũng không tốt"},
+      {q:"（患者が病院に電話をする）患者「すみません。10時に予約した田中と申しますが、11時に（　）。」",opts:["変えましょうか","変えたほうがいいですか","変えていただきましょう","変えていただけないでしょうか"],ans:3,exp:"〜ていただけないでしょうか = liệu có thể làm ơn... không ạ? (lịch sự tối đa)"}
+    ]
+  },
+  {
+    id: "7-2019", label: "7/2019",
+    m1: [
+      {q:"今朝、気持ちよく起きられたのは、昨晩しっかり眠れた（　）だと思う。",opts:["せい","こと","おかげ","ため"],ans:2,exp:"〜おかげだ = nhờ có... mà (nguyên nhân tốt)"},
+      {q:"新しい趣味を（　）と思って、先週から料理を習い始めた。",opts:["持とう","持つ","持つよう","持った"],ans:0,exp:"〜（よ）うと思って = nghĩ muốn làm gì đó (ý định → hành động)"},
+      {q:"A「最近、料理にはまっているって本当？」B「うん。毎日作って（　）、料理が楽しくなってきた。」",opts:["いるうちに","いるためには","いるためのに","いるだけあって"],ans:0,exp:"〜ているうちに = trong khi làm... thì dần dần... (thay đổi không nhận ra)"},
+      {q:"（駅で）A「すみません。地下鉄の乗り方を教えていただけますか。」B「ええ、いいですよ。まずここに（　）切符を買います。」",opts:["入ったとき","入る前に","入ってから","入るために"],ans:1,exp:"〜前に = trước khi... (trình tự hành động)"},
+      {q:"あの店のラーメンは、並んで（　）食べる価値がある。",opts:["でも","さえ","まで","こそ"],ans:2,exp:"〜まで = đến mức... (mức độ cực đoan, dù phải xếp hàng cũng đáng ăn)"},
+      {q:"彼女はフランス語（　）、スペイン語も話せる。",opts:["だけでなく","のほかに","に加えて","はもちろん"],ans:3,exp:"〜はもちろん = không chỉ... mà cả... (điều hiển nhiên cộng thêm)"},
+      {q:"この歌を聞く（　）、子どものころを思い出す。",opts:["ために","ものを","たびに","ことで"],ans:2,exp:"〜たびに = mỗi khi... (lặp lại sự việc)"},
+      {q:"（会社で）上司「田中さん、明日の会議の資料、準備できてる？」田中「あ、すみません。今日中に（　）。」",opts:["準備いたします","準備なさいます","準備させていただきます","準備していただきます"],ans:2,exp:"〜させていただきます = xin phép được làm... (kính ngữ khiêm nhường nhất)"},
+      {q:"A「最近、仕事が忙しくて、なかなか勉強できないんだ。」B「忙しくて大変だね。（　）、少しでも続けることが大切だよ。」",opts:["それどころか","それでも","そうしたら","それなのに"],ans:1,exp:"それでも = nhưng dù vậy... (tiếp tục bất chấp khó khăn)"},
+      {q:"A「部長、もう一度確認させてください。」B「うん。この書類を（　）いいんだよね。」",opts:["送ればかり","送るだけで","送っただけで","送れば"],ans:3,exp:"〜ればいい = chỉ cần làm... là đủ"},
+      {q:"（バス停で）乗客「すみません。市民病院に行くにはこのバス（　）乗ればいいですか。」",opts:["だけに","でさえ","にだけ","でいい"],ans:3,exp:"〜でいい = bằng... cũng được (chấp nhận phương tiện đơn giản)"},
+      {q:"今の若者は、親に（　）のが当たり前だと思っているのだろうか。",opts:["養われる","養わせる","養ってもらう","養わせてもらう"],ans:2,exp:"〜てもらう = được ai đó làm cho mình (hướng lợi ích về phía người nói)"},
+      {q:"（掲示板より）「緊急の場合は（　）警備室に連絡してください。」",opts:["すぐ","まず","必ず","ただちに"],ans:3,exp:"直ちに = ngay lập tức (văn phong trang trọng, khẩn cấp)"}
+    ]
+  },
+  {
+    id: "7-2021", label: "7/2021",
+    m1: [
+      {q:"両親に買ってもらった着物（　）大学の卒業式に出席した。",opts:["を","が","で","に"],ans:2,exp:"〜で = bằng/mặc... (phương tiện, trang phục)"},
+      {q:"本を読んでいたら、（　）5時間も経ってしまった。",opts:["そろそろ","だんだん","ようやく","いつのまにか"],ans:3,exp:"いつのまにか = không biết từ lúc nào... (không nhận ra thời gian trôi)"},
+      {q:"日わたしに（　）。今一番大切なものは、飼っている犬です。",opts:["対して","比べて","おいて","とって"],ans:3,exp:"〜にとって = đối với... (quan điểm/nhận định chủ quan của ai đó)"},
+      {q:"A「部長の田中さんとのお会いになるのは今日が初めてですね。」B「はい。山下課長（　）お目にかかったことがございませんので。」",opts:["にだけ","にしか","でしか","だけ"],ans:1,exp:"〜にしか〜ません = chỉ... mà thôi (giới hạn + phủ định)"},
+      {q:"この図書館は、入口の近くに、返す本を入れるためのブックポストがあり、図書館が開いている（　）、本を返すことができる。",opts:["ときでも","まで","間だからが","ところなら"],ans:0,exp:"〜ときでも = kể cả khi... cũng (bất kể thời gian nào)"},
+      {q:"A「今夜は晴れているから星がよく見えるよ。」B「わあ、本当だ。（　）きれいなんだろう。」",opts:["ときも","なんか","なんて","なんでも"],ans:2,exp:"なんて〜だろう = thật là... ! (cảm thán, ngạc nhiên trước điều tuyệt đẹp)"},
+      {q:"展覧会に知り合いの絵がかざられるので、わたしも見に（　）と思う。",opts:["行こうか","行かないか","行くのか","行ったか"],ans:0,exp:"〜（よ）うかと思う = đang nghĩ sẽ... (ý định chưa quyết hẳn)"},
+      {q:"夏は食べ物が悪く（　）ので、注意してください。",opts:["なりにくい","しやすい","しにくい","なりやすい"],ans:3,exp:"〜やすい = dễ... (dễ xảy ra tính chất/hiện tượng)"},
+      {q:"乗っていた電車が急に止まって、隣に立っていた人に新しい白い靴を（　）。",opts:["踏んでしまった","踏んでおいた","踏まれてしまった","踏ませておいた"],ans:2,exp:"〜れてしまった = bị... (bị động, kết quả không mong muốn)"},
+      {q:"明日からテニスの国際大会が始まる。参加する8名は皆、過去に国際大会での優勝経験があり、今回の大会は誰が（　）。",opts:["優勝しても不思議ではない","優勝したらいい。","優勝するに違いない","優勝するのではないだろうか"],ans:0,exp:"〜ても不思議ではない = dù ai thắng cũng không lạ (ai cũng có khả năng)"},
+      {q:"（駅の改札口で）妻「あ、もう10時だよ。急がないと新幹線が出発（　）。」夫「本当だ。急ごう。」",opts:["して","しとく","しちゃう","しなきゃなる"],ans:2,exp:"〜てしまう → しちゃう (khẩu ngữ) = sẽ bị... mất (kết quả không mong muốn)"},
+      {q:"山田「あ、課長、明日はどうもごちそうさまでした。おいしい物をたくさん（　）。」課長「それはよかった。またうちで食事をしよう。」",opts:["いただいていました","いただきました","めしあがっていました","めしあがりました"],ans:1,exp:"いただきました = đã được thụ hưởng ạ (khiêm nhường 謙譲語 của 食べる)"},
+      {q:"妻「明日食べに行くラーメン屋、11時半ごろから込むらしいよ。」夫「じゃあ、11時過ぎに店に着けるように早めに家を（　）ね。」妻「うん、そうね。早めに出よう。」",opts:["出るつもりかもしれない。","出たほうがいいかもしれない。","出てはいけないそうだ","出なくてもよさそうだ"],ans:1,exp:"〜たほうがいい = nên làm... (lời khuyên)"}
+    ]
+  },
+  {
+    id: "7-2022", label: "7/2022",
+    m1: [
+      {q:"友達がおいしいカレー屋があると言って連れていってくれた。友達と同じものを頼んだが、私（　）辛すぎた。",opts:["で","へ","には","より"],ans:2,exp:"〜には = đối với... (đánh giá dựa trên tiêu chuẩn cá nhân)"},
+      {q:"A「（　）絵本、知ってる？」B「うん、知ってるよ。子供のとき、大好きだった。」",opts:["「大きな家」と","「大きな家」って","「大きな家」でも","「大きな家」なんか"],ans:1,exp:"〜って = tên là... / gọi là... (khẩu ngữ của と言う)"},
+      {q:"昨日見た映画は、面白いと聞いていたのに（　）面白くなかった。",opts:["やっと","すっかり","せっかく","ちっとも"],ans:3,exp:"ちっとも〜ない = hoàn toàn không... (phủ định tuyệt đối)"},
+      {q:"近所のパン屋は、パンの種類が多い。一年中売っているパン（　）季節ごとに発売されるパンもある。",opts:["のほかに","のことで","に比べて","について"],ans:0,exp:"〜のほかに = ngoài... ra còn có... (bổ sung thông tin)"},
+      {q:"夫は、プロのサッカー選手として活動する（　）大学院でスポーツ科学を学んでいる。",opts:["点で","一方で","としたら","のだから"],ans:1,exp:"〜一方で = trong khi đó... / vừa... vừa... (hai hành động song song)"},
+      {q:"もうすぐ夏だ。（　）エアコンが問題なく動くかどうか、確認しておこうと思う。",opts:["暑くなるまで","暑くなる前に","暑くするまで","暑くする前に"],ans:1,exp:"〜前に = trước khi... (làm trước để phòng ngừa)"},
+      {q:"新しいパソコンを買って1か月（　）使っていないのに、壊れてしまった。",opts:["ごろしか","ごろだけ","ぐらいしか","ぐらいだけ"],ans:2,exp:"〜ぐらいしか〜ない = chỉ khoảng... thôi (nhấn mạnh ít ỏi)"},
+      {q:"（薬局で）店員「この薬を1日3回、食事の後に飲んでください。飲むと眠く（　）、飲んだ後、車の運転などはしないでください。」",opts:["なればいいので","なったばかりなので","なることがあるので","なってはいけないので"],ans:2,exp:"〜ことがある = đôi khi có thể... (khả năng không thường xuyên)"},
+      {q:"（インタビューで）選手「優勝できたのは皆さんの応援の（　）。ありがとうございました。」",opts:["はずです","ようです","ことです","おかげです"],ans:3,exp:"〜おかげです = nhờ có... mà (lý do tốt đẹp)"},
+      {q:"（電話で）田中「はい、営業課の田中です。」石山「会計課の石山ですが、今ちょっとよろしいですか。」田中「すみません。これから会議なんです。」田中「わかりました。では、またあとで（　）。」",opts:["かけ直します","かけ出します","かけています","かけておきます"],ans:0,exp:"かけ直す = gọi lại (làm lại hành động gọi điện)"},
+      {q:"（玄関で）妻「帰りにスーパーで卵を（　）？」夫「わかった。」",opts:["買っていってもらわない","買ってきてもらわない","買っていってくれない","買ってきてくれない"],ans:3,exp:"〜てきてくれない = giúp mang về/mua về cho tôi không? (hướng về phía người nói)"},
+      {q:"村山「中野さん、3月で会社を辞めるって本当ですか。」中野「はい、私、4月から（　）。」",opts:["留学することにしたんです","留学することにしそうです","留学したことがあるんです","留学したことがありそうです"],ans:0,exp:"〜ことにした = đã quyết định sẽ... (quyết định của bản thân)"},
+      {q:"（銀行のホームページで）キャッシュカードの暗証番号は決して他人に（　）。",opts:["知ってはいけません","知らせにくいです","知られないようにしてください","知らないほうがいいでしょう"],ans:2,exp:"〜られないようにしてください = hãy đề phòng để không bị... (cảnh báo lịch sự)"}
+    ]
+  },
+  {
+    id: "12-2022", label: "12/2022",
+    m1: [
+      {q:"（留学生が日本のホストファミリーへのお礼の手紙で）「おかげ（　）日本語の力がかなり上達しました。」",opts:["で","が","に","をもって"],ans:0,exp:"おかげで = nhờ có... mà (lý do tốt đẹp)"},
+      {q:"（掃除の案内）「掃除をするときは窓を開けて、換気をするように（　）ください。」",opts:["して","してき","しておいて","させて"],ans:0,exp:"〜するようにしてください = hãy cố gắng... (hướng dẫn, yêu cầu hành vi)"},
+      {q:"（天気予報で）「台風の影響で、沿岸地域では高波に（　）十分注意してください。」",opts:["ついて","対して","よって","おいて"],ans:1,exp:"〜に対して = đối với... / về phía... (hướng tới đối tượng cụ thể)"},
+      {q:"A「最近スポーツを始めたって聞いたけど？」B「うん。ダイエットしたくて、走り始めたんだ。走って（　）、気持ちよくなってきた。」",opts:["しまうと","みると","いると","いかないと"],ans:1,exp:"〜てみると = khi thử... thì (kết quả bất ngờ sau khi thử)"},
+      {q:"料理を作るのが好きで、料理のレシピを見（　）にはいられない。",opts:["ないで","ないでは","ないでも","ないとは"],ans:1,exp:"〜ずにはいられない / 〜ないではいられない = không thể không... (không kiềm chế được)"},
+      {q:"（大学の授業で）「では、このテーマについてグループで話し合い、一人一人が自分の意見を発表する（　）してください。」",opts:["ように","ことに","ことが","ために"],ans:1,exp:"〜ことにする = quyết định làm... (quy định, chỉ định)"},
+      {q:"「私は20年間、ずっと貿易の仕事を（　）。この経験を生かして、これからも頑張ります。」",opts:["してきました","していきました","してありました","していました"],ans:0,exp:"〜てきた = đã làm liên tục đến nay (quá khứ → hiện tại)"},
+      {q:"（職場で）「田中くん、今日のお昼はどうする？」「ちょっと体の調子が悪くて、（　）。」",opts:["食欲がないんです","食欲のないんです","食欲はないほうです","食欲なんです"],ans:0,exp:"〜んです = giải thích lý do... (説明・弁明の「んです」)"},
+      {q:"祖父は野菜だけ（　）好きで、肉はあまり食べない。",opts:["ばかりか","を通じて","がゆえに","にかけては"],ans:3,exp:"〜にかけては = khi nói đến chuyện... (lĩnh vực xuất sắc)"},
+      {q:"（コンビニで）店員「あ、だいぶ大変そうですね。袋は（　）。」客「お願いします。」",opts:["おつけしましょうか","おつけになりましょうか","つけてさしあげましょうか","つけていただきましょうか"],ans:0,exp:"おつけしましょうか = kính ngữ khiêm nhường, đề nghị phục vụ khách"},
+      {q:"体の具合が悪いので、今日のパーティーは（　）しまった。",opts:["休もうと","休もうかと","休んでも","休んでしまおうかと"],ans:1,exp:"〜（よ）うかと思う = đang nghĩ muốn... (ý định chưa chắc)"},
+      {q:"（バス停）「次のバスは、10時50分に参ります。今しばらく（　）。」",opts:["お待ちします","お待ちください","お待ちになります","お待ちになってください"],ans:1,exp:"お待ちください = xin hãy đợi ạ (lịch sự 丁寧語)"},
+      {q:"A「最近、子供が言うことを聞かなくて、どうしたらいいかわからなくて。」B「（　）ね。悩みを聞いてあげることが大切だと思うよ。」",opts:["それは大変だった","それは大変だろう","それは大変そうだ","それは大変だね"],ans:3,exp:"〜ね = cảm thông với người nghe (共感の表現)"}
+    ]
+  },
+  {
+    id: "7-2024", label: "7/2024",
+    m1: [
+      {q:"久しぶりに大学時代の友人と会って、楽しい時間（　）過ごした。",opts:["で","に","が","を"],ans:3,exp:"時間を過ごす = trải qua thời gian... (を là tân ngữ của 過ごす)"},
+      {q:"私の家の近くにはスーパーが2軒あって、（　）歩いて行けるので便利だ。",opts:["どちらから","どちらへも","どちらかでも","どちらかまで"],ans:1,exp:"どちらへも = đến cả hai (〜へも = cả hướng này cũng)"},
+      {q:"子供のころからバスが大好きだったはバスの運転手（　）働いている。",opts:["として","のほうが","にとって","のほかに"],ans:0,exp:"〜として = với tư cách là... (身分・立場)"},
+      {q:"今朝、寝坊して会議に遅れそうだったので、タクシーに乗ったが、道が込んでいて（　）遅刻してしまった。",opts:["つい","結局","次第に","ほとんど"],ans:1,exp:"結局 = rốt cuộc... (sau tất cả diễn biến, kết quả là)"},
+      {q:"この歌を（　）たびに大学時代のことを思い出す。",opts:["聞き","聞く","聞いた","聞いている"],ans:1,exp:"〜たびに = mỗi khi... (Vる形 + たびに)"},
+      {q:"（大学で）アン「国に帰りますが、帰ってからどう（　）まだ決めていません。」",opts:["するかは","するかが","することは","することが"],ans:0,exp:"どう〜かは = chuyện sẽ... như thế nào (間接疑問文 + は/が)"},
+      {q:"インターネットで買ったセーターが届いた。サイズが少し大きいかもしれないと心配していたが、実際に（　）ぴったりだった。",opts:["着てみると","着たのだから","着るとしたら","着ていることで"],ans:0,exp:"〜てみると = khi thử... thì (kết quả thực tế)"},
+      {q:"（大学で）A「ごめん、授業の後は図書館へ行くつもりなんだ。あしたレポートを（　）まだ終わってなくて。」",opts:["出したほうがよくても","出さなくてもいいのに","出してはいけなくても","出さないといけないのに"],ans:3,exp:"〜ないといけないのに = dù phải... mà vẫn... (nêu lý do kèm tình trạng)"},
+      {q:"この夏祭りは、100年以上前から、この町に住む人々によって（　）。",opts:["続けてもらえる","続けさせられる","続けられている","続けてくれている"],ans:2,exp:"〜によって〜られている = được duy trì bởi... (bị động tôn trọng, chủ thể tập thể)"},
+      {q:"A「このクッキー、おいしいね。どこで（　）？」B「さくらデパートだよ。」",opts:["買ったの","買ったよね","買ったことある","買ったんじゃない"],ans:0,exp:"〜の？ = hỏi thông tin (疑問の「の」khẩu ngữ thân mật)"},
+      {q:"（会議室で）A「この会議室、あとでまた使うので、エアコンはつけたままに（　）。」B「はい、わかりました。」",opts:["していませんか","なっていませんか","なっておいてください","なっておいてください"],ans:2,exp:"〜たままにしておく = giữ nguyên trạng thái... (để nguyên không tắt)"},
+      {q:"昨日読んだ雑誌に、「忘れることは、必ずしも（　）」と書いてあった。",opts:["悪いことなのだ","悪いことではない","悪いことのはずだ","悪いことかもしれない"],ans:1,exp:"必ずしも〜ではない = không nhất thiết là... (phủ định tương đối)"},
+      {q:"学生「先生は、ふだん何かスポーツを（　）。」先生「ええ。ゴルフにはときどき行きますよ。」",opts:["いたしますか","まいりますか","なさいますか","いらっしゃいますか"],ans:2,exp:"なさいますか = kính ngữ tôn kính (尊敬語) của する, hỏi hành động của người trên"}
+    ]
+  },
+  {
+    id: "12-2024", label: "12/2024",
+    m1: [
+      {q:"私は、自分の作ったパンをたくさんの人（　）食べてほしいと思って、パン屋を始めた。",opts:["は","に","まで","なら"],ans:1,exp:"〜に食べてほしい = muốn ai đó ăn (〜に + Vてほしい, đối tượng là に)"},
+      {q:"（研究室で）学生「先生、今、よろしいですか。来週の発表（　）、ちょっとご相談したいのですが。」先生「ええ、いいですよ。」",opts:["にとって","によると","のことで","のほか"],ans:2,exp:"〜のことで = về chuyện... (chủ đề muốn bàn luận)"},
+      {q:"いつもは宿題に2時間以上かかるが、今日は1時間（　）終わりそうだ。",opts:["ごろに","ごろで","ぐらいに","ぐらいで"],ans:3,exp:"〜ぐらいで = trong khoảng... (thời gian hoàn thành, ぐらい + で)"},
+      {q:"（家で）息子「ねえ、お母さん、おなかすいた。」母「えっ、（　）ご飯食べたばかりなのに、もうおなかすいたの？」",opts:["そろそろ","だんだん","さっき","ずっと"],ans:2,exp:"さっき = vừa nãy (chỉ thời điểm gần đây)"},
+      {q:"大事なレシートをズボンのポケットに（　）洗濯してしまった。",opts:["入れたまま","入ったまま","入れている間","入っている間"],ans:0,exp:"〜たまま = giữ nguyên trạng thái... mà làm gì (hành động không ý thức)"},
+      {q:"（駅の近くで）A「急げば、9時の電車に間に合うかもしれないよ。走ろうか。」B「いや、（　）もう間に合わないと思うよ。次の電車にしよう。」",opts:["走ってて","走ったって","走らなきゃ","走っちゃって"],ans:1,exp:"〜たって = dù có... cũng không (khẩu ngữ của 〜ても)"},
+      {q:"私はよくインターネットで買い物をするが、洋服は買わない。実際に（　）買いたいからだ。",opts:["着てみないと","着ておかないと","着てみてから","着ておいてから"],ans:2,exp:"〜てみてから = sau khi thử... rồi mới (trình tự: thử trước, mua sau)"},
+      {q:"（林さんの家で）山下「おいしそうなお料理ですね。」林「どうぞたくさん（　）ください。」山下「ありがとうございます。いただきます。」",opts:["なさって","おっしゃって","めしあがって","いらっしゃって"],ans:2,exp:"めしあがる = ăn/uống (尊敬語 của 食べる/飲む)"},
+      {q:"A「最近、寒くなって（　）ね。」B「ええ。今日は特に冷えますね。」",opts:["いました","ありました","いきました","きました"],ans:3,exp:"〜てきた = dần dần trở nên... (thay đổi theo thời gian hướng đến hiện tại)"},
+      {q:"（大学で）A「日曜日の留学生交流会、どうだったた？」B「楽しかったよ。初めてだったからちょっと緊張したけど、新しい友達もできたし、（　）。」",opts:["行ってよかったよ","行こうかと思うよ","行きたかったなあ","行けたらいいなあ"],ans:0,exp:"〜てよかった = may mà đã... / thật tốt vì đã... (hối tiếc ngược: vui vì đã làm)"},
+      {q:"（大学の事務所で）学生「すみません。ペンを（　）。」事務所の人「あ、はい。これを使ってください。」",opts:["お貸しできますか","お貸しいたしますか","貸したらいかがですか","貸していただけませんか"],ans:3,exp:"〜ていただけませんか = Nhờ/xin... được không ạ? (lịch sự cao nhất khi nhờ vả)"},
+      {q:"以前は、会社の窓から海を見ることができたが、隣に高いビルができて、（　）。",opts:["見えなくてもよくなった","見られたかもしれない","見えなくなってしまった","見られるようにならない"],ans:2,exp:"〜てしまった = đã... mất rồi (kết quả không thể đảo ngược, tiếc nuối)"},
+      {q:"（病院で）医者「この薬を五日間飲んでください。」患者「わかりました。熱が下がっても（　）。」医者「はい。五日間必ず飲んでください。」",opts:["飲んではいけませんか","飲んでいないんでしょうか","飲んでみようと思いますか","飲んだほうがいいでしょうか"],ans:3,exp:"〜たほうがいいでしょうか = có nên... không ạ? (hỏi lời khuyên lịch sự)"}
+    ]
+  },
+  {
+    id: "7-2025", label: "7/2025",
+    m1: [
+      {q:"先月東京で行われたサッカーの国際大会には、世界中（　）多くのサッカーファンが集まった。",opts:["に","で","から","まで"],ans:2,exp:"世界中から = từ khắp nơi trên thế giới đến (起点を示す「から」)"},
+      {q:"食事のマナーは国（　）違うので、私は旅行に行く前に、気をつけたほうがいいことはないか調べるようにしている。",opts:["によって","に対して","にとって","において"],ans:0,exp:"〜によって違う = khác nhau tùy theo... (原因・基準のによって)"},
+      {q:"A「もうすぐ（　）この前言ってたけど、準備は進んでる？」B「うん。」",opts:["引っ越す","引っ越すか","引っ越すって","引っ越すのを"],ans:2,exp:"〜って = là... / rằng... (khẩu ngữ của と言った: truyền đạt thông tin)"},
+      {q:"田中「山下さん、映画をよく見るそうですね。映画館で見るんですか。」山下「映画館にも行きますが、（　）、家でDVDを見ることが多いですね。」",opts:["確かに","まるで","必ずしも","どちらかというと"],ans:3,exp:"どちらかというと = nếu phải chọn thì... / nói chung là... (xu hướng)"},
+      {q:"（料理番組で）「じゃがいもは、ゆでてから皮をむいたほうが、きれいに皮がむけます。ゆでた後、熱い（　）皮をむきましょう。」",opts:["のに","うちに","ことで","とすると"],ans:1,exp:"熱いうちに = khi còn nóng (〜うちに = tranh thủ lúc còn trong trạng thái đó)"},
+      {q:"少し前にご飯を食べた（　）なのに、もうおなかがすいてきた。",opts:["せい","とき","よう","ばかり"],ans:3,exp:"〜ばかり = vừa mới... xong (hành động vừa hoàn thành không lâu)"},
+      {q:"私は小学生のころ、ゲームが大好きだった。早く家で、ゲームが（　）、毎日学校から走って帰っていた。",opts:["したくて","したくても","するためで","するためでも"],ans:0,exp:"〜たくて = vì muốn... nên (desire as reason for action)"},
+      {q:"弟の誕生日プレゼントを何にするか考えている。何を（　）、喜ぶだろうか。",opts:["くれたら","あげたら","くれるから","あげるから"],ans:1,exp:"何をあげたら = nếu tặng gì thì... (điều kiện + 喜ぶ)"},
+      {q:"（電話で）A「この前借りた小説、もう1回貸してもらえない？」B「うん、いいよ。あした、学校に（　）ね。」",opts:["持とっく","持ってる","持ってく","持っちゃう"],ans:2,exp:"持ってく = 持っていく (khẩu ngữ, sẽ mang đến)"},
+      {q:"A「来週の登山、楽しみだね。」B「うん、（　）ね。」",opts:["晴れてきた","晴れるといい","晴れるんだ","晴れてよかった"],ans:1,exp:"〜といい = thật tốt nếu... (mong muốn, hy vọng)"},
+      {q:"（市のホームページで）9月30日に絵本作家の坂本みどりさんによる講演会が開かれます。市民の方であれば、どなたでも無料で（　）。",opts:["ご参加になれます","参加いたします","ご参加になっています","参加できます"],ans:0,exp:"ご〜になれます = có thể... được ạ (kính ngữ tôn trọng + khả năng)"},
+      {q:"以前は、会社の窓から海を見ることができたが、隣に高いビルができて、（　）。",opts:["見えなくてもよくなった","見られたかもしれない","見えなくなってしまった","見られるようにならない"],ans:2,exp:"〜てしまった = đã... mất rồi (kết quả không thể đảo ngược, tiếc)"},
+      {q:"（病院で）医者「この薬を五日間飲んでください。」患者「わかりました。熱が下がっても（　）。」",opts:["飲んではいけませんか","飲んでいないんでしょうか","飲んでみようと思いますか","飲んだほうがいいでしょうか"],ans:3,exp:"〜たほうがいいでしょうか = có nên... không ạ? (xác nhận lịch sự)"}
+    ]
+  }
+;
 
 // Thêm 7 đề còn thiếu từ Drive
 const GRAMMAR_EXAM_DATA_EXTRA = [
