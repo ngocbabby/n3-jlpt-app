@@ -2414,7 +2414,7 @@ function buildCard(lesson, colorIdx) {
 
     node.innerHTML = `
       <div class="grammar-pattern-row" style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
-        <div class="grammar-pattern" style="color:${color};flex:1">${g.pattern}</div>
+        <div class="grammar-pattern" style="color:var(--text);flex:1">${g.pattern}</div>
         <button class="g-tts-btn" title="Đọc" style="background:${color}22;border:1.5px solid ${color}44;color:${color};border-radius:8px;padding:4px 8px;font-size:.85rem;cursor:pointer;flex-shrink:0">🔊</button>
       </div>
       <span class="meaning-tag" style="background:${color}22;color:${color}">意味</span>
