@@ -9,7 +9,7 @@
 :root{
   --bg:#0d0d1a;--sur:#161628;--card:#1f1f38;--c2:#181830;
   --a1:#ff4d6d;--a2:#ffd166;--a3:#a78bfa;--a4:#34d399;
-  --t:#f4f4ff;--s:#c8c8e8;--d:#8888aa;--b:#2e2e50;
+  --t:#f4f4ff;--s:#dcdcf5;--d:#b8b8d8;--b:#2e2e50;
   --lv1:#ffd166;--lv2:#4ade80;--lv3:#c084fc;--lv4:#60a5fa;--lv5:#f87171;
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -24,11 +24,11 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 @keyframes fp{0%,100%{opacity:1}50%{opacity:.55}}
 .cdrow{display:flex;align-items:center;gap:8px;background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.25);border-radius:8px;padding:7px 12px}
 .cdnum{font-size:26px;font-weight:800;color:var(--a2);line-height:1}
-.cdinfo{font-size:11px;color:var(--s);flex:1}
+.cdinfo{font-size:11px;color:#ddddf5;flex:1}
 .cdpush{color:var(--a1);font-size:13px;font-weight:800;animation:fp 1s ease infinite}
 
 .tabs{display:flex;background:var(--sur);border-bottom:2px solid var(--b);position:sticky;top:75px;z-index:100}
-.tab{flex:1;padding:10px 3px;text-align:center;font-size:11px;font-weight:700;color:var(--d);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:color .2s}
+.tab{flex:1;padding:10px 3px;text-align:center;font-size:11px;font-weight:700;color:#b0b0d0;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:color .2s}
 .tab.on{color:var(--a1);border-bottom-color:var(--a1)}
 .tic{font-size:18px;display:block;margin-bottom:2px}
 
@@ -36,11 +36,11 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 .scr.on{display:block}
 
 .msw{display:flex;gap:7px;margin-bottom:11px}
-.mbtn{flex:1;padding:9px;border:1.5px solid var(--b);background:var(--card);border-radius:10px;font-size:13px;font-weight:700;color:var(--d);cursor:pointer;text-align:center;transition:all .15s}
+.mbtn{flex:1;padding:9px;border:1.5px solid var(--b);background:var(--card);border-radius:10px;font-size:13px;font-weight:700;color:#c0c0e0;cursor:pointer;text-align:center;transition:all .15s}
 .mbtn.on{border-color:var(--a1);color:var(--a1);background:rgba(255,77,109,.12)}
 
 .lvtabs{display:flex;gap:5px;margin-bottom:11px}
-.lvt{flex:1;padding:8px 3px;border:2px solid var(--b);background:var(--card);border-radius:10px;font-size:12px;font-weight:800;color:var(--d);cursor:pointer;text-align:center;transition:all .15s}
+.lvt{flex:1;padding:8px 3px;border:2px solid var(--b);background:var(--card);border-radius:10px;font-size:12px;font-weight:800;color:#b0b0d8;cursor:pointer;text-align:center;transition:all .15s}
 .lvt[data-lv="1"].on{border-color:var(--lv1);color:var(--lv1);background:rgba(255,209,102,.12)}
 .lvt[data-lv="2"].on{border-color:var(--lv2);color:var(--lv2);background:rgba(74,222,128,.12)}
 .lvt[data-lv="3"].on{border-color:var(--lv3);color:var(--lv3);background:rgba(192,132,252,.12)}
@@ -49,8 +49,8 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 .lvt-ic{font-size:17px;display:block;margin-bottom:1px}
 
 .fc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.fc-nums{font-size:14px;color:var(--s);font-weight:700}
-.fc-mode-lbl{font-size:12px;color:var(--d)}
+.fc-nums{font-size:14px;color:#e0e0f8;font-weight:700}
+.fc-mode-lbl{font-size:12px;color:#c0c0e8;font-weight:700}
 
 /* CARD — fixed height, touch-ready */
 .card{
@@ -80,14 +80,14 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 .card.flip .back{display:flex;overflow-y:auto;max-height:208px;padding-right:2px}
 
 .cm{font-size:clamp(18px,5vw,34px);font-weight:800;color:var(--a2);line-height:1.2;word-break:break-all}
-.cr{font-size:17px;color:var(--a3);font-weight:700}
+.cr{font-size:17px;color:#c4b5fd;font-weight:700}
 .cb{display:inline-block;background:rgba(167,139,250,.2);color:#c4b5fd;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700}
-.chint{position:absolute;bottom:10px;right:13px;font-size:11px;color:rgba(200,200,230,.35)}
+.chint{position:absolute;bottom:10px;right:13px;font-size:11px;color:rgba(220,220,255,.55)}
 /* back fields */
 .bm{font-size:clamp(16px,4.5vw,28px);font-weight:800;color:var(--a2);line-height:1.2;word-break:break-all}
-.br{font-size:16px;color:var(--a3);font-weight:700}
+.br{font-size:16px;color:#c4b5fd;font-weight:700}
 .bvn{font-size:clamp(15px,4vw,20px);font-weight:800;color:#ffffff;word-break:break-word}
-.btype{font-size:13px;color:#c4b5fd;font-weight:700}
+.btype{font-size:13px;color:#ddd6fe;font-weight:700}
 .bhv{font-size:13px;color:var(--a4);font-weight:800}
 .bmemo{font-size:12px;color:var(--s);line-height:1.6;text-align:left;width:100%;word-break:break-word;overflow-wrap:break-word}
 .bex{background:rgba(167,139,250,.15);border-radius:8px;padding:8px 10px;font-size:13px;color:#e8e8ff;line-height:1.65;text-align:left;width:100%;word-break:break-word;overflow-wrap:break-word}
@@ -95,7 +95,7 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 .bgtip{font-size:12px;color:var(--s);line-height:1.6;text-align:left;width:100%;word-break:break-word}
 
 /* swipe indicator */
-.swipe-hint{display:flex;justify-content:space-between;font-size:11px;color:rgba(200,200,230,.3);margin-top:4px;padding:0 4px}
+.swipe-hint{display:flex;justify-content:space-between;font-size:11px;color:rgba(220,220,250,.5);margin-top:4px;padding:0 4px}
 
 .fc-btns{display:flex;gap:8px;margin-top:9px}
 .fb{flex:1;padding:12px;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;transition:opacity .15s}
@@ -117,8 +117,8 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 .gi:hover{transform:translateX(2px)}
 .gi.open{border-left-color:var(--a2)}
 .gi-p{font-size:17px;font-weight:800;color:var(--a2);margin-bottom:3px;word-break:break-word}
-.gi-v{font-size:13px;color:var(--s)}
-.gi-tip{font-size:13px;color:var(--d);line-height:1.65;margin-top:6px;display:none}
+.gi-v{font-size:13px;color:#d8d8f5;font-weight:600}
+.gi-tip{font-size:13px;color:#c8c8e8;line-height:1.65;margin-top:6px;display:none}
 .gi.open .gi-tip{display:block}
 .gi-ex{background:rgba(167,139,250,.13);border-radius:8px;padding:8px 11px;margin-top:6px;font-size:14px;color:#e0e0ff;display:none;word-break:break-word}
 .gi.open .gi-ex{display:block}
@@ -135,7 +135,7 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 .ph-pct{font-size:15px;font-weight:800}
 .ph-bg{background:rgba(255,255,255,.07);border-radius:4px;height:5px;overflow:hidden}
 .ph-bar{height:5px;border-radius:4px;transition:width .5s}
-.ph-d{font-size:12px;color:var(--d);margin-top:4px}
+.ph-d{font-size:12px;color:#c8c8e8;margin-top:4px;font-weight:600}
 .lvleg{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
 .lvp{display:flex;align-items:center;gap:4px;background:var(--c2);border-radius:20px;padding:4px 8px;font-size:12px;font-weight:700}
 .lvdot{width:8px;height:8px;border-radius:50%}
@@ -146,7 +146,7 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 .toast.sh{opacity:1}
 
 .bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--sur);border-top:2px solid var(--b);display:flex;z-index:150;box-shadow:0 -4px 20px rgba(0,0,0,.6)}
-.nb{flex:1;border:none;background:transparent;padding:9px 0;font-size:10px;font-weight:700;color:var(--d);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:color .15s}
+.nb{flex:1;border:none;background:transparent;padding:9px 0;font-size:10px;font-weight:700;color:#a8a8cc;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:color .15s}
 .nb-ic{font-size:19px}
 .nb.on{color:var(--a1)}
 
@@ -189,31 +189,19 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
     <div class="ph-r"><span style="font-size:20px">📝</span><span style="font-size:15px;font-weight:800;flex:1">Ngữ Pháp</span><span class="ph-pct" id="g-pct" style="color:var(--a1)">0%</span></div>
     <div class="ph-bg"><div class="ph-bar" id="g-bar" style="width:0%;background:var(--a1)"></div></div>
     <div class="ph-d" id="g-det">0 / 133 mẫu</div>
-    <div class="lvleg" id="g-leg"></div>
+    
   </div>
   <div class="ph">
     <div class="ph-r"><span style="font-size:20px">📚</span><span style="font-size:15px;font-weight:800;flex:1">Từ Vựng</span><span class="ph-pct" id="v-pct" style="color:var(--a2)">0%</span></div>
     <div class="ph-bg"><div class="ph-bar" id="v-bar" style="width:0%;background:var(--a2)"></div></div>
     <div class="ph-d" id="v-det">0 / 880 từ</div>
-    <div class="lvleg">
-      <div class="lvp"><div class="lvdot" style="background:var(--lv1)"></div>Lv1 <span id="lv1c">0</span></div>
-      <div class="lvp"><div class="lvdot" style="background:var(--lv2)"></div>Lv2 <span id="lv2c">0</span></div>
-      <div class="lvp"><div class="lvdot" style="background:var(--lv3)"></div>Lv3 <span id="lv3c">0</span></div>
-      <div class="lvp"><div class="lvdot" style="background:var(--lv4)"></div>Lv4 <span id="lv4c">0</span></div>
-      <div class="lvp"><div class="lvdot" style="background:var(--lv5)"></div>Lv5 <span id="lv5c">0</span></div>
-    </div>
+    
   </div>
   <div class="ph">
     <div class="ph-r"><span style="font-size:20px">漢</span><span style="font-size:15px;font-weight:800;flex:1">Kanji</span><span class="ph-pct" id="k-pct" style="color:var(--a4)">0%</span></div>
     <div class="ph-bg"><div class="ph-bar" id="k-bar" style="width:0%;background:var(--a4)"></div></div>
     <div class="ph-d" id="k-det">0 / 295 kanji</div>
-    <div class="lvleg">
-      <div class="lvp"><div class="lvdot" style="background:var(--lv1)"></div>Lv1 <span id="klv1c">0</span></div>
-      <div class="lvp"><div class="lvdot" style="background:var(--lv2)"></div>Lv2 <span id="klv2c">0</span></div>
-      <div class="lvp"><div class="lvdot" style="background:var(--lv3)"></div>Lv3 <span id="klv3c">0</span></div>
-      <div class="lvp"><div class="lvdot" style="background:var(--lv4)"></div>Lv4 <span id="klv4c">0</span></div>
-      <div class="lvp"><div class="lvdot" style="background:var(--lv5)"></div>Lv5 <span id="klv5c">0</span></div>
-    </div>
+    
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px">
     <button onclick="sw('gram')" style="padding:12px;background:var(--card);border:1.5px solid var(--a1);color:var(--a1);border-radius:11px;font-size:14px;font-weight:800;cursor:pointer">📝 Ngữ Pháp</button>
