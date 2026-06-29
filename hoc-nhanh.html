@@ -334,7 +334,8 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
       oninput="gFilter(this.value)">
     <div class="slist" id="g-items"></div>
   </div>
-  <div id="g-fc" style="display:none">
+  <!-- LV tabs + header: ALWAYS visible in FC mode -->
+  <div id="g-fc-controls" style="display:none">
     <div class="lvtabs" id="g-lvtabs">
       <div class="lvt on" data-lv="1" onclick="setGLv(1)"><span class="lvt-ic" style="color:var(--lv1)">♥</span>Lv1</div>
       <div class="lvt" data-lv="2" onclick="setGLv(2)"><span class="lvt-ic" style="color:var(--lv2)">♥</span>Lv2</div>
@@ -346,8 +347,11 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
       <span class="fc-nums" id="gfc-n">—</span>
       <span class="fc-mode-lbl" id="gfc-lbl">Lv1 – mẫu mới</span>
     </div>
+  </div>
+
+  <!-- Lv1/5: flashcard card only -->
+  <div id="g-fc" style="display:none">
     <div id="gfc-wrap"></div>
-    <div class="swipe-hint"><span>← Từ mới</span><span>Từ cũ →</span></div>
     <div class="fc-btns">
       <button class="fb fbtts" id="gfc-tts" onclick="speakGFC()">🔊</button>
       <button class="fb fbfl" onclick="prevGFC()">← Quay lại</button>
@@ -768,6 +772,8 @@ function gMode(m) {
   document.getElementById('gm-list').classList.toggle('on',m==='list');
   document.getElementById('gm-fc').classList.toggle('on',m==='fc');
   document.getElementById('g-list').style.display=m==='list'?'':'none';
+  // g-fc-controls (lv tabs) always visible in fc mode
+  document.getElementById('g-fc-controls').style.display=m==='fc'?'block':'none';
   if(m==='list'){
     document.getElementById('g-fc').style.display='none';
     document.getElementById('gfc-quiz-area').style.display='none';
@@ -789,17 +795,11 @@ let gCurLv=1, gDeck=[], gIdx=0, gFlip=false, gPending=null; // pending = idx of 
 
 function setGLv(lv) {
   gCurLv=lv; setLvTabActive('g-lvtabs',lv);
-  // Also update quiz/fc visibility if in fc mode
-  if(curGMode==='fc'){
-    if(lv>=2&&lv<=4){
-      document.getElementById('g-fc').style.display='none';
-      document.getElementById('gfc-quiz-area').style.display='block';
-    } else {
-      document.getElementById('g-fc').style.display='block';
-      document.getElementById('gfc-quiz-area').style.display='none';
-    }
-  }
   initGFC(lv);
+  // g-fc-controls always shows in fc mode (tabs must stay visible)
+  if(curGMode==='fc'){
+    document.getElementById('g-fc-controls').style.display='block';
+  }
 }
 
 function initGFC(lv) {
@@ -817,6 +817,7 @@ function initGFC(lv) {
     }
     document.getElementById('g-fc').style.display='none';
     document.getElementById('gfc-quiz-area').style.display='block';
+    if(curGMode==='fc') document.getElementById('g-fc-controls').style.display='block';
     if(window._gqc && window._gqc.cfg && window._gqc.cfg.lv===lv){
       window._gqc.show();
     } else {
@@ -824,10 +825,11 @@ function initGFC(lv) {
       window._gqc.show();
     }
   } else {
-    document.getElementById('g-fc').style.display='block';
+    // lv1 or lv5: flashcard mode
+    document.getElementById('g-fc').style.display = curGMode==='fc' ? 'block' : 'none';
     document.getElementById('gfc-quiz-area').style.display='none';
     if(!gDeck.length){ showEmpty('gfc-wrap','Chưa có mẫu ở Lv'+lv); document.getElementById('gfc-n').textContent='0/0'; return; }
-    renderGFC();
+    if(curGMode==='fc') renderGFC();
   }
 }
 
