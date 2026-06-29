@@ -60,7 +60,7 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
   text-align:center;padding:16px 18px 36px;
   border:2px solid var(--b);
   cursor:pointer;transition:border-color .2s;
-  position:relative;overflow:hidden;
+  position:relative;overflow:visible;
   touch-action:pan-y;user-select:none;
   word-break:break-word;overflow-wrap:break-word;
 }
@@ -167,6 +167,107 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 #cat-box{position:fixed;bottom:86px;left:0;right:0;height:56px;pointer-events:none;z-index:300;overflow:hidden}
 #cat-cv{position:absolute;bottom:0;left:8px;width:56px;height:56px}
 
+
+/* ── QUIZ MODE (Lv2/3/4) ── */
+.quiz-wrap{padding:0}
+.quiz-q{
+  background:var(--card);border-radius:16px;
+  padding:20px 18px 18px;
+  border:2px solid var(--b);
+  min-height:120px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;word-break:break-word;margin-bottom:10px;
+  position:relative;
+}
+.quiz-q .qtext{font-size:clamp(14px,4vw,22px);font-weight:800;color:var(--a2);line-height:1.4}
+.quiz-q .qsub{font-size:13px;color:var(--s);margin-top:5px}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.qopt{
+  background:var(--card);border:2px solid var(--b);
+  border-radius:12px;padding:13px 10px;
+  font-size:clamp(13px,3.5vw,16px);font-weight:700;
+  color:var(--t);cursor:pointer;
+  text-align:center;word-break:break-word;
+  transition:all .15s;line-height:1.4;
+  min-height:52px;display:flex;align-items:center;justify-content:center;
+}
+.qopt:active{transform:scale(.97)}
+.qopt.correct{background:rgba(52,211,153,.2)!important;border-color:#34d399!important;color:#34d399!important}
+.qopt.wrong{background:rgba(248,113,113,.2)!important;border-color:#f87171!important;color:#f87171!important}
+.qopt.disabled{pointer-events:none;opacity:.5}
+.qopt.reveal-correct{background:rgba(52,211,153,.25)!important;border-color:#34d399!important;color:#34d399!important;animation:pulse-green .6s ease}
+@keyframes pulse-green{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+
+/* Timer bar */
+.timer-wrap{height:8px;background:rgba(255,255,255,.1);border-radius:4px;margin-bottom:10px;overflow:hidden}
+.timer-bar{height:8px;border-radius:4px;background:var(--a4);transition:width .1s linear;width:100%}
+.timer-bar.warn{background:var(--a2)}
+.timer-bar.danger{background:var(--a1)}
+
+/* Timer controls */
+.timer-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.timer-label{font-size:14px;font-weight:800;color:var(--s)}
+.pause-btn{
+  background:var(--card2);border:1.5px solid var(--b);
+  color:var(--s);border-radius:8px;
+  padding:5px 14px;font-size:13px;font-weight:800;cursor:pointer;
+  transition:all .15s;
+}
+.pause-btn:hover{border-color:var(--a2);color:var(--a2)}
+.pause-overlay{
+  position:absolute;inset:0;background:rgba(13,13,26,.85);
+  border-radius:16px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;z-index:10;
+  backdrop-filter:blur(3px);
+}
+.pause-overlay .big{font-size:32px}
+.pause-overlay .msg{font-size:16px;font-weight:800;color:var(--t)}
+.resume-btn{
+  background:var(--a1);color:white;border:none;
+  border-radius:12px;padding:12px 32px;
+  font-size:16px;font-weight:800;cursor:pointer;
+}
+
+/* Lv4 listen */
+.listen-wrap{text-align:center;padding:10px 0 6px}
+.listen-btn{
+  background:var(--a1);border:none;border-radius:50%;
+  width:70px;height:70px;font-size:28px;
+  cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 16px rgba(255,77,109,.4);
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.listen-btn:hover{transform:scale(1.08)}
+.listen-btn.playing{animation:pulse-red 1s ease infinite}
+@keyframes pulse-red{0%,100%{box-shadow:0 4px 16px rgba(255,77,109,.4)}50%{box-shadow:0 4px 28px rgba(255,77,109,.8)}}
+.listen-hint{font-size:12px;color:var(--s);margin-top:6px}
+
+/* Lv5 glow heart */
+.heart-lv5{
+  text-shadow:0 0 8px #f87171, 0 0 16px rgba(248,113,113,.6)!important;
+  filter:drop-shadow(0 0 6px rgba(248,113,113,.8));
+}
+
+/* Wrong count badge */
+.wrong-badge{
+  position:absolute;top:8px;left:10px;
+  background:rgba(248,113,113,.2);border:1px solid var(--lv5);
+  color:var(--lv5);border-radius:20px;
+  padding:2px 8px;font-size:11px;font-weight:800;
+}
+
+/* Quiz score line */
+.quiz-status{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:8px;font-size:13px;
+}
+.qs-num{color:var(--s);font-weight:700}
+.qs-wrong{color:var(--lv5);font-weight:800}
+
+/* Fix card overflow - ensure back content scrollable */
+.card{overflow:auto!important}
+.card .back{overflow-y:auto;max-height:190px;padding:0 2px}
+
 </style>
 </head>
 <body>
@@ -253,6 +354,30 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
       <button class="fb fbnxt" onclick="nextGFC()">Tiếp →</button>
     </div>
   </div>
+
+  <!-- Grammar Quiz Lv2/3/4 -->
+  <div id="gfc-quiz-area" style="display:none">
+    <div class="quiz-status">
+      <span class="qs-num" id="gq-num">1/10</span>
+      <span class="qs-wrong" id="gq-wrong"></span>
+    </div>
+    <div id="gq-timer-wrap" style="display:none">
+      <div class="timer-top">
+        <span class="timer-label" id="gq-timer-label">7s</span>
+        <button class="pause-btn" onclick="toggleGPause()">⏸ Tạm dừng</button>
+      </div>
+      <div class="timer-wrap"><div class="timer-bar" id="gq-timer-bar"></div></div>
+    </div>
+    <div class="quiz-q" id="gq-question">
+      <div id="gq-pause-overlay" class="pause-overlay" style="display:none">
+        <div class="big">⏸</div><div class="msg">Đang tạm dừng</div>
+        <button class="resume-btn" onclick="toggleGPause()">▶ Tiếp tục</button>
+      </div>
+      <div class="qtext" id="gq-qtext"></div>
+      <div class="qsub" id="gq-qsub" style="font-size:12px;color:var(--s);margin-top:4px"></div>
+    </div>
+    <div class="quiz-opts" id="gq-opts"></div>
+  </div>
 </div>
 
 <!-- VOCAB -->
@@ -268,12 +393,45 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
     <span class="fc-nums" id="vfc-n">—</span>
     <span class="fc-mode-lbl" id="vfc-lbl">Lv1 – từ mới</span>
   </div>
-  <div id="vfc-wrap"></div>
-  <div class="swipe-hint"><span>← Từ mới</span><span>Từ cũ →</span></div>
-  <div class="fc-btns">
-    <button class="fb fbtts" id="vfc-tts" onclick="speakVFC()">🔊</button>
-    <button class="fb fbfl" onclick="prevVFC()">← Quay lại</button>
-    <button class="fb fbnxt" onclick="nextVFC()">Tiếp →</button>
+  <!-- Lv1/5: flashcard -->
+  <div id="vfc-fc-area">
+    <div id="vfc-wrap"></div>
+    <div class="fc-btns">
+      <button class="fb fbtts" id="vfc-tts" onclick="speakVFC()">🔊</button>
+      <button class="fb fbfl" onclick="prevVFC()">← Quay lại</button>
+      <button class="fb fbnxt" onclick="nextVFC()">Tiếp →</button>
+    </div>
+  </div>
+  <!-- Lv2/3/4: quiz -->
+  <div id="vfc-quiz-area" style="display:none">
+    <div class="quiz-status">
+      <span class="qs-num" id="vq-num">1/10</span>
+      <span class="qs-wrong" id="vq-wrong"></span>
+    </div>
+    <!-- Timer (lv3 only) -->
+    <div id="vq-timer-wrap" style="display:none">
+      <div class="timer-top">
+        <span class="timer-label" id="vq-timer-label">5s</span>
+        <button class="pause-btn" id="vq-pause-btn" onclick="toggleVPause()">⏸ Tạm dừng</button>
+      </div>
+      <div class="timer-wrap"><div class="timer-bar" id="vq-timer-bar"></div></div>
+    </div>
+    <!-- Question -->
+    <div class="quiz-q" id="vq-question">
+      <div id="vq-pause-overlay" class="pause-overlay" style="display:none">
+        <div class="big">⏸</div>
+        <div class="msg">Đang tạm dừng</div>
+        <button class="resume-btn" onclick="toggleVPause()">▶ Tiếp tục</button>
+      </div>
+      <!-- Lv4: listen button -->
+      <div id="vq-listen" class="listen-wrap" style="display:none">
+        <button class="listen-btn" id="vq-listen-btn" onclick="playVQuizAudio()">🔊</button>
+        <div class="listen-hint">Nghe rồi chọn đáp án đúng</div>
+      </div>
+      <div class="qtext" id="vq-qtext"></div>
+      <div class="qsub" id="vq-qsub"></div>
+    </div>
+    <div class="quiz-opts" id="vq-opts"></div>
   </div>
   <div style="background:var(--card);border-radius:10px;padding:10px;margin-top:9px;border:1px solid var(--b);font-size:12px;color:var(--s);line-height:1.85">
     <b style="color:var(--t)">♥ Quy tắc tim:</b><br>
@@ -296,12 +454,41 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
     <span class="fc-nums" id="kfc-n">—</span>
     <span class="fc-mode-lbl" id="kfc-lbl">Lv1 – kanji mới</span>
   </div>
-  <div id="kfc-wrap"></div>
-  <div class="swipe-hint"><span>← Kanji mới</span><span>Kanji cũ →</span></div>
-  <div class="fc-btns">
-    <button class="fb fbtts" id="kfc-tts" onclick="speakKFC()">🔊</button>
-    <button class="fb fbfl" onclick="prevKFC()">← Quay lại</button>
-    <button class="fb fbnxt" onclick="nextKFC()">Tiếp →</button>
+  <!-- Lv1/5: flashcard -->
+  <div id="kfc-fc-area">
+    <div id="kfc-wrap"></div>
+    <div class="fc-btns">
+      <button class="fb fbtts" id="kfc-tts" onclick="speakKFC()">🔊</button>
+      <button class="fb fbfl" onclick="prevKFC()">← Quay lại</button>
+      <button class="fb fbnxt" onclick="nextKFC()">Tiếp →</button>
+    </div>
+  </div>
+  <!-- Lv2/3/4: quiz -->
+  <div id="kfc-quiz-area" style="display:none">
+    <div class="quiz-status">
+      <span class="qs-num" id="kq-num">1/10</span>
+      <span class="qs-wrong" id="kq-wrong"></span>
+    </div>
+    <div id="kq-timer-wrap" style="display:none">
+      <div class="timer-top">
+        <span class="timer-label" id="kq-timer-label">5s</span>
+        <button class="pause-btn" id="kq-pause-btn" onclick="toggleKPause()">⏸ Tạm dừng</button>
+      </div>
+      <div class="timer-wrap"><div class="timer-bar" id="kq-timer-bar"></div></div>
+    </div>
+    <div class="quiz-q" id="kq-question">
+      <div id="kq-pause-overlay" class="pause-overlay" style="display:none">
+        <div class="big">⏸</div><div class="msg">Đang tạm dừng</div>
+        <button class="resume-btn" onclick="toggleKPause()">▶ Tiếp tục</button>
+      </div>
+      <div id="kq-listen" class="listen-wrap" style="display:none">
+        <button class="listen-btn" id="kq-listen-btn" onclick="playKQuizAudio()">🔊</button>
+        <div class="listen-hint">Nghe rồi chọn kanji đúng</div>
+      </div>
+      <div class="qtext" id="kq-qtext"></div>
+      <div class="qsub" id="kq-qsub"></div>
+    </div>
+    <div class="quiz-opts" id="kq-opts"></div>
   </div>
 </div>
 
@@ -597,8 +784,19 @@ function initGFC(lv) {
   gDeck=getItemsForTab(GRAMMAR,ST.gLv,lv);
   gIdx=0; gFlip=false; gPending=null;
   document.getElementById('gfc-lbl').textContent=LBELS[lv];
-  if(!gDeck.length){ showEmpty('gfc-wrap','Chưa có mẫu ngữ pháp ở Lv'+lv); document.getElementById('gfc-n').textContent='0/0'; return; }
-  renderGFC();
+  if(lv>=2&&lv<=4){
+    if(!gDeck.length){ showEmpty('gfc-wrap','Chưa có mẫu ở Lv'+lv); document.getElementById('gfc-n').textContent='0/0';
+      document.getElementById('g-fc').style.display='none';
+      document.getElementById('gfc-quiz-area').style.display='none'; return; }
+    document.getElementById('g-fc').style.display='none';
+    document.getElementById('gfc-quiz-area').style.display='block';
+    showQuizMode('g',lv,gDeck);
+  } else {
+    document.getElementById('g-fc').style.display='block';
+    document.getElementById('gfc-quiz-area').style.display='none';
+    if(!gDeck.length){ showEmpty('gfc-wrap','Chưa có mẫu ở Lv'+lv); document.getElementById('gfc-n').textContent='0/0'; return; }
+    renderGFC();
+  }
 }
 
 function renderGFC() {
@@ -698,8 +896,19 @@ function initVFC(lv) {
   vDeck=getItemsForTab(VOCAB,ST.vLv,lv);
   vIdx=0; vFlip=false; vPending=null;
   document.getElementById('vfc-lbl').textContent=LBELS[lv];
-  if(!vDeck.length){ showEmpty('vfc-wrap','Chưa có từ ở Lv'+lv); document.getElementById('vfc-n').textContent='0/0'; return; }
-  renderVFC();
+  if(lv>=2&&lv<=4){
+    // Quiz mode
+    if(!vDeck.length){ showEmpty('vfc-wrap','Chưa có từ ở Lv'+lv); document.getElementById('vfc-n').textContent='0/0';
+      document.getElementById('vfc-fc-area').style.display='none';
+      document.getElementById('vfc-quiz-area').style.display='none'; return; }
+    showQuizMode('v',lv,vDeck);
+  } else {
+    // Flashcard mode (lv1/lv5)
+    document.getElementById('vfc-fc-area').style.display='block';
+    document.getElementById('vfc-quiz-area').style.display='none';
+    if(!vDeck.length){ showEmpty('vfc-wrap','Chưa có từ ở Lv'+lv); document.getElementById('vfc-n').textContent='0/0'; return; }
+    renderVFC();
+  }
 }
 
 function renderVFC() {
@@ -787,8 +996,17 @@ function initKFC(lv) {
   kDeck=getItemsForTab(KANJI,ST.kLv,lv);
   kIdx=0; kFlip=false; kPending=null;
   document.getElementById('kfc-lbl').textContent=LBELS[lv];
-  if(!kDeck.length){ showEmpty('kfc-wrap','Chưa có kanji ở Lv'+lv); document.getElementById('kfc-n').textContent='0/0'; return; }
-  renderKFC();
+  if(lv>=2&&lv<=4){
+    if(!kDeck.length){ showEmpty('kfc-wrap','Chưa có kanji ở Lv'+lv); document.getElementById('kfc-n').textContent='0/0';
+      document.getElementById('kfc-fc-area').style.display='none';
+      document.getElementById('kfc-quiz-area').style.display='none'; return; }
+    showQuizMode('k',lv,kDeck);
+  } else {
+    document.getElementById('kfc-fc-area').style.display='block';
+    document.getElementById('kfc-quiz-area').style.display='none';
+    if(!kDeck.length){ showEmpty('kfc-wrap','Chưa có kanji ở Lv'+lv); document.getElementById('kfc-n').textContent='0/0'; return; }
+    renderKFC();
+  }
 }
 
 function renderKFC() {
@@ -1027,6 +1245,423 @@ function patchFn(name){
 setTimeout(function(){patchFn('nextVFC');patchFn('nextKFC');patchFn('nextGFC');},1000);
 
 (function loop(){draw();requestAnimationFrame(loop);})();
+})();
+
+
+// ──── QUIZ ENGINE ────
+// ════════════════════════════════════════════════
+//  QUIZ ENGINE — Lv2 / Lv3 / Lv4
+//  Applies to VOCAB, KANJI, GRAMMAR
+// ════════════════════════════════════════════════
+
+// ── Wrong count tracker (session only, resets on reload/new day) ──
+// wrongCounts[type][id] = count this session
+const WC = { v:{}, g:{}, k:{} };
+const lastDay = new Date().toDateString();
+// Check if new day → reset (stored in session)
+if(sessionStorage.getItem('quiz_day') !== lastDay){
+  sessionStorage.setItem('quiz_day', lastDay);
+  // Fresh day, WC already empty
+}
+
+// ── Timer states saved to localStorage for pause-persist ──
+const PAUSE_KEY = 'hn_pause_v1';
+function savePauseState(type, data){
+  try { const p=JSON.parse(localStorage.getItem(PAUSE_KEY)||'{}'); p[type]=data; localStorage.setItem(PAUSE_KEY,JSON.stringify(p)); } catch(e){}
+}
+function loadPauseState(type){
+  try { const p=JSON.parse(localStorage.getItem(PAUSE_KEY)||'{}'); return p[type]||null; } catch(e){return null;} 
+}
+function clearPauseState(type){
+  try { const p=JSON.parse(localStorage.getItem(PAUSE_KEY)||'{}'); delete p[type]; localStorage.setItem(PAUSE_KEY,JSON.stringify(p)); } catch(e){}
+}
+
+// ── Distractors: pick 3 wrong answers from same pool ──
+function getDistractors(correct, pool, keyFn, valFn, count=3){
+  // pool = array of items, keyFn returns the "answer" value, valFn returns display
+  const correctKey = keyFn(correct);
+  // Filter: different answer, prefer same group/type
+  let candidates = pool.filter(x => keyFn(x) !== correctKey);
+  // Shuffle and pick count
+  candidates = candidates.sort(()=>Math.random()-.5);
+  return candidates.slice(0, count);
+}
+
+function shuffle(arr){ return arr.sort(()=>Math.random()-.5); }
+
+// ── Build quiz question ──
+// Returns {qtext, qsub, correct, opts:[{text,isCorrect}], audioText}
+function buildQuestion(type, item, lv){
+  // type: 'v'=vocab, 'k'=kanji, 'g'=grammar
+  if(type==='v'){
+    const pool = VOCAB;
+    if(lv===2||lv===3){
+      // Show kanji → pick meaning
+      const distractors = getDistractors(item, pool, x=>x.v, x=>x.v);
+      const opts = shuffle([
+        {text:item.v, isCorrect:true},
+        ...distractors.map(d=>({text:d.v, isCorrect:false}))
+      ]);
+      return { qtext:item.k, qsub:item.r, correct:item.v, opts, audioText:item.k };
+    } else if(lv===4){
+      // Listen → pick kanji
+      const distractors = getDistractors(item, pool, x=>x.k, x=>x.k);
+      const opts = shuffle([
+        {text:item.k, isCorrect:true},
+        ...distractors.map(d=>({text:d.k, isCorrect:false}))
+      ]);
+      return { qtext:'', qsub:'', correct:item.k, opts, audioText:item.k, isListen:true };
+    }
+  } else if(type==='k'){
+    const pool = KANJI;
+    if(lv===2||lv===3){
+      // Show kanji char → pick meaning
+      const distractors = getDistractors(item, pool, x=>x.v, x=>x.v);
+      const opts = shuffle([
+        {text:item.v, isCorrect:true},
+        ...distractors.map(d=>({text:d.v, isCorrect:false}))
+      ]);
+      return { qtext:item.k, qsub:item.r, correct:item.v, opts, audioText:item.k };
+    } else if(lv===4){
+      // Listen → pick kanji
+      const distractors = getDistractors(item, pool, x=>x.k, x=>x.k);
+      const opts = shuffle([
+        {text:item.k, isCorrect:true},
+        ...distractors.map(d=>({text:d.k, isCorrect:false}))
+      ]);
+      return { qtext:'', qsub:'', correct:item.k, opts, audioText:item.k, isListen:true };
+    }
+  } else if(type==='g'){
+    const pool = GRAMMAR;
+    if(lv===2||lv===3){
+      // Show meaning (VN) → pick pattern
+      const distractors = getDistractors(item, pool, x=>x.p, x=>x.p);
+      const opts = shuffle([
+        {text:item.p, isCorrect:true},
+        ...distractors.map(d=>({text:d.p, isCorrect:false}))
+      ]);
+      return { qtext:item.v.substring(0,80), qsub:'Chọn cấu trúc ngữ pháp đúng', correct:item.p, opts };
+    } else if(lv===4){
+      // Show meaning → pick pattern (no audio for grammar lv4)
+      const distractors = getDistractors(item, pool, x=>x.p, x=>x.p);
+      const opts = shuffle([
+        {text:item.p, isCorrect:true},
+        ...distractors.map(d=>({text:d.p, isCorrect:false}))
+      ]);
+      return { qtext:item.v.substring(0,80), qsub:'Chọn cấu trúc ngữ pháp đúng', correct:item.p, opts };
+    }
+  }
+  return null;
+}
+
+// ── Timer duration ──
+function getTimerMs(type, itemKey, lv){
+  if(lv!==3) return 0;
+  const base = type==='g' ? 7000 : 5000;
+  const wrongKey = type+'_'+itemKey;
+  const prevWrong = parseInt(sessionStorage.getItem('pw_'+wrongKey)||'0');
+  const penalty = Math.min(prevWrong, 1) * 2000; // -2s for each prev wrong session, max -2s
+  return Math.max(3000, base - penalty);
+}
+
+// ── Generic Quiz Controller ──
+function QuizController(cfg){
+  // cfg: { type, prefix, lvGet, lvSet, deck, lv, 
+  //        qEl,optsEl,numEl,wrongEl,timerWrap,timerBar,timerLabel,
+  //        listenWrap,listenBtn,pauseOverlay,pauseBtn,
+  //        onDone }
+  const self = this;
+  self.cfg = cfg;
+  self.deck = [...cfg.deck]; // copy
+  self.idx = 0;
+  self.sessionWrong = {}; // {itemKey: count this lv-session}
+  self.paused = false;
+  self.timerInterval = null;
+  self.timerRemaining = 0;
+  self.timerTotal = 0;
+  self.answered = false;
+  self.usedIndices = new Set(); // prevent repeats in session
+
+  // Shuffle deck
+  self.deck = self.deck.sort(()=>Math.random()-.5);
+
+  // Check for persisted pause state
+  const saved = loadPauseState(cfg.type+'_'+cfg.lv);
+  if(saved && saved.itemIdx !== undefined){
+    self.idx = saved.itemIdx;
+    self.sessionWrong = saved.sessionWrong || {};
+  }
+
+  self.currentItem = null;
+  self.currentQ = null;
+
+  self.show = function(){
+    if(self.idx >= self.deck.length){ self.idx=0; } // wrap
+    const entry = self.deck[self.idx];
+    self.currentItem = entry;
+    const item = entry.it;
+    const origIdx = entry.i;
+
+    self.currentQ = buildQuestion(cfg.type, item, cfg.lv);
+    if(!self.currentQ){ self.next(true); return; }
+
+    self.answered = false;
+
+    // Render question
+    const qEl = document.getElementById(cfg.prefix+'qtext');
+    const qsEl = document.getElementById(cfg.prefix+'qsub');
+    if(qEl) qEl.textContent = self.currentQ.qtext;
+    if(qsEl) qsEl.textContent = self.currentQ.qsub||'';
+
+    // Listen mode
+    const listenWrap = document.getElementById(cfg.prefix+'listen');
+    if(listenWrap){
+      listenWrap.style.display = self.currentQ.isListen ? 'block' : 'none';
+      if(self.currentQ.isListen && self.currentQ.audioText){
+        // auto-play audio for lv4
+        setTimeout(()=>speak(self.currentQ.audioText), 300);
+      }
+    }
+
+    // Wrong badge
+    const itemKey = cfg.type+'_'+(item.id||origIdx);
+    const wc = self.sessionWrong[itemKey]||0;
+    const wrongEl = document.getElementById(cfg.prefix+'wrong');
+    if(wrongEl) wrongEl.textContent = wc>0 ? '💔 '.repeat(Math.min(wc,3)) : '';
+
+    // Num
+    const numEl = document.getElementById(cfg.prefix+'num');
+    if(numEl) numEl.textContent = (self.idx+1)+'/'+self.deck.length;
+
+    // Options
+    self.renderOpts();
+
+    // Timer (lv3)
+    self.stopTimer();
+    if(cfg.lv===3){
+      const timerWrap = document.getElementById(cfg.prefix+'timer-wrap');
+      if(timerWrap) timerWrap.style.display='block';
+      const ms = getTimerMs(cfg.type, itemKey, cfg.lv);
+      self.timerTotal = ms;
+      self.startTimer(ms);
+    }
+
+    // Save pause state
+    savePauseState(cfg.type+'_'+cfg.lv, {itemIdx:self.idx, sessionWrong:self.sessionWrong});
+  };
+
+  self.renderOpts = function(){
+    const optsEl = document.getElementById(cfg.prefix+'opts');
+    if(!optsEl||!self.currentQ) return;
+    optsEl.innerHTML = self.currentQ.opts.map((opt,i)=>`
+      <button class="qopt" id="${cfg.prefix}opt-${i}" onclick="window._qcb('${cfg.type}_${cfg.lv}',${i})">
+        ${opt.text}
+      </button>
+    `).join('');
+  };
+
+  self.answer = function(optIdx){
+    if(self.answered) return;
+    self.answered = true;
+    self.stopTimer();
+
+    const opt = self.currentQ.opts[optIdx];
+    const item = self.currentItem.it;
+    const origIdx = self.currentItem.i;
+    const itemKey = cfg.type+'_'+(item.id!==undefined?item.id:origIdx);
+
+    // Disable all opts
+    document.querySelectorAll(`[id^="${cfg.prefix}opt-"]`).forEach(el=>el.classList.add('disabled'));
+
+    if(opt.isCorrect){
+      document.getElementById(cfg.prefix+'opt-'+optIdx).classList.add('correct');
+      // Level up
+      const curLv = ST[cfg.lvKey] ? (ST[cfg.lvKey][item.id!==undefined?item.id:origIdx]||0) : 0;
+      if(cfg.lv===2) { if(ST[cfg.lvKey]) ST[cfg.lvKey][item.id!==undefined?item.id:origIdx]=2; }
+      else if(cfg.lv===3) { if(ST[cfg.lvKey]) ST[cfg.lvKey][item.id!==undefined?item.id:origIdx]=3; }
+      else if(cfg.lv===4) { if(ST[cfg.lvKey]) ST[cfg.lvKey][item.id!==undefined?item.id:origIdx]=4; }
+      save(); updProg();
+      // Remove from deck
+      self.deck.splice(self.idx,1);
+      setTimeout(()=>{
+        if(!self.deck.length){ toast('🎉 Hết level! Lên Lv'+(cfg.lv+1)+'!'); clearPauseState(cfg.type+'_'+cfg.lv); return; }
+        if(self.idx>=self.deck.length) self.idx=0;
+        self.show();
+      }, 800);
+    } else {
+      // Wrong: highlight correct
+      document.getElementById(cfg.prefix+'opt-'+optIdx).classList.add('wrong');
+      self.currentQ.opts.forEach((o,i)=>{ if(o.isCorrect) document.getElementById(cfg.prefix+'opt-'+i).classList.add('reveal-correct'); });
+      // Track wrong
+      if(!self.sessionWrong[itemKey]) self.sessionWrong[itemKey]=0;
+      self.sessionWrong[itemKey]++;
+      sessionStorage.setItem('pw_'+itemKey, self.sessionWrong[itemKey]);
+      // 3 wrongs → demote
+      if(self.sessionWrong[itemKey]>=3){
+        const newLv = Math.max(0, cfg.lv-2); // lv-1 tab
+        if(ST[cfg.lvKey]) ST[cfg.lvKey][item.id!==undefined?item.id:origIdx]=Math.max(0,newLv);
+        save();
+        toast('💔 Sai 3 lần → tụt về Lv'+(Math.max(1,cfg.lv-1))+'!');
+        self.deck.splice(self.idx,1);
+        delete self.sessionWrong[itemKey];
+        setTimeout(()=>{
+          if(!self.deck.length){ clearPauseState(cfg.type+'_'+cfg.lv); return; }
+          if(self.idx>=self.deck.length) self.idx=0;
+          self.show();
+        }, 1500);
+        return;
+      }
+      // Re-insert after 5
+      const reInsertAt = Math.min(self.idx+5, self.deck.length);
+      const removed = self.deck.splice(self.idx,1)[0];
+      self.deck.splice(reInsertAt,0,removed);
+      setTimeout(()=>{ self.show(); }, 1500);
+    }
+  };
+
+  self.startTimer = function(ms){
+    self.timerRemaining = ms;
+    const bar = document.getElementById(cfg.prefix+'timer-bar');
+    const lbl = document.getElementById(cfg.prefix+'timer-label');
+    self.timerInterval = setInterval(()=>{
+      if(self.paused) return;
+      self.timerRemaining -= 100;
+      const pct = Math.max(0, self.timerRemaining/self.timerTotal*100);
+      const sec = Math.ceil(self.timerRemaining/1000);
+      if(bar){ bar.style.width=pct+'%'; bar.className='timer-bar'+(pct<40?' warn':'')+(pct<20?' danger':''); }
+      if(lbl) lbl.textContent=Math.max(0,sec)+'s';
+      if(self.timerRemaining<=0){
+        self.stopTimer();
+        // Time up = wrong
+        if(!self.answered){
+          self.answered=true;
+          // Show correct answer
+          self.currentQ.opts.forEach((o,i)=>{ if(o.isCorrect) document.getElementById(cfg.prefix+'opt-'+i).classList.add('reveal-correct'); });
+          document.querySelectorAll(`[id^="${cfg.prefix}opt-"]`).forEach(el=>el.classList.add('disabled'));
+          const itemKey = cfg.type+'_'+(self.currentItem.it.id!==undefined?self.currentItem.it.id:self.currentItem.i);
+          if(!self.sessionWrong[itemKey]) self.sessionWrong[itemKey]=0;
+          self.sessionWrong[itemKey]++;
+          sessionStorage.setItem('pw_'+itemKey, self.sessionWrong[itemKey]);
+          if(self.sessionWrong[itemKey]>=3){
+            const newLv=Math.max(0,cfg.lv-2);
+            if(ST[cfg.lvKey]) ST[cfg.lvKey][self.currentItem.it.id!==undefined?self.currentItem.it.id:self.currentItem.i]=newLv;
+            save(); toast('💔 Sai 3 lần → tụt lv!');
+            self.deck.splice(self.idx,1);
+            delete self.sessionWrong[itemKey];
+          } else {
+            const re=Math.min(self.idx+5,self.deck.length);
+            const rem=self.deck.splice(self.idx,1)[0];
+            self.deck.splice(re,0,rem);
+          }
+          setTimeout(()=>{ if(!self.deck.length) return; if(self.idx>=self.deck.length) self.idx=0; self.show(); },1500);
+        }
+      }
+    },100);
+  };
+
+  self.stopTimer = function(){
+    if(self.timerInterval){ clearInterval(self.timerInterval); self.timerInterval=null; }
+  };
+
+  self.togglePause = function(){
+    self.paused = !self.paused;
+    const ov = document.getElementById(cfg.prefix+'pause-overlay');
+    const pb = document.getElementById(cfg.prefix+'pause-btn');
+    if(ov) ov.style.display = self.paused?'flex':'none';
+    if(pb) pb.textContent = self.paused?'▶ Tiếp tục':'⏸ Tạm dừng';
+    savePauseState(cfg.type+'_'+cfg.lv, {itemIdx:self.idx, sessionWrong:self.sessionWrong});
+  };
+}
+
+// Global callback for option clicks (needed since innerHTML onclick)
+window._qcb = function(key, idx){
+  if(key.startsWith('v_')) window._vqc && window._vqc.answer(idx);
+  else if(key.startsWith('k_')) window._kqc && window._kqc.answer(idx);
+  else if(key.startsWith('g_')) window._gqc && window._gqc.answer(idx);
+};
+
+window.playVQuizAudio = function(){ if(window._vqc&&window._vqc.currentQ) speak(window._vqc.currentQ.audioText); };
+window.playKQuizAudio = function(){ if(window._kqc&&window._kqc.currentQ) speak(window._kqc.currentQ.audioText); };
+window.toggleVPause = function(){ window._vqc&&window._vqc.togglePause(); };
+window.toggleKPause = function(){ window._kqc&&window._kqc.togglePause(); };
+window.toggleGPause = function(){ window._gqc&&window._gqc.togglePause(); };
+
+// ── Show/hide quiz vs flashcard ──
+function showQuizMode(type, lv, deck){
+  const isQuiz = (lv>=2 && lv<=4);
+  if(type==='v'){
+    document.getElementById('vfc-fc-area').style.display = isQuiz?'none':'block';
+    document.getElementById('vfc-quiz-area').style.display = isQuiz?'block':'none';
+    if(isQuiz){
+      window._vqc = new QuizController({
+        type:'v', prefix:'vq-', lvKey:'vLv',
+        deck, lv,
+      });
+      window._vqc.show();
+    }
+  } else if(type==='k'){
+    document.getElementById('kfc-fc-area').style.display = isQuiz?'none':'block';
+    document.getElementById('kfc-quiz-area').style.display = isQuiz?'block':'none';
+    if(isQuiz){
+      window._kqc = new QuizController({
+        type:'k', prefix:'kq-', lvKey:'kLv',
+        deck, lv,
+      });
+      window._kqc.show();
+    }
+  } else if(type==='g'){
+    document.getElementById('g-fc').style.display = isQuiz?'none':'block';
+    document.getElementById('gfc-quiz-area').style.display = isQuiz?'block':'none';
+    if(isQuiz){
+      window._gqc = new QuizController({
+        type:'g', prefix:'gq-', lvKey:'gLv',
+        deck, lv,
+      });
+      window._gqc.show();
+    }
+  }
+}
+
+// ── Lv5: auto-pass + glow heart ──
+// Override setHeartState for lv5
+const _origSetHeart = window.setHeartState;
+window.setHeartState = function(id, lv, pending){
+  _origSetHeart && _origSetHeart(id, lv, pending);
+  const h = document.getElementById(id);
+  if(!h) return;
+  if(lv===5){
+    h.classList.add('heart-lv5');
+  } else {
+    h.classList.remove('heart-lv5');
+  }
+};
+
+// ── Lv5: override nextV/K/GFC to auto-advance ──
+const _origNextV5 = window.nextVFC;
+window.nextVFC = function(){
+  if(vCurLv===5 && vDeck.length>0){
+    // auto-mark as lv5
+    const {it:w} = vDeck[vIdx%vDeck.length];
+    const curStored = ST.vLv[w.id]||0;
+    if(curStored===4){ ST.vLv[w.id]=4; save(); } // stored=4 → shows in lv5 tab
+  }
+  _origNextV5 && _origNextV5.apply(this,arguments);
+};
+
+// ── 10-day decay for Lv5 ──
+(function checkLv5Decay(){
+  const TODAY = new Date().toDateString();
+  const lastOK = localStorage.getItem('lv5_last')||TODAY;
+  const diff = Math.round((new Date(TODAY)-new Date(lastOK))/(1000*60*60*24));
+  if(diff>=10){
+    // demote all lv5 items (stored=4) back to lv4 (stored=3)
+    let demoted=0;
+    Object.keys(ST.vLv).forEach(id=>{ if(ST.vLv[id]===4){ ST.vLv[id]=3; demoted++; } });
+    Object.keys(ST.gLv).forEach(id=>{ if(ST.gLv[id]===4){ ST.gLv[id]=3; demoted++; } });
+    Object.keys(ST.kLv).forEach(id=>{ if(ST.kLv[id]===4){ ST.kLv[id]=3; demoted++; } });
+    if(demoted>0){ save(); toast('⏰ '+demoted+' từ Lv5 tụt về Lv4 (10 ngày không ôn)!'); }
+  }
+  localStorage.setItem('lv5_last', TODAY);
 })();
 
 </script>
