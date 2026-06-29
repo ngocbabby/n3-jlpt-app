@@ -162,9 +162,9 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 
 /* ══ NEKO MASCOT ══ */
 #neko{
-  position:fixed;bottom:90px;left:20px;
-  width:72px;height:72px;
-  z-index:490;pointer-events:none;
+  position:fixed;bottom:92px;right:8px;
+  width:48px;height:48px;
+  z-index:200;pointer-events:none;
 }
 </style>
 </head>
@@ -309,7 +309,7 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 
 
 <!-- NEKO -->
-<canvas id="neko" width="72" height="72"></canvas>
+<canvas id="neko" width="48" height="48"></canvas>
 
 <div class="bnav">
   <button class="nb on" id="nb-home" onclick="sw('home')"><span class="nb-ic">📊</span>Tiến độ</button>
@@ -886,7 +886,7 @@ initKFC(1);
   const C = document.getElementById('neko');
   if(!C) return;
   const ctx = C.getContext('2d');
-  const W=72, H=72;
+  const W=48, H=48;
 
   const COL={
     body:'#E8A848',light:'#F5D898',white:'#F8F3E8',
@@ -896,7 +896,7 @@ initKFC(1);
   };
 
   // Position (pixel from left/bottom of viewport)
-  let px=20, py=window.innerHeight-180;
+  let px=window.innerWidth-56, py=window.innerHeight-BNAV-H-10;
   let targetX=px, targetY=py;
   const BNAV=86, MARGIN=14;
 
@@ -925,9 +925,9 @@ initKFC(1);
 
   function doJump(){
     set('jump');
-    const origBot = window.innerHeight - py - H;
+    const origBot = parseInt(C.style.bottom||'92');
     C.style.transition='bottom .35s cubic-bezier(.34,2,.64,1)';
-    C.style.bottom=(origBot+90)+'px';
+    C.style.bottom=(origBot+55)+'px';
     setTimeout(()=>{
       C.style.transition='bottom .4s cubic-bezier(.22,.9,.36,1.2)';
       C.style.bottom=origBot+'px';
@@ -938,11 +938,13 @@ initKFC(1);
   function set(s){ state=s; stateAge=0; }
 
   function pickTarget(){
-    const maxX=window.innerWidth-W-MARGIN;
-    const maxY=window.innerHeight-BNAV-H-MARGIN;
-    const minY=window.innerHeight*.35;
-    targetX = MARGIN+Math.random()*(maxX-MARGIN);
-    targetY = minY+Math.random()*(maxY-minY);
+    // SAFE ZONE: only move in bottom strip, never over content
+    const maxX = window.innerWidth - W - MARGIN;
+    // Vertically: stay in the strip just above bottom nav (safe 60px band)
+    const safeBottom = window.innerHeight - BNAV - H - 4;
+    const safeTop    = window.innerHeight - BNAV - H - 60;
+    targetX = MARGIN + Math.random() * (maxX - MARGIN);
+    targetY = Math.max(safeTop, safeBottom - Math.random()*50);
   }
 
   // ── Auto transitions ──
@@ -991,6 +993,8 @@ initKFC(1);
   // ── DRAW ──
   function draw(){
     ctx.clearRect(0,0,W,H);
+    ctx.save();
+    ctx.scale(48/72, 48/72);
     tick++;
     updateBlink();
     tailA = Math.sin(tick*.1)*14 + (state==='happy'?Math.sin(tick*.25)*22:0);
@@ -1116,6 +1120,7 @@ initKFC(1);
     }
 
     ctx.restore(); // bob
+    ctx.restore(); // scale
   }
 
   // ── LOOP ──
