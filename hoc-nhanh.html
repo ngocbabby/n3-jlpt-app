@@ -82,7 +82,7 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 .cm{font-size:clamp(18px,5vw,34px);font-weight:800;color:var(--a2);line-height:1.2;word-break:break-all}
 .cr{font-size:17px;color:#c4b5fd;font-weight:700}
 .cb{display:inline-block;background:rgba(167,139,250,.2);color:#c4b5fd;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700}
-.chint{position:absolute;bottom:10px;right:13px;font-size:11px;color:rgba(220,220,255,.55)}
+.chint{display:none}
 /* back fields */
 .bm{font-size:clamp(16px,4.5vw,28px);font-weight:800;color:var(--a2);line-height:1.2;word-break:break-all}
 .br{font-size:16px;color:#c4b5fd;font-weight:700}
@@ -612,7 +612,7 @@ function renderGFC() {
           <div class="bgtip">💡 ${g.t}</div>
           <div class="bex" style="margin-top:8px"><b>例：</b>${g.eh||g.ec||''}<br><span style="color:#9090b8">${g.evc||''}</span></div>`,
     heartId:'gfc-heart',
-    hintText:'Nhấn thẻ để xem · Vuốt để chuyển',
+    hintText:'',
     onFlip:flipGFC,
     onSwipeLeft:()=>nextGFC(),
     onSwipeRight:()=>prevGFC(),
@@ -711,7 +711,7 @@ function renderVFC() {
     front:`<div class="cm">${w.k}</div><div class="cr">${w.r}</div><div class="cb">${w.t}</div>`,
     back:`<div class="bm">${w.k}</div><div class="br">${w.r}</div><div class="bvn">${w.v}</div><div class="btype">${w.t}</div>`,
     heartId:'vfc-heart',
-    hintText:'Nhấn thẻ để xem · Vuốt để chuyển',
+    hintText:'',
     onFlip:flipVFC,
     onSwipeLeft:()=>nextVFC(),
     onSwipeRight:()=>prevVFC(),
@@ -804,7 +804,7 @@ function renderKFC() {
           <div class="bhv">HV: ${k.hv}</div>
           <div class="bmemo">${k.m||''}</div>`,
     heartId:'kfc-heart',
-    hintText:'Nhấn thẻ để xem · Vuốt để chuyển',
+    hintText:'',
     onFlip:flipKFC,
     onSwipeLeft:()=>nextKFC(),
     onSwipeRight:()=>prevKFC(),
