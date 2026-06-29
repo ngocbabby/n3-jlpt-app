@@ -162,6 +162,16 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 
 
 
+
+/* CAT */
+#cat-box{position:fixed;bottom:86px;left:0;right:0;height:56px;pointer-events:none;z-index:300;overflow:hidden}
+#cat-cv{position:absolute;bottom:0;left:8px;width:56px;height:56px}
+
+</style>
+</head>
+<body>
+<div style="max-width:480px;margin:0 auto">
+
 <div class="hdr">
   <div class="hdr-r">
     <a href="index.html" class="back">← Home</a>
@@ -300,10 +310,7 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 
 
 
-
-<!-- NEKO STRIP -->
-<div id="neko-strip"><canvas id="neko-c" width="56" height="56"></canvas></div>
-
+<div id="cat-box"><canvas id="cat-cv" width="56" height="56"></canvas></div>
 <div class="bnav">
   <button class="nb on" id="nb-home" onclick="sw('home')"><span class="nb-ic">📊</span>Tiến độ</button>
   <button class="nb" id="nb-gram" onclick="sw('gram')"><span class="nb-ic">📝</span>Ngữ pháp</button>
@@ -876,248 +883,150 @@ initKFC(1);
 
 
 
-/* ── NEKO CAT ── */
 (function(){
-  const cv = document.getElementById('neko-c');
-  if(!cv) return;
-  const g = cv.getContext('2d');
-  const S = 56; // canvas size
+var cv=document.getElementById('cat-cv');
+if(!cv)return;
+var g=cv.getContext('2d');
+var tick=0,state='sit',age=0,px=8,tx=8,words=0,lastT=Date.now();
+var blink=false,bt=0;
+var C={body:'#E8A848',lt:'#F5D898',wh:'#F8F3E8',dk:'#C07830',br:'#5A2810',pk:'#F0A0B8',tn:'#E85878',bl:'#F5C518',ns:'#E87898',ey:'#3A1808',ir:'#B85820'};
 
-  // ── State ──
-  let state = 'sit'; // sit | walk | happy | sleep | curious | lick
-  let age = 0, tick = 0;
-  let posX = 10; // left px
-  let targetX = 10;
-  let blink = false, blinkT = 0;
-  let wordsLearned = 0;
-  let lastWord = Date.now();
+window._nekoWord=function(){
+  words++;lastT=Date.now();
+  if(state==='sleep')go('sit');
+  if(words>=10){words=0;jump();}
+  else if(Math.random()<.4)go('happy');
+  else move();
+};
 
-  // ── Colors ──
-  const C = {
-    body:'#E8A848', light:'#F5D898', white:'#F8F3E8',
-    dark:'#C07830', brown:'#5A2810', pink:'#F0A0B8',
-    tongue:'#E85878', bell:'#F5C518', nose:'#E87898',
-    eyeC:'#3A1808', iris:'#B85820'
-  };
+function go(s){state=s;age=0;}
+function move(){var w=window.innerWidth;tx=8+Math.random()*(w-72);go('walk');}
 
-  // ── Public API ──
-  window._nekoWord = function(){
-    wordsLearned++; lastWord = Date.now();
-    if(state==='sleep') setState('sit');
-    if(wordsLearned >= 10){ wordsLearned=0; doJump(); }
-    else if(Math.random()<.4){ setState('happy'); }
-    else { moveRandom(); }
-  };
+function jump(){
+  go('happy');
+  cv.style.transition='bottom .3s cubic-bezier(.34,2,.64,1)';cv.style.bottom='48px';
+  setTimeout(function(){cv.style.transition='bottom .35s cubic-bezier(.22,.8,.36,1.3)';cv.style.bottom='0px';setTimeout(function(){cv.style.transition='';},350);},300);
+}
 
-  function setState(s){ state=s; age=0; }
-
-  function doJump(){
-    setState('happy');
-    const el = document.getElementById('neko-c');
-    if(!el) return;
-    el.style.transition='bottom .3s cubic-bezier(.34,2,.64,1)';
-    el.style.bottom='50px';
-    setTimeout(()=>{
-      el.style.transition='bottom .35s cubic-bezier(.22,.8,.36,1.3)';
-      el.style.bottom='0px';
-      setTimeout(()=>{ el.style.transition=''; },350);
-    },300);
+function tick_state(){
+  age++;
+  if(state==='sit'){
+    if(age>200&&Math.random()<.008)go('sleep');
+    else if(age>80&&Math.random()<.012)go('lick');
+    else if(age>100&&Math.random()<.01)move();
+    else if(age>150&&Math.random()<.007)go('curious');
+  } else if(state==='sleep'){
+    if(age>350&&Math.random()<.007)go('sit');
+    if(Date.now()-lastT>9000){lastT=Date.now();go('curious');}
+  } else if(state==='walk'){
+    var dx=tx-px;
+    if(Math.abs(dx)<3){go('sit');}
+    else{px+=dx*.09;cv.style.left=Math.round(px)+'px';}
+    if(age>250)go('sit');
+  } else {
+    if(age>90)go('sit');
   }
+  if(state==='sit'&&age===160&&Math.random()<.5)move();
+}
 
-  function moveRandom(){
-    const maxX = window.innerWidth - S - 10;
-    targetX = 10 + Math.random()*(maxX-10);
-    setState('walk');
-  }
+function upBlink(){bt++;if(!blink&&bt>90){blink=true;bt=0;}if(blink&&bt>4){blink=false;bt=0;}}
 
-  // ── Movement ──
-  function updateMove(){
-    if(state!=='walk') return;
-    const dx = targetX - posX;
-    if(Math.abs(dx)<3){ setState('sit'); return; }
-    posX += dx * .08;
-    const el = document.getElementById('neko-c');
-    if(el) el.style.left = Math.round(posX)+'px';
-  }
+function draw(){
+  g.clearRect(0,0,56,56);
+  tick++;upBlink();tick_state();
+  var sl=state==='sleep',hp=state==='happy'||state==='walk',lk=state==='lick',cr=state==='curious',wk=state==='walk';
+  var bob=sl?0:Math.sin(tick*.07)*1;
+  var ta=Math.sin(tick*.1)*13+(hp?Math.sin(tick*.28)*18:0);
+  var sc=56/72;
+  g.save();g.translate(0,bob);g.scale(sc,sc);
 
-  // ── Auto behavior ──
-  function autoState(){
-    age++;
-    const r = Math.random();
-    switch(state){
-      case 'sit':
-        if(age>200&&r<.008) setState('sleep');
-        else if(age>80&&r<.012) setState('lick');
-        else if(age>100&&r<.010){ moveRandom(); }
-        else if(age>150&&r<.006) setState('curious');
-        break;
-      case 'sleep':
-        if(age>350&&r<.007) setState('sit');
-        if(Date.now()-lastWord>10000){ lastWord=Date.now(); setState('curious'); }
-        break;
-      case 'walk':
-        if(age>300) setState('sit');
-        break;
-      case 'happy': case 'lick': case 'curious':
-        if(age>100) setState('sit');
-        break;
-    }
-    // wander when idle
-    if(state==='sit'&&age===180&&Math.random()<.5) moveRandom();
-  }
+  // tail
+  g.save();g.translate(50,52);g.rotate(ta*Math.PI/180);
+  g.beginPath();g.moveTo(0,0);g.bezierCurveTo(12,-6,18,-18,12,-30);
+  g.lineWidth=7;g.strokeStyle=C.body;g.lineCap='round';g.stroke();
+  g.lineWidth=4;g.strokeStyle=C.dk;g.stroke();
+  g.beginPath();g.arc(12,-30,4,0,Math.PI*2);g.fillStyle=C.wh;g.fill();
+  g.restore();
 
-  // ── Blink ──
-  function updateBlink(){
-    blinkT++;
-    if(!blink&&blinkT>90+Math.random()*60){ blink=true; blinkT=0; }
-    if(blink&&blinkT>4){ blink=false; blinkT=0; }
-  }
+  // body
+  g.beginPath();g.ellipse(36,50,19,14,0,0,Math.PI*2);
+  g.fillStyle=C.wh;g.fill();g.strokeStyle=C.br;g.lineWidth=1.5;g.stroke();
+  g.beginPath();g.ellipse(40,52,10,8,.3,0,Math.PI*2);g.fillStyle=C.lt;g.fill();
 
-  // ── DRAW ──
-  function draw(){
-    g.clearRect(0,0,S,S);
-    tick++;
-    updateBlink();
-    updateMove();
-    autoState();
+  // head
+  var hx=36,hy=30;
+  g.save();
+  if(cr){g.translate(hx,hy);g.rotate(-.18);g.translate(-hx,-hy);}
+  g.beginPath();g.ellipse(hx,hy,18,17,0,0,Math.PI*2);
+  g.fillStyle=C.body;g.fill();g.strokeStyle=C.br;g.lineWidth=1.5;g.stroke();
+  g.beginPath();g.ellipse(hx-2,hy+2,11,10,.1,0,Math.PI*2);g.fillStyle=C.wh;g.fill();
+  g.beginPath();g.ellipse(hx-10,hy+4,5,3.5,-.3,0,Math.PI*2);g.fillStyle='rgba(240,160,184,.3)';g.fill();
+  g.beginPath();g.ellipse(hx+10,hy+4,5,3.5,.3,0,Math.PI*2);g.fill();
 
-    const sl=state==='sleep', hp=state==='happy'||state==='walk',
-          lk=state==='lick', cr=state==='curious', wk=state==='walk';
+  // ears
+  [[-14,-19,-4,-13,-17,-6],[14,19,4,13,17,6]].forEach(function(e){
+    g.beginPath();g.moveTo(hx+e[0],hy-10);g.lineTo(hx+e[1],hy-26);g.lineTo(hx+e[2],hy-17);g.closePath();
+    g.fillStyle=C.body;g.fill();g.strokeStyle=C.br;g.lineWidth=1.5;g.stroke();
+    g.beginPath();g.moveTo(hx+e[3],hy-11);g.lineTo(hx+e[4],hy-22);g.lineTo(hx+e[5],hy-16);g.closePath();
+    g.fillStyle=C.pk;g.fill();
+  });
 
-    const bob = sl?0:Math.sin(tick*.07)*1.2;
-    const tailA = Math.sin(tick*.1)*14+(hp?Math.sin(tick*.3)*18:0);
-
-    g.save(); g.translate(0,bob);
-
-    // Scale everything to fit 56x56 (original coords are 72x72)
-    const sc=56/72;
-    g.scale(sc,sc);
-
-    // TAIL
-    g.save();
-    g.translate(50,52); g.rotate(tailA*Math.PI/180);
-    g.beginPath(); g.moveTo(0,0); g.bezierCurveTo(12,-6,18,-18,12,-30);
-    g.lineWidth=7; g.strokeStyle=C.body; g.lineCap='round'; g.stroke();
-    g.lineWidth=4; g.strokeStyle=C.dark; g.stroke();
-    g.beginPath(); g.arc(12,-30,4,0,Math.PI*2); g.fillStyle=C.white; g.fill();
-    g.restore();
-
-    // BODY
-    if(sl){
-      g.beginPath(); g.ellipse(36,50,22,11,.2,0,Math.PI*2);
-      g.fillStyle=C.white; g.fill(); g.strokeStyle=C.brown; g.lineWidth=1.5; g.stroke();
-      g.beginPath(); g.ellipse(40,51,11,7,.1,0,Math.PI*2); g.fillStyle=C.body; g.fill();
-    } else {
-      g.beginPath(); g.ellipse(36,50,19,14,0,0,Math.PI*2);
-      g.fillStyle=C.white; g.fill(); g.strokeStyle=C.brown; g.lineWidth=1.5; g.stroke();
-      g.beginPath(); g.ellipse(40,52,10,8,.3,0,Math.PI*2); g.fillStyle=C.light; g.fill();
-    }
-
-    // HEAD (tilt if curious)
-    const hx=36, hy=sl?42:30;
-    g.save();
-    if(cr){ g.translate(hx,hy); g.rotate(-0.18); g.translate(-hx,-hy); }
-
-    g.beginPath(); g.ellipse(hx,hy,18,17,0,0,Math.PI*2);
-    g.fillStyle=C.body; g.fill(); g.strokeStyle=C.brown; g.lineWidth=1.5; g.stroke();
-    g.beginPath(); g.ellipse(hx-2,hy+2,11,10,.1,0,Math.PI*2); g.fillStyle=C.white; g.fill();
-    // cheeks
-    g.beginPath(); g.ellipse(hx-10,hy+4,5,3.5,-.3,0,Math.PI*2); g.fillStyle='rgba(240,160,184,.35)'; g.fill();
-    g.beginPath(); g.ellipse(hx+10,hy+4,5,3.5,.3,0,Math.PI*2); g.fill();
-
-    if(!sl){
-      // EARS
-      [{ox:-14,ix:-13,mx:-19,imx:-17,ex:-4,iex:-6},{ox:14,ix:13,mx:19,imx:17,ex:4,iex:6}].forEach(e=>{
-        g.beginPath(); g.moveTo(hx+e.ox,hy-10); g.lineTo(hx+e.mx,hy-26); g.lineTo(hx+e.ex,hy-17); g.closePath();
-        g.fillStyle=C.body; g.fill(); g.strokeStyle=C.brown; g.lineWidth=1.5; g.stroke();
-        g.beginPath(); g.moveTo(hx+e.ix,hy-11); g.lineTo(hx+e.imx,hy-22); g.lineTo(hx+e.iex,hy-16); g.closePath();
-        g.fillStyle=C.pink; g.fill();
-      });
-    }
-
-    // EYES
-    const ey=hy-2;
-    if(blink||sl){
-      g.beginPath(); g.arc(hx-7,ey,5,Math.PI*.05,Math.PI*.95);
-      g.strokeStyle=C.brown; g.lineWidth=2.5; g.stroke();
-      g.beginPath(); g.arc(hx+7,ey,5,Math.PI*.05,Math.PI*.95); g.stroke();
-      if(sl){
-        g.font='bold 9px sans-serif'; g.fillStyle='rgba(180,180,255,.9)';
-        g.fillText('z',hx+18+Math.sin(tick*.06)*2,hy-18-Math.abs(Math.sin(tick*.04))*4);
-        g.fillText('Z',hx+24,hy-27-Math.abs(Math.sin(tick*.03))*3);
-      }
-    } else if(hp){
-      g.beginPath(); g.arc(hx-7,ey,6,Math.PI,0,true); g.fillStyle=C.brown; g.fill();
-      g.beginPath(); g.arc(hx+7,ey,6,Math.PI,0,true); g.fill();
-    } else {
-      [hx-7,hx+7].forEach(ex=>{
-        g.beginPath(); g.arc(ex,ey,5.5,0,Math.PI*2); g.fillStyle='#f5edd0'; g.fill();
-        g.beginPath(); g.arc(ex,ey,4,0,Math.PI*2); g.fillStyle=C.iris; g.fill();
-        g.beginPath(); g.arc(ex,ey+.5,cr?1.8:2.5,0,Math.PI*2); g.fillStyle=C.eyeC; g.fill();
-      });
-      g.beginPath(); g.arc(hx-8.5,ey-1.5,1.3,0,Math.PI*2); g.fillStyle='white'; g.fill();
-      g.beginPath(); g.arc(hx+5.5,ey-1.5,1.3,0,Math.PI*2); g.fill();
-    }
-
-    // NOSE
-    g.beginPath(); g.moveTo(hx,hy+4); g.lineTo(hx-2.5,hy+2); g.lineTo(hx+2.5,hy+2);
-    g.closePath(); g.fillStyle=C.nose; g.fill();
-    g.beginPath(); g.moveTo(hx,hy+4); g.lineTo(hx,hy+6); g.strokeStyle=C.brown; g.lineWidth=1.2; g.stroke();
-
-    // MOUTH
-    if(hp||lk){
-      g.beginPath(); g.moveTo(hx-5,hy+6); g.quadraticCurveTo(hx,hy+10,hx+5,hy+6);
-      g.strokeStyle=C.brown; g.lineWidth=1.5; g.stroke();
-      const tY=lk?hy+14+Math.sin(tick*.2)*3:hy+10;
-      g.beginPath(); g.ellipse(hx,tY,4,3.5,0,0,Math.PI*2); g.fillStyle=C.tongue; g.fill();
-    } else if(!sl){
-      g.beginPath(); g.moveTo(hx-4,hy+6); g.lineTo(hx,hy+5); g.lineTo(hx+4,hy+6);
-      g.strokeStyle=C.brown; g.lineWidth=1.5; g.stroke();
-    }
-
-    // WHISKERS
-    g.strokeStyle='rgba(100,60,20,.45)'; g.lineWidth=1;
-    [[hx-10,hy+3,hx-26,hy+1],[hx-10,hy+5.5,hx-26,hy+7],
-     [hx+10,hy+3,hx+26,hy+1],[hx+10,hy+5.5,hx+26,hy+7]].forEach(([x1,y1,x2,y2])=>{
-      g.beginPath(); g.moveTo(x1,y1); g.lineTo(x2,y2); g.stroke();
+  // eyes
+  var ey=hy-2;
+  if(blink||sl){
+    [hx-7,hx+7].forEach(function(ex){g.beginPath();g.arc(ex,ey,5,Math.PI*.05,Math.PI*.95);g.strokeStyle=C.br;g.lineWidth=2.5;g.stroke();});
+    if(sl){g.font='bold 9px sans-serif';g.fillStyle='rgba(180,180,255,.9)';g.fillText('z',hx+18+Math.sin(tick*.06)*2,hy-18);g.fillText('Z',hx+24,hy-27);}
+  } else if(hp){
+    [hx-7,hx+7].forEach(function(ex){g.beginPath();g.arc(ex,ey,6,Math.PI,0,true);g.fillStyle=C.br;g.fill();});
+  } else {
+    [hx-7,hx+7].forEach(function(ex){
+      g.beginPath();g.arc(ex,ey,5.5,0,Math.PI*2);g.fillStyle='#f5edd0';g.fill();
+      g.beginPath();g.arc(ex,ey,4,0,Math.PI*2);g.fillStyle=C.ir;g.fill();
+      g.beginPath();g.arc(ex,ey+.5,cr?1.8:2.5,0,Math.PI*2);g.fillStyle=C.ey;g.fill();
     });
-    g.restore(); // head tilt
-
-    // COLLAR
-    if(!sl){
-      g.beginPath(); g.arc(hx,hy+15,8,-.8,Math.PI+.8);
-      g.strokeStyle=C.dark; g.lineWidth=4; g.stroke();
-      g.beginPath(); g.arc(hx,hy+23,4,0,Math.PI*2); g.fillStyle=C.bell; g.fill();
-      g.strokeStyle=C.brown; g.lineWidth=1; g.stroke();
-      g.beginPath(); g.moveTo(hx-4,hy+23); g.lineTo(hx+4,hy+23);
-      g.strokeStyle=C.brown; g.lineWidth=.8; g.stroke();
-    }
-
-    // PAWS
-    if(!sl){
-      const pw=wk?Math.sin(tick*.22)*5:0;
-      [[hx-13,62+pw],[hx+13,62-pw]].forEach(([ex,ey2])=>{
-        g.beginPath(); g.ellipse(ex,ey2,6,4,0,0,Math.PI*2);
-        g.fillStyle=C.white; g.fill(); g.strokeStyle=C.brown; g.lineWidth=1.2; g.stroke();
-        [-3,0,3].forEach(dx=>{ g.beginPath(); g.moveTo(ex+dx,ey2+1.5); g.lineTo(ex+dx,ey2+4); g.strokeStyle='rgba(100,60,20,.4)'; g.lineWidth=.9; g.stroke(); });
-      });
-    }
-
-    g.restore(); // scale
-    g.restore(); // bob
+    g.beginPath();g.arc(hx-8.5,ey-1.5,1.3,0,Math.PI*2);g.fillStyle='white';g.fill();
+    g.beginPath();g.arc(hx+5.5,ey-1.5,1.3,0,Math.PI*2);g.fill();
   }
 
-  // ── Patch next functions ──
-  setTimeout(()=>{
-    ['nextVFC','nextKFC','nextGFC'].forEach(fn=>{
-      const orig=window[fn];
-      if(typeof orig==='function')
-        window[fn]=function(){ window._nekoWord(); return orig.apply(this,arguments); };
-    });
-  },800);
+  // nose + mouth
+  g.beginPath();g.moveTo(hx,hy+4);g.lineTo(hx-2.5,hy+2);g.lineTo(hx+2.5,hy+2);g.closePath();g.fillStyle=C.ns;g.fill();
+  g.beginPath();g.moveTo(hx,hy+4);g.lineTo(hx,hy+6);g.strokeStyle=C.br;g.lineWidth=1.2;g.stroke();
+  if(hp||lk){
+    g.beginPath();g.moveTo(hx-5,hy+6);g.quadraticCurveTo(hx,hy+10,hx+5,hy+6);g.strokeStyle=C.br;g.lineWidth=1.5;g.stroke();
+    var ty=lk?hy+14+Math.sin(tick*.2)*3:hy+10;
+    g.beginPath();g.ellipse(hx,ty,4,3.5,0,0,Math.PI*2);g.fillStyle=C.tn;g.fill();
+  } else {
+    g.beginPath();g.moveTo(hx-4,hy+6);g.lineTo(hx,hy+5);g.lineTo(hx+4,hy+6);g.strokeStyle=C.br;g.lineWidth=1.5;g.stroke();
+  }
 
-  // ── Loop ──
-  (function loop(){ draw(); requestAnimationFrame(loop); })();
+  // whiskers
+  g.strokeStyle='rgba(100,60,20,.4)';g.lineWidth=1;
+  [[hx-10,hy+3,hx-26,hy+1],[hx-10,hy+6,hx-26,hy+8],[hx+10,hy+3,hx+26,hy+1],[hx+10,hy+6,hx+26,hy+8]].forEach(function(w){
+    g.beginPath();g.moveTo(w[0],w[1]);g.lineTo(w[2],w[3]);g.stroke();
+  });
+  g.restore(); // head
+
+  // collar
+  g.beginPath();g.arc(hx,hy+15,8,-.8,Math.PI+.8);g.strokeStyle=C.dk;g.lineWidth=4;g.stroke();
+  g.beginPath();g.arc(hx,hy+23,4,0,Math.PI*2);g.fillStyle=C.bl;g.fill();g.strokeStyle=C.br;g.lineWidth=1;g.stroke();
+
+  // paws
+  var pw=wk?Math.sin(tick*.22)*5:0;
+  [[hx-13,62+pw],[hx+13,62-pw]].forEach(function(p){
+    g.beginPath();g.ellipse(p[0],p[1],6,4,0,0,Math.PI*2);g.fillStyle=C.wh;g.fill();g.strokeStyle=C.br;g.lineWidth=1.2;g.stroke();
+  });
+
+  g.restore(); // scale+bob
+}
+
+// Patch next functions safely
+function patchFn(name){
+  var orig=window[name];
+  if(typeof orig==='function'){window[name]=function(){if(window._nekoWord)window._nekoWord();return orig.apply(this,arguments);};}
+}
+setTimeout(function(){patchFn('nextVFC');patchFn('nextKFC');patchFn('nextGFC');},1000);
+
+(function loop(){draw();requestAnimationFrame(loop);})();
 })();
 
 </script>
