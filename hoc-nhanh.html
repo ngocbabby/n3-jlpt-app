@@ -636,6 +636,12 @@ function renderGFC() {
 
 function flipGFC() {
   gFlip=!gFlip; setCardFlip('gfc-wrap',gFlip);
+  if(gFlip && gDeck.length>0){
+    const {it:g}=gDeck[gIdx%gDeck.length];
+    setTimeout(()=>speak(g.ec||g.p||''),100);
+  } else {
+    if(window.speechSynthesis) window.speechSynthesis.cancel();
+  }
 }
 
 function toggleGHeart() {
@@ -725,7 +731,10 @@ function renderVFC() {
   speak(w.k);
 }
 
-function flipVFC(){ vFlip=!vFlip; setCardFlip('vfc-wrap',vFlip); }
+function flipVFC(){
+  vFlip=!vFlip; setCardFlip('vfc-wrap',vFlip);
+  if(!vFlip && window.speechSynthesis) window.speechSynthesis.cancel();
+}
 
 function toggleVHeart() {
   if(!vDeck.length) return;
@@ -815,7 +824,10 @@ function renderKFC() {
   speak(k.k);
 }
 
-function flipKFC(){ kFlip=!kFlip; setCardFlip('kfc-wrap',kFlip); }
+function flipKFC(){
+  kFlip=!kFlip; setCardFlip('kfc-wrap',kFlip);
+  if(!kFlip && window.speechSynthesis) window.speechSynthesis.cancel();
+}
 
 function toggleKHeart() {
   if(!kDeck.length) return;
