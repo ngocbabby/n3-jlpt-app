@@ -55,13 +55,14 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 /* CARD — fixed height, touch-ready */
 .card{
   background:var(--card);border-radius:16px;
-  height:258px;
+  min-height:240px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:22px 20px;
+  text-align:center;padding:16px 18px 36px;
   border:2px solid var(--b);
   cursor:pointer;transition:border-color .2s;
   position:relative;overflow:hidden;
   touch-action:pan-y;user-select:none;
+  word-break:break-word;overflow-wrap:break-word;
 }
 .card:hover{border-color:rgba(255,255,255,.15)}
 /* heart */
@@ -73,25 +74,25 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 }
 .heart:hover{transform:scale(1.3)}
 /* front/back */
-.front{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%}
+.front{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:100%;overflow-y:auto;max-height:200px}
 .back{display:none;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%}
 .card.flip .front{display:none}
-.card.flip .back{display:flex}
+.card.flip .back{display:flex;overflow-y:auto;max-height:208px;padding-right:2px}
 
-.cm{font-size:36px;font-weight:800;color:var(--a2);line-height:1.2}
+.cm{font-size:clamp(18px,5vw,34px);font-weight:800;color:var(--a2);line-height:1.2;word-break:break-all}
 .cr{font-size:17px;color:var(--a3);font-weight:700}
 .cb{display:inline-block;background:rgba(167,139,250,.2);color:#c4b5fd;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700}
 .chint{position:absolute;bottom:10px;right:13px;font-size:11px;color:rgba(200,200,230,.35)}
 /* back fields */
-.bm{font-size:30px;font-weight:800;color:var(--a2);line-height:1.2}
+.bm{font-size:clamp(16px,4.5vw,28px);font-weight:800;color:var(--a2);line-height:1.2;word-break:break-all}
 .br{font-size:16px;color:var(--a3);font-weight:700}
-.bvn{font-size:22px;font-weight:800;color:#ffffff}
+.bvn{font-size:clamp(15px,4vw,20px);font-weight:800;color:#ffffff;word-break:break-word}
 .btype{font-size:13px;color:#c4b5fd;font-weight:700}
 .bhv{font-size:13px;color:var(--a4);font-weight:800}
-.bmemo{font-size:13px;color:var(--s);line-height:1.65;text-align:left;width:100%}
-.bex{background:rgba(167,139,250,.15);border-radius:8px;padding:9px 12px;font-size:14px;color:#e8e8ff;line-height:1.7;text-align:left;width:100%;word-break:break-word}
+.bmemo{font-size:12px;color:var(--s);line-height:1.6;text-align:left;width:100%;word-break:break-word;overflow-wrap:break-word}
+.bex{background:rgba(167,139,250,.15);border-radius:8px;padding:8px 10px;font-size:13px;color:#e8e8ff;line-height:1.65;text-align:left;width:100%;word-break:break-word;overflow-wrap:break-word}
 .bgvn{font-size:18px;font-weight:800;color:#ffffff;text-align:left;width:100%}
-.bgtip{font-size:13px;color:var(--s);line-height:1.65;text-align:left;width:100%}
+.bgtip{font-size:12px;color:var(--s);line-height:1.6;text-align:left;width:100%;word-break:break-word}
 
 /* swipe indicator */
 .swipe-hint{display:flex;justify-content:space-between;font-size:11px;color:rgba(200,200,230,.3);margin-top:4px;padding:0 4px}
@@ -151,6 +152,11 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 
 @keyframes pop{from{opacity:0;transform:scale(.95) translateY(4px)}to{opacity:1;transform:none}}
 .gi,.ph{animation:pop .2s ease}
+
+.card .back::-webkit-scrollbar{width:2px}
+.card .back::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:10px}
+.front::-webkit-scrollbar{width:2px}
+.front::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:10px}
 </style>
 </head>
 <body>
@@ -245,7 +251,7 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
     <div class="swipe-hint"><span>← Từ mới</span><span>Từ cũ →</span></div>
     <div class="fc-btns">
       <button class="fb fbtts" id="gfc-tts" onclick="speakGFC()">🔊</button>
-      <button class="fb fbfl" onclick="flipGFC()">Lật thẻ</button>
+      <button class="fb fbfl" onclick="prevGFC()">← Quay lại</button>
       <button class="fb fbnxt" onclick="nextGFC()">Tiếp →</button>
     </div>
   </div>
@@ -268,7 +274,7 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
   <div class="swipe-hint"><span>← Từ mới</span><span>Từ cũ →</span></div>
   <div class="fc-btns">
     <button class="fb fbtts" id="vfc-tts" onclick="speakVFC()">🔊</button>
-    <button class="fb fbfl" onclick="flipVFC()">Lật thẻ</button>
+    <button class="fb fbfl" onclick="prevVFC()">← Quay lại</button>
     <button class="fb fbnxt" onclick="nextVFC()">Tiếp →</button>
   </div>
   <div style="background:var(--card);border-radius:10px;padding:10px;margin-top:9px;border:1px solid var(--b);font-size:12px;color:var(--s);line-height:1.85">
@@ -296,7 +302,7 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
   <div class="swipe-hint"><span>← Kanji mới</span><span>Kanji cũ →</span></div>
   <div class="fc-btns">
     <button class="fb fbtts" id="kfc-tts" onclick="speakKFC()">🔊</button>
-    <button class="fb fbfl" onclick="flipKFC()">Lật thẻ</button>
+    <button class="fb fbfl" onclick="prevKFC()">← Quay lại</button>
     <button class="fb fbnxt" onclick="nextKFC()">Tiếp →</button>
   </div>
 </div>
@@ -593,7 +599,7 @@ function renderGFC() {
           <div class="bgtip">💡 ${g.t}</div>
           <div class="bex" style="margin-top:8px"><b>例：</b>${g.eh||g.ec||''}<br><span style="color:#9090b8">${g.evc||''}</span></div>`,
     heartId:'gfc-heart',
-    hintText:'Nhấn để xem nghĩa',
+    hintText:'Nhấn thẻ để xem · Vuốt để chuyển',
     onFlip:flipGFC,
     onSwipeLeft:()=>nextGFC(),
     onSwipeRight:()=>prevGFC(),
@@ -687,7 +693,7 @@ function renderVFC() {
     front:`<div class="cm">${w.k}</div><div class="cr">${w.r}</div><div class="cb">${w.t}</div>`,
     back:`<div class="bm">${w.k}</div><div class="br">${w.r}</div><div class="bvn">${w.v}</div><div class="btype">${w.t}</div>`,
     heartId:'vfc-heart',
-    hintText:'Nhấn để xem nghĩa',
+    hintText:'Nhấn thẻ để xem · Vuốt để chuyển',
     onFlip:flipVFC,
     onSwipeLeft:()=>nextVFC(),
     onSwipeRight:()=>prevVFC(),
@@ -770,14 +776,14 @@ function renderKFC() {
   kFlip=false;
   document.getElementById('kfc-n').textContent=(kIdx+1)+'/'+kDeck.length;
   makeCard('kfc-wrap',{
-    front:`<div class="cm" style="font-size:58px;font-weight:900">${k.k}</div>`,
-    back:`<div class="bm" style="font-size:40px">${k.k}</div>
+    front:`<div class="cm" style="font-size:54px;font-weight:900;line-height:1">${k.k}</div>`,
+    back:`<div class="bm" style="font-size:36px">${k.k}</div>
           <div class="br">${k.r}</div>
           <div class="bvn">${k.v}</div>
           <div class="bhv">HV: ${k.hv}</div>
           <div class="bmemo">${k.m||''}</div>`,
     heartId:'kfc-heart',
-    hintText:'Nhấn để xem nghĩa & mẹo',
+    hintText:'Nhấn thẻ để xem · Vuốt để chuyển',
     onFlip:flipKFC,
     onSwipeLeft:()=>nextKFC(),
     onSwipeRight:()=>prevKFC(),
