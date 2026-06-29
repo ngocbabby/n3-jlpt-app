@@ -265,7 +265,7 @@ body{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;background:var(--
 .qs-wrong{color:var(--lv5);font-weight:800}
 
 /* Fix card overflow - ensure back content scrollable */
-.card{overflow:auto!important}
+.card{overflow:hidden}
 .card .back{overflow-y:auto;max-height:190px;padding:0 2px}
 
 </style>
@@ -768,8 +768,20 @@ function gMode(m) {
   document.getElementById('gm-list').classList.toggle('on',m==='list');
   document.getElementById('gm-fc').classList.toggle('on',m==='fc');
   document.getElementById('g-list').style.display=m==='list'?'':'none';
-  document.getElementById('g-fc').style.display=m==='fc'?'':'none';
-  if(m==='fc') renderGFC();
+  if(m==='list'){
+    document.getElementById('g-fc').style.display='none';
+    document.getElementById('gfc-quiz-area').style.display='none';
+  } else {
+    // fc mode: show quiz or flashcard depending on current lv
+    if(gCurLv>=2&&gCurLv<=4){
+      document.getElementById('g-fc').style.display='none';
+      document.getElementById('gfc-quiz-area').style.display='block';
+    } else {
+      document.getElementById('g-fc').style.display='block';
+      document.getElementById('gfc-quiz-area').style.display='none';
+      if(gDeck.length) renderGFC();
+    }
+  }
 }
 
 // ── Grammar FC ──
@@ -777,6 +789,16 @@ let gCurLv=1, gDeck=[], gIdx=0, gFlip=false, gPending=null; // pending = idx of 
 
 function setGLv(lv) {
   gCurLv=lv; setLvTabActive('g-lvtabs',lv);
+  // Also update quiz/fc visibility if in fc mode
+  if(curGMode==='fc'){
+    if(lv>=2&&lv<=4){
+      document.getElementById('g-fc').style.display='none';
+      document.getElementById('gfc-quiz-area').style.display='block';
+    } else {
+      document.getElementById('g-fc').style.display='block';
+      document.getElementById('gfc-quiz-area').style.display='none';
+    }
+  }
   initGFC(lv);
 }
 
@@ -785,12 +807,22 @@ function initGFC(lv) {
   gIdx=0; gFlip=false; gPending=null;
   document.getElementById('gfc-lbl').textContent=LBELS[lv];
   if(lv>=2&&lv<=4){
-    if(!gDeck.length){ showEmpty('gfc-wrap','Chưa có mẫu ở Lv'+lv); document.getElementById('gfc-n').textContent='0/0';
+    if(!gDeck.length){
       document.getElementById('g-fc').style.display='none';
-      document.getElementById('gfc-quiz-area').style.display='none'; return; }
+      document.getElementById('gfc-quiz-area').style.display='block';
+      document.getElementById('gq-num').textContent='0/0';
+      document.getElementById('gq-question').innerHTML='<div style="text-align:center;padding:20px;color:var(--s)">✅ Chưa có mẫu ở Lv'+lv+'<br><small>Hoàn thành Lv'+(lv-1)+' để mở khoá!</small></div>';
+      document.getElementById('gq-opts').innerHTML='';
+      return;
+    }
     document.getElementById('g-fc').style.display='none';
     document.getElementById('gfc-quiz-area').style.display='block';
-    showQuizMode('g',lv,gDeck);
+    if(window._gqc && window._gqc.cfg && window._gqc.cfg.lv===lv){
+      window._gqc.show();
+    } else {
+      window._gqc = new QuizController({type:'g', prefix:'gq-', lvKey:'gLv', deck:gDeck, lv});
+      window._gqc.show();
+    }
   } else {
     document.getElementById('g-fc').style.display='block';
     document.getElementById('gfc-quiz-area').style.display='none';
@@ -898,9 +930,14 @@ function initVFC(lv) {
   document.getElementById('vfc-lbl').textContent=LBELS[lv];
   if(lv>=2&&lv<=4){
     // Quiz mode
-    if(!vDeck.length){ showEmpty('vfc-wrap','Chưa có từ ở Lv'+lv); document.getElementById('vfc-n').textContent='0/0';
+    if(!vDeck.length){
       document.getElementById('vfc-fc-area').style.display='none';
-      document.getElementById('vfc-quiz-area').style.display='none'; return; }
+      document.getElementById('vfc-quiz-area').style.display='block';
+      document.getElementById('vq-num').textContent='0/0';
+      document.getElementById('vq-question').innerHTML='<div style="text-align:center;padding:20px;color:var(--s)">✅ Chưa có từ ở Lv'+lv+'<br><small>Hoàn thành Lv'+(lv-1)+' để mở khoá!</small></div>';
+      document.getElementById('vq-opts').innerHTML='';
+      return;
+    }
     showQuizMode('v',lv,vDeck);
   } else {
     // Flashcard mode (lv1/lv5)
@@ -997,9 +1034,14 @@ function initKFC(lv) {
   kIdx=0; kFlip=false; kPending=null;
   document.getElementById('kfc-lbl').textContent=LBELS[lv];
   if(lv>=2&&lv<=4){
-    if(!kDeck.length){ showEmpty('kfc-wrap','Chưa có kanji ở Lv'+lv); document.getElementById('kfc-n').textContent='0/0';
+    if(!kDeck.length){
       document.getElementById('kfc-fc-area').style.display='none';
-      document.getElementById('kfc-quiz-area').style.display='none'; return; }
+      document.getElementById('kfc-quiz-area').style.display='block';
+      document.getElementById('kq-num').textContent='0/0';
+      document.getElementById('kq-question').innerHTML='<div style="text-align:center;padding:20px;color:var(--s)">✅ Chưa có kanji ở Lv'+lv+'<br><small>Hoàn thành Lv'+(lv-1)+' để mở khoá!</small></div>';
+      document.getElementById('kq-opts').innerHTML='';
+      return;
+    }
     showQuizMode('k',lv,kDeck);
   } else {
     document.getElementById('kfc-fc-area').style.display='block';
@@ -1403,7 +1445,14 @@ function QuizController(cfg){
     const origIdx = entry.i;
 
     self.currentQ = buildQuestion(cfg.type, item, cfg.lv);
-    if(!self.currentQ){ self.next(true); return; }
+    if(!self.currentQ){
+      // skip this item - no valid question
+      self.deck.splice(self.idx, 1);
+      if(!self.deck.length) return;
+      if(self.idx >= self.deck.length) self.idx = 0;
+      self.show();
+      return;
+    }
 
     self.answered = false;
 
@@ -1593,60 +1642,43 @@ function showQuizMode(type, lv, deck){
     document.getElementById('vfc-fc-area').style.display = isQuiz?'none':'block';
     document.getElementById('vfc-quiz-area').style.display = isQuiz?'block':'none';
     if(isQuiz){
-      window._vqc = new QuizController({
-        type:'v', prefix:'vq-', lvKey:'vLv',
-        deck, lv,
-      });
-      window._vqc.show();
+      if(window._vqc && window._vqc.cfg && window._vqc.cfg.lv===lv){
+        // Resume existing controller
+        window._vqc.show();
+      } else {
+        window._vqc = new QuizController({type:'v', prefix:'vq-', lvKey:'vLv', deck, lv});
+        window._vqc.show();
+      }
     }
   } else if(type==='k'){
     document.getElementById('kfc-fc-area').style.display = isQuiz?'none':'block';
     document.getElementById('kfc-quiz-area').style.display = isQuiz?'block':'none';
     if(isQuiz){
-      window._kqc = new QuizController({
-        type:'k', prefix:'kq-', lvKey:'kLv',
-        deck, lv,
-      });
-      window._kqc.show();
+      if(window._kqc && window._kqc.cfg && window._kqc.cfg.lv===lv){
+        window._kqc.show();
+      } else {
+        window._kqc = new QuizController({type:'k', prefix:'kq-', lvKey:'kLv', deck, lv});
+        window._kqc.show();
+      }
     }
   } else if(type==='g'){
     document.getElementById('g-fc').style.display = isQuiz?'none':'block';
     document.getElementById('gfc-quiz-area').style.display = isQuiz?'block':'none';
     if(isQuiz){
-      window._gqc = new QuizController({
-        type:'g', prefix:'gq-', lvKey:'gLv',
-        deck, lv,
-      });
-      window._gqc.show();
+      if(window._gqc && window._gqc.cfg && window._gqc.cfg.lv===lv){
+        window._gqc.show();
+      } else {
+        window._gqc = new QuizController({type:'g', prefix:'gq-', lvKey:'gLv', deck, lv});
+        window._gqc.show();
+      }
     }
   }
 }
 
-// ── Lv5: auto-pass + glow heart ──
-// Override setHeartState for lv5
-const _origSetHeart = window.setHeartState;
-window.setHeartState = function(id, lv, pending){
-  _origSetHeart && _origSetHeart(id, lv, pending);
-  const h = document.getElementById(id);
-  if(!h) return;
-  if(lv===5){
-    h.classList.add('heart-lv5');
-  } else {
-    h.classList.remove('heart-lv5');
-  }
-};
+// Lv5 heart glow handled in setHeartState directly
 
 // ── Lv5: override nextV/K/GFC to auto-advance ──
-const _origNextV5 = window.nextVFC;
-window.nextVFC = function(){
-  if(vCurLv===5 && vDeck.length>0){
-    // auto-mark as lv5
-    const {it:w} = vDeck[vIdx%vDeck.length];
-    const curStored = ST.vLv[w.id]||0;
-    if(curStored===4){ ST.vLv[w.id]=4; save(); } // stored=4 → shows in lv5 tab
-  }
-  _origNextV5 && _origNextV5.apply(this,arguments);
-};
+// Lv5 auto-pass: handled by getItemsForTab stored=4 check
 
 // ── 10-day decay for Lv5 ──
 (function checkLv5Decay(){
