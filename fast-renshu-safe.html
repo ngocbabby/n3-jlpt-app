@@ -17,12 +17,16 @@ body{margin:0;min-height:100dvh;display:grid;place-items:center;background:#fff8
   try{
     let html=await fetch(core,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('load');return r.text()});
     const oldSpeak="function speak(txt){txt=N(txt).replace(/[A-Za-zÀ-ỹ0-9]+/g,'').replace(/[〜]/g,'').trim();if(!txt)return;try{speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(txt);u.lang='ja-JP';u.rate=.88;speechSynthesis.speak(u)}catch(e){}}";
-    const newSpeak="function speak(txt){txt=N(txt);let parts=txt.split(/\\s+/).filter(Boolean);let last=parts[parts.length-1]||txt;let hasKana=/^[ぁ-んァ-ンー]+$/.test(last);txt=hasKana?last:txt.replace(/[A-Za-zÀ-ỹ0-9]+/g,'').replace(/[〜]/g,'').trim();if(!txt)return;try{speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(txt);u.lang='ja-JP';u.rate=.88;speechSynthesis.speak(u)}catch(e){}}";
+    const newSpeak="function speak(txt){txt=N(txt);let parts=txt.split(/\\s+/).filter(Boolean);let last=parts[parts.length-1]||txt;let hasKana=/^[ぁ-んァ-ンー・･]+$/.test(last);txt=hasKana?last:txt.replace(/[A-Za-zÀ-ỹ0-9]+/g,'').replace(/[〜]/g,'').trim();if(!txt)return;try{speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(txt);u.lang='ja-JP';u.rate=.88;speechSynthesis.speak(u)}catch(e){}}";
     html=html.replace(oldSpeak,newSpeak);
     html=html.replace("onclick=\"speak('${jsArg((it.term||'')+' '+(it.reading||''))}')\"","onclick=\"speak('${jsArg(it.reading||it.term||'')}')\"");
     html=html.replace("speak(it.term+' '+it.reading)","speak(it.reading||it.term)");
     html=html.replace("speak('${jsArg((it.term||'')+' '+(it.reading||''))}')","speak('${jsArg(it.reading||it.term||'')}')");
-    html=html.replace('Bấm chặng để học · Excel 5 cột','Bấm chặng để học · âm thanh đọc 1 lần');
+
+    const oldKanji="evalConst(kh,'KANJI_DB').forEach(x=>items.push({id:id++,kind:'Kanji',term:x.k||x.word||'',reading:(x.on&&x.on.read)||(x.kun&&x.kun.read)||'',meaning:x.vn||x.meaning||'',tags:x.hv||x.group||''}));";
+    const newKanji="evalConst(kh,'KANJI_DB').forEach(x=>{const rs=[];const add=v=>{if(!v)return;if(Array.isArray(v)){v.forEach(add);return}if(typeof v==='object'){add(v.read);add(v.kana);add(v.r);add(v.yomi);Object.values(v).forEach(y=>{if(typeof y==='string'&&/[ぁ-んァ-ン]/.test(y))add(y)});return}v=String(v).trim();if(/[ぁ-んァ-ン]/.test(v))rs.push(v)};add(x.kana);add(x.reading);add(x.yomi);add(x.on);add(x.kun);add(x.on_yomi);add(x.kun_yomi);add(x.onyomi);add(x.kunyomi);items.push({id:id++,kind:'Kanji',term:x.k||x.word||'',reading:[...new Set(rs)].join(' · '),meaning:x.vn||x.meaning||'',tags:x.hv||x.group||''})});";
+    html=html.replace(oldKanji,newKanji);
+    html=html.replace('Bấm chặng để học · Excel 5 cột','Bấm chặng để học · kanji đủ cách đọc');
     document.open();
     document.write(html);
     document.close();
