@@ -1,4 +1,4 @@
-const CACHE_NAME = 'n3-jlpt-v11-fast-renshu-reading-fix';
+const CACHE_NAME = 'n3-jlpt-v12-fast-renshu-audit';
 
 const URLS_TO_CACHE = [
   '/n3-jlpt-app/',
