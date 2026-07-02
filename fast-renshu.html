@@ -20,15 +20,11 @@ body{margin:0;min-height:100dvh;display:grid;place-items:center;background:#fff8
     const oldSpeak="function speak(txt){txt=N(txt).replace(/[A-Za-zÀ-ỹ0-9]+/g,'').replace(/[〜]/g,'').trim();if(!txt)return;try{speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(txt);u.lang='ja-JP';u.rate=.88;speechSynthesis.speak(u)}catch(e){}}";
     const newSpeak="function speak(txt){txt=N(txt);let parts=txt.split(/\\s+/).filter(Boolean);let last=parts[parts.length-1]||txt;let hasKana=/^[ぁ-んァ-ンー]+$/.test(last);txt=hasKana?last:txt.replace(/[A-Za-zÀ-ỹ0-9]+/g,'').replace(/[〜]/g,'').trim();if(!txt)return;try{speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(txt);u.lang='ja-JP';u.rate=.88;speechSynthesis.speak(u)}catch(e){}}";
     html=html.replace(oldSpeak,newSpeak);
-
-    // Force every visible speaker button to pass only one Japanese form.
     html=html.replace("onclick=\"speak('${jsArg((it.term||'')+' '+(it.reading||''))}')\"","onclick=\"speak('${jsArg(it.reading||it.term||'')}')\"");
     html=html.replace("speak(it.term+' '+it.reading)","speak(it.reading||it.term)");
     html=html.replace("speak('${jsArg((it.term||'')+' '+(it.reading||''))}')","speak('${jsArg(it.reading||it.term||'')}')");
-
-    // Extra guard: if any future code still passes term+reading, keep only final kana at runtime.
-    html=html.replace('</script>','window.__FAST_RENSHU_TTS_ONCE__=true;</script>');
     html=html.replace('Bấm chặng để học · Excel 5 cột','Bấm chặng để học · âm thanh đọc 1 lần');
+
     document.open();document.write(html);document.close();
   }catch(e){
     document.getElementById('msg').innerHTML='<span class="err">Không mở được Fast Renshu.</span><br>Hãy tải lại trang hoặc kiểm tra mạng.';
