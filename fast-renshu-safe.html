@@ -2,42 +2,10 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#ff8fb3">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Fast Renshu Safe</title>
-<style>
-body{margin:0;min-height:100dvh;display:grid;place-items:center;background:#fff8fb;color:#332b38;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding:24px;text-align:center}.box{max-width:420px;background:#fff;border:1.5px solid #ffd1e1;border-radius:24px;padding:24px;box-shadow:0 10px 28px rgba(160,86,128,.15)}h1{margin:0 0 8px;font-size:24px}.sub{font-size:13px;color:#7f7188;line-height:1.6}.err{color:#9b263a;font-weight:800}
-</style>
+<meta http-equiv="refresh" content="0;url=fast-renshu.html?v=clean-v10">
+<style>body{margin:0;min-height:100dvh;display:grid;place-items:center;background:#fff8fb;color:#332b38;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;padding:24px;text-align:center}.box{max-width:420px;background:#fff;border:1.5px solid #ffd1e1;border-radius:24px;padding:24px;box-shadow:0 10px 28px rgba(160,86,128,.15)}a{color:#ff7faa;font-weight:900}</style>
 </head>
-<body>
-<div class="box"><h1>🐰🌸 Fast Renshu</h1><div class="sub" id="msg">Đang mở bản an toàn...</div></div>
-<script>
-(async()=>{
-  const core='https://raw.githubusercontent.com/ngocbabby/n3-jlpt-app/d571f8404a5168b91715e4b6b7efd4b8f829f747/fast-renshu.html';
-  try{
-    let html=await fetch(core,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('load');return r.text()});
-    const oldSpeak="function speak(txt){txt=N(txt).replace(/[A-Za-zÀ-ỹ0-9]+/g,'').replace(/[〜]/g,'').trim();if(!txt)return;try{speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(txt);u.lang='ja-JP';u.rate=.88;speechSynthesis.speak(u)}catch(e){}}";
-    const newSpeak="function speak(txt){txt=N(txt);let parts=txt.split(/\\s+/).filter(Boolean);let last=parts[parts.length-1]||txt;let hasKana=/^[ぁ-んァ-ンー・･]+$/.test(last);txt=hasKana?last:txt.replace(/[A-Za-zÀ-ỹ0-9]+/g,'').replace(/[〜]/g,'').trim();if(!txt)return;try{speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(txt);u.lang='ja-JP';u.rate=.88;speechSynthesis.speak(u)}catch(e){}}";
-    html=html.replace(oldSpeak,newSpeak);
-    html=html.replace("onclick=\"speak('${jsArg((it.term||'')+' '+(it.reading||''))}')\"","onclick=\"speak('${jsArg(it.reading||it.term||'')}')\"");
-    html=html.replace("speak(it.term+' '+it.reading)","speak(it.reading||it.term)");
-    html=html.replace("speak('${jsArg((it.term||'')+' '+(it.reading||''))}')","speak('${jsArg(it.reading||it.term||'')}')");
-
-    const oldKanji="evalConst(kh,'KANJI_DB').forEach(x=>items.push({id:id++,kind:'Kanji',term:x.k||x.word||'',reading:(x.on&&x.on.read)||(x.kun&&x.kun.read)||'',meaning:x.vn||x.meaning||'',tags:x.hv||x.group||''}));";
-    const newKanji="evalConst(kh,'KANJI_DB').forEach(x=>{const rs=[];const add=v=>{if(!v)return;if(Array.isArray(v)){v.forEach(add);return}if(typeof v==='object'){add(v.read);add(v.kana);add(v.r);add(v.yomi);Object.values(v).forEach(y=>{if(typeof y==='string'&&/[ぁ-んァ-ン]/.test(y))add(y)});return}v=String(v).trim();if(/[ぁ-んァ-ン]/.test(v))rs.push(v)};add(x.kana);add(x.reading);add(x.yomi);add(x.on);add(x.kun);add(x.on_yomi);add(x.kun_yomi);add(x.onyomi);add(x.kunyomi);const term=x.k||x.word||'';items.push({id:id++,kind:String(term).length>1?'Từ ghép Kanji':'Kanji',term,reading:[...new Set(rs)].join(' · '),meaning:x.vn||x.meaning||'',tags:x.hv||x.group||''})});";
-    html=html.replace(oldKanji,newKanji);
-
-    const oldJpCell="function jpCell(it){return `<div class=\"cell clickable\" onclick=\"speak('${jsArg((it.term||'')+' '+(it.reading||''))}')\"><div class=\"jp\">${esc(it.term)}</div>${it.reading?`<div class=\"yomi\">${esc(it.reading)}</div>`:''}<div class=\"audio\">🔊 Nhật</div></div>`}";
-    const newJpCell="function jpCell(it){const r=it.reading||((/[一-龯]/.test(it.term)&&it.kind!=='Ngữ pháp')?'chưa có cách đọc trong data':'');return `<div class=\"cell clickable\" onclick=\"speak('${jsArg(it.reading||it.term||'')}')\"><div class=\"jp\">${esc(it.term)}</div>${r?`<div class=\"yomi\">${esc(r)}</div>`:''}<div class=\"audio\">🔊 Nhật</div></div>`}";
-    html=html.replace(oldJpCell,newJpCell);
-    html=html.replace('Bấm chặng để học · Excel 5 cột','Bấm chặng để học · đọc/kana rõ hơn');
-    document.open();
-    document.write(html);
-    document.close();
-  }catch(e){
-    document.getElementById('msg').innerHTML='<span class="err">Không mở được Fast Renshu.</span><br>Hãy thử tải lại trang hoặc mở lại bằng link safe.';
-  }
-})();
-</script>
-</body>
+<body><div class="box"><h1>🐰🌸 Fast Renshu</h1><p>Đang mở bản sạch...</p><p><a href="fast-renshu.html?v=clean-v10">Bấm vào đây nếu chưa tự mở</a></p></div></body>
 </html>
