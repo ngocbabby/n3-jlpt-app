@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Fast Renshu</title>
+  <meta name="theme-color" content="#ff8fb3">
+  <style>
+    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#fff7fb;color:#302b3a;min-height:100vh;display:grid;place-items:center;padding:24px;text-align:center}
+    .box{background:#fff;border:1px solid #ffd1e1;border-radius:24px;padding:24px;box-shadow:0 12px 30px rgba(167,100,140,.16);max-width:420px}
+    h1{margin:0 0 8px;font-size:28px}.sub{color:#7f748a;margin-bottom:16px}.btn{display:inline-block;background:#ff8fb3;color:#fff;text-decoration:none;border-radius:999px;padding:12px 18px;font-weight:900}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>🐰🌸 Fast Renshu</h1>
+    <div class="sub">Đang mở app học Excel 5 cột...</div>
+    <a class="btn" href="love-sprint.html?name=fast-renshu-v2">Mở ngay</a>
+  </div>
+  <script>
+    fetch('love-sprint.html?fast-renshu-v2', {cache:'no-store'})
+      .then(r => r.text())
+      .then(html => {
+        html = html
+          .replace(/N3 Love Sprint/g, 'Fast Renshu')
+          .replace(/Love Sprint/g, 'Fast Renshu')
+          .replace(/n3-love-sprint-v2/g, 'fast-renshu-v2');
+        document.open();
+        document.write(html);
+        document.close();
+      })
+      .catch(() => {});
+  </script>
+</body>
+</html>
