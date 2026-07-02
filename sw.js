@@ -1,4 +1,4 @@
-const CACHE_NAME = 'n3-jlpt-v6-fast-renshu-tts-once';
+const CACHE_NAME = 'n3-jlpt-v7-fast-renshu-force-fresh';
 
 const URLS_TO_CACHE = [
   '/n3-jlpt-app/',
@@ -39,11 +39,17 @@ self.addEventListener('fetch', event => {
   if (url.origin !== location.origin) return;
 
   const pathname = url.pathname;
-  const networkFirst = pathname.endsWith('/n3-jlpt-app/') || pathname.endsWith('/n3-jlpt-app/index.html') || pathname.endsWith('/n3-jlpt-app/fast-renshu.html') || pathname.endsWith('/n3-jlpt-app/sw.js');
+  const isHome = pathname.endsWith('/n3-jlpt-app/') || pathname.endsWith('/n3-jlpt-app/index.html');
+  const isFast = pathname.endsWith('/n3-jlpt-app/fast-renshu.html');
+  const isSW = pathname.endsWith('/n3-jlpt-app/sw.js');
+  const networkFirst = isHome || isFast || isSW;
 
   if (networkFirst) {
     event.respondWith(
-      fetch(event.request).then(response => {
+      (isFast
+        ? fetch('/n3-jlpt-app/fast-renshu.html?v=fast-renshu-tts-v7', {cache:'reload'})
+        : fetch(event.request, {cache:'reload'})
+      ).then(response => {
         if (response && response.status === 200) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
