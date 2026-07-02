@@ -24,9 +24,13 @@ body{margin:0;min-height:100dvh;display:grid;place-items:center;background:#fff8
     html=html.replace("speak('${jsArg((it.term||'')+' '+(it.reading||''))}')","speak('${jsArg(it.reading||it.term||'')}')");
 
     const oldKanji="evalConst(kh,'KANJI_DB').forEach(x=>items.push({id:id++,kind:'Kanji',term:x.k||x.word||'',reading:(x.on&&x.on.read)||(x.kun&&x.kun.read)||'',meaning:x.vn||x.meaning||'',tags:x.hv||x.group||''}));";
-    const newKanji="evalConst(kh,'KANJI_DB').forEach(x=>{const rs=[];const add=v=>{if(!v)return;if(Array.isArray(v)){v.forEach(add);return}if(typeof v==='object'){add(v.read);add(v.kana);add(v.r);add(v.yomi);Object.values(v).forEach(y=>{if(typeof y==='string'&&/[ぁ-んァ-ン]/.test(y))add(y)});return}v=String(v).trim();if(/[ぁ-んァ-ン]/.test(v))rs.push(v)};add(x.kana);add(x.reading);add(x.yomi);add(x.on);add(x.kun);add(x.on_yomi);add(x.kun_yomi);add(x.onyomi);add(x.kunyomi);items.push({id:id++,kind:'Kanji',term:x.k||x.word||'',reading:[...new Set(rs)].join(' · '),meaning:x.vn||x.meaning||'',tags:x.hv||x.group||''})});";
+    const newKanji="evalConst(kh,'KANJI_DB').forEach(x=>{const rs=[];const add=v=>{if(!v)return;if(Array.isArray(v)){v.forEach(add);return}if(typeof v==='object'){add(v.read);add(v.kana);add(v.r);add(v.yomi);Object.values(v).forEach(y=>{if(typeof y==='string'&&/[ぁ-んァ-ン]/.test(y))add(y)});return}v=String(v).trim();if(/[ぁ-んァ-ン]/.test(v))rs.push(v)};add(x.kana);add(x.reading);add(x.yomi);add(x.on);add(x.kun);add(x.on_yomi);add(x.kun_yomi);add(x.onyomi);add(x.kunyomi);const term=x.k||x.word||'';items.push({id:id++,kind:String(term).length>1?'Từ ghép Kanji':'Kanji',term,reading:[...new Set(rs)].join(' · '),meaning:x.vn||x.meaning||'',tags:x.hv||x.group||''})});";
     html=html.replace(oldKanji,newKanji);
-    html=html.replace('Bấm chặng để học · Excel 5 cột','Bấm chặng để học · kanji đủ cách đọc');
+
+    const oldJpCell="function jpCell(it){return `<div class=\"cell clickable\" onclick=\"speak('${jsArg((it.term||'')+' '+(it.reading||''))}')\"><div class=\"jp\">${esc(it.term)}</div>${it.reading?`<div class=\"yomi\">${esc(it.reading)}</div>`:''}<div class=\"audio\">🔊 Nhật</div></div>`}";
+    const newJpCell="function jpCell(it){const r=it.reading||((/[一-龯]/.test(it.term)&&it.kind!=='Ngữ pháp')?'chưa có cách đọc trong data':'');return `<div class=\"cell clickable\" onclick=\"speak('${jsArg(it.reading||it.term||'')}')\"><div class=\"jp\">${esc(it.term)}</div>${r?`<div class=\"yomi\">${esc(r)}</div>`:''}<div class=\"audio\">🔊 Nhật</div></div>`}";
+    html=html.replace(oldJpCell,newJpCell);
+    html=html.replace('Bấm chặng để học · Excel 5 cột','Bấm chặng để học · đọc/kana rõ hơn');
     document.open();
     document.write(html);
     document.close();
