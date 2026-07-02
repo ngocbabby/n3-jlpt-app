@@ -1,4 +1,4 @@
-const CACHE_NAME = 'n3-jlpt-v2-fast-renshu';
+const CACHE_NAME = 'n3-jlpt-v3-fast-renshu-map';
 
 const URLS_TO_CACHE = [
   '/n3-jlpt-app/',
@@ -38,9 +38,8 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   if (url.origin !== location.origin) return;
 
-  // Home va Fast Renshu uu tien network de tranh hien ban cache cu.
   const pathname = url.pathname;
-  const networkFirst = pathname.endsWith('/n3-jlpt-app/') || pathname.endsWith('/n3-jlpt-app/index.html') || pathname.endsWith('/n3-jlpt-app/fast-renshu.html');
+  const networkFirst = pathname.endsWith('/n3-jlpt-app/') || pathname.endsWith('/n3-jlpt-app/index.html') || pathname.endsWith('/n3-jlpt-app/fast-renshu.html') || pathname.endsWith('/n3-jlpt-app/sw.js');
 
   if (networkFirst) {
     event.respondWith(
