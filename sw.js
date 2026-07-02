@@ -1,4 +1,4 @@
-const CACHE_NAME = 'n3-jlpt-v8-fast-renshu-tts-strict';
+const CACHE_NAME = 'n3-jlpt-v9-fast-renshu-open-fix';
 
 const URLS_TO_CACHE = [
   '/n3-jlpt-app/',
@@ -47,7 +47,7 @@ self.addEventListener('fetch', event => {
   if (networkFirst) {
     event.respondWith(
       (isFast
-        ? fetch('/n3-jlpt-app/fast-renshu.html?v=fast-renshu-tts-v8', {cache:'reload'})
+        ? fetch('/n3-jlpt-app/fast-renshu.html?v=fast-renshu-open-v9', {cache:'reload'})
         : fetch(event.request, {cache:'reload'})
       ).then(response => {
         if (response && response.status === 200) {
