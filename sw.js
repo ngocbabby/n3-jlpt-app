@@ -1,10 +1,10 @@
-const CACHE_NAME = 'n3-jlpt-v13c-fast-renshu-base-overrides';
+const CACHE_NAME = 'n3-jlpt-v14-fast-renshu-excel-order';
 
 const URLS_TO_CACHE = [
   '/n3-jlpt-app/',
   '/n3-jlpt-app/index.html',
   '/n3-jlpt-app/fast-renshu.html',
-  '/n3-jlpt-app/fast-renshu-v13.html',
+  '/n3-jlpt-app/fast-renshu-v14.html',
   '/n3-jlpt-app/fast-renshu-safe.html',
   '/n3-jlpt-app/vocab.html',
   '/n3-jlpt-app/kanji.html',
@@ -36,7 +36,7 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   if (url.origin !== location.origin) return;
   const p = url.pathname;
-  const fresh = p.endsWith('/n3-jlpt-app/') || p.endsWith('/n3-jlpt-app/index.html') || p.endsWith('/n3-jlpt-app/fast-renshu.html') || p.endsWith('/n3-jlpt-app/fast-renshu-v13.html') || p.endsWith('/n3-jlpt-app/fast-renshu-safe.html') || p.endsWith('/n3-jlpt-app/sw.js');
+  const fresh = p.endsWith('/n3-jlpt-app/') || p.endsWith('/n3-jlpt-app/index.html') || p.endsWith('/n3-jlpt-app/fast-renshu.html') || p.endsWith('/n3-jlpt-app/fast-renshu-v14.html') || p.endsWith('/n3-jlpt-app/fast-renshu-safe.html') || p.endsWith('/n3-jlpt-app/sw.js');
   if (fresh) {
     event.respondWith(fetch(event.request, {cache:'reload'}).then(r => { if (r && r.status === 200) { const c = r.clone(); caches.open(CACHE_NAME).then(cache => cache.put(event.request, c)); } return r; }).catch(() => caches.match(event.request).then(c => c || caches.match('/n3-jlpt-app/index.html'))));
     return;
