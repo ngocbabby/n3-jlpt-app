@@ -1,4 +1,4 @@
-const CACHE_NAME = 'n3-jlpt-v13b-fast-renshu-safe-overrides';
+const CACHE_NAME = 'n3-jlpt-v13c-fast-renshu-base-overrides';
 
 const URLS_TO_CACHE = [
   '/n3-jlpt-app/',
