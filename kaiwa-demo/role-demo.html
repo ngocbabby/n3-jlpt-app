@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#06131f">
+<title>Kaiwa Quest - Đóng vai A/B</title>
+<style>
+:root{--bg:#030a13;--panel:#071d2c;--panel2:#0a2638;--line:#27d8d0;--gold:#f4c76d;--vio:#7654e8;--txt:#effcff;--mut:#8faeba;--pink:#ff7d9a}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#02070d;color:var(--txt);font-family:Inter,"Noto Sans JP",system-ui,sans-serif}button{font:inherit}.app{max-width:430px;min-height:100vh;margin:auto;padding:14px 14px 88px;background:radial-gradient(circle at 70% 10%,#175a6255,transparent 28%),radial-gradient(circle at 15% 58%,#39216144,transparent 30%),linear-gradient(180deg,#071a28,#030912 78%)}.top{display:flex;align-items:center;gap:10px}.back{width:42px;height:42px;border-radius:14px;border:1px solid #1d5468;background:#081e2d;color:#fff;font-size:24px}.head{flex:1}.eyebrow{font-size:9px;letter-spacing:.2em;color:#53ece6;font-weight:900}.head h1{font-size:20px;margin:2px 0}.head p{font-size:11px;color:var(--mut);margin:0}.role-pill{border:1px solid #2ddbd4;border-radius:15px;padding:8px 10px;background:#092434;color:#5df0ea;font-size:11px;font-weight:900}.source{margin:13px 0 9px;border:1px solid #244a5b;border-radius:13px;padding:9px 11px;background:#071925;color:#b9d0d8;font-size:10px}.source b{color:var(--gold)}.progress{height:5px;border-radius:5px;background:#102b3b;overflow:hidden}.progress i{display:block;height:100%;background:linear-gradient(90deg,#22d4cb,#8c5cf2);transition:.25s}.scene{height:268px;margin-top:12px;border:1px solid #176d7c;border-radius:23px;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 32%,#21bbb744,transparent 42%),linear-gradient(#0b2c40,#071725);box-shadow:inset 0 0 36px #1bd1cb0d}.location{position:absolute;top:10px;left:12px;font-size:9px;color:#91b5c1}.char{position:absolute;bottom:-5px;font-size:112px;filter:drop-shadow(0 12px 12px #0009);transition:.25s}.char.a{left:18px}.char.b{right:18px}.char.dim{opacity:.35;filter:grayscale(.5) drop-shadow(0 12px 12px #0009)}.bubble{position:absolute;z-index:3;left:22px;right:22px;top:36px;border:1px solid #34ddd6;border-radius:20px;padding:12px;text-align:center;background:rgba(3,20,31,.94);box-shadow:0 0 25px #2bded633}.speaker{font-size:9px;color:#51eee8;font-weight:900;letter-spacing:.12em}.jp{font-size:17px;line-height:1.45;font-weight:800;margin:6px 0}.vi{font-size:10px;line-height:1.4;color:#acc4ce}.turn{margin:12px 0 8px;text-align:center;color:var(--gold);font-weight:900;font-size:12px}.main-action{display:block;width:88px;height:88px;margin:0 auto;border-radius:50%;border:3px solid #c7ffff;background:linear-gradient(145deg,#22c8c0,#6d4ee0);color:#fff;font-size:34px;box-shadow:0 0 30px #35e3dc66}.main-action.ai{background:linear-gradient(145deg,#1f7ead,#6848d6)}.main-action.recording{background:linear-gradient(145deg,#ff5574,#9c375f);animation:pulse 1s infinite}@keyframes pulse{50%{box-shadow:0 0 42px #ff688b99}}.status{text-align:center;min-height:22px;margin:8px 0;color:#9dc2cc;font-size:10px}.audio{width:100%;height:36px;margin-bottom:8px}.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.controls button,.role-controls button{border:1px solid #1b5265;border-radius:13px;padding:10px 5px;background:#092334;color:#eaffff;font-size:10px}.role-controls{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.role-controls .active{border-color:#62eee8;background:linear-gradient(145deg,#167f83,#5644bd);font-weight:900}.history{margin-top:14px}.history h2{font-size:13px;margin:0 0 8px;color:#cfe7ed}.line{display:grid;grid-template-columns:35px 1fr;gap:9px;padding:9px;border-radius:14px;margin-bottom:7px;background:rgba(8,29,43,.78);border:1px solid #143f51;opacity:.52}.line.current{opacity:1;border-color:#27ccc6;box-shadow:0 0 17px #22d4ca22}.line.done{opacity:.78}.avatar{width:35px;height:35px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#25bdb7,#6852d7);font-weight:900}.line b{font-size:10px;color:#5cece6}.line p{font-size:11px;margin:2px 0;line-height:1.35}.line small{font-size:9px;color:var(--mut)}.notice{margin-top:12px;padding:10px;border-radius:13px;border:1px solid #5d4a25;background:#2c210d88;color:#f7daa0;font-size:10px;line-height:1.45}.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);opacity:0;transition:.25s;background:#061b27;border:1px solid #28ccc7;border-radius:14px;padding:10px 14px;font-size:11px}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<main class="app">
+<div class="top"><button class="back" onclick="location.href='./'">‹</button><div class="head"><div class="eyebrow">KAIWA QUEST</div><h1>Đóng vai hội thoại A/B</h1><p>App và bạn thay phiên nói, không đọc chung một câu</p></div><div id="rolePill" class="role-pill">Vai A</div></div>
+<div class="source"><b>Hội thoại luyện tập mở rộng:</b> câu mở đầu dựa trên chủ đề sử dụng máy trong tài liệu; các câu đáp được bổ sung để luyện A–B.</div>
+<div class="progress"><i id="progress"></i></div>
+<section class="scene"><div class="location">📍 Công xưởng · Hướng dẫn sử dụng máy</div><div id="charA" class="char a">👩🏻‍🔧</div><div id="charB" class="char b">👩🏻‍💼</div><div class="bubble"><div id="speaker" class="speaker"></div><div id="jp" class="jp"></div><div id="vi" class="vi"></div></div></section>
+<div id="turn" class="turn"></div>
+<button id="mainAction" class="main-action"></button>
+<div id="status" class="status"></div>
+<audio id="playback" class="audio" controls hidden></audio>
+<div class="controls"><button id="prev">← Câu trước</button><button id="hint">Ẩn/hiện nghĩa</button><button id="next">Câu sau →</button></div>
+<div class="role-controls"><button id="roleA" class="active">Bạn đóng vai A</button><button id="roleB">Bạn đóng vai B</button><button id="restart">Bắt đầu từ đầu</button><button id="auto">App đọc lượt của mình</button></div>
+<section class="history"><h2>Toàn bộ đoạn hội thoại</h2><div id="history"></div></section>
+<div class="notice">Khi câu thuộc vai của app: nút giữa là ▶ và app đọc câu đó. Khi câu thuộc vai của bạn: nút giữa đổi thành 🎙️ để bạn ghi âm. Đổi vai sẽ hoán đổi toàn bộ lượt nói A/B.</div>
+</main><div id="toast" class="toast"></div>
+<script>
+const dialogue=[
+ {speaker:'A',jp:'すみません、この機械の使い方がまだわからないです。',vi:'Xin lỗi, tôi vẫn chưa biết cách sử dụng máy này.'},
+ {speaker:'B',jp:'大丈夫ですよ。まず、このボタンを押してください。',vi:'Không sao đâu. Trước tiên hãy nhấn nút này.'},
+ {speaker:'A',jp:'このボタンですね。次はどうすればいいですか。',vi:'Là nút này đúng không ạ? Tiếp theo tôi nên làm gì?'},
+ {speaker:'B',jp:'はい。それから、安全を確認してください。',vi:'Đúng rồi. Sau đó hãy kiểm tra an toàn.'},
+ {speaker:'A',jp:'確認しました。機械を動かしてもいいですか。',vi:'Tôi đã kiểm tra rồi. Tôi có thể vận hành máy được chưa ạ?'},
+ {speaker:'B',jp:'はい、いいですよ。ゆっくり始めてください。',vi:'Vâng, được rồi. Hãy bắt đầu từ từ nhé.'}
+];
+let index=0,userRole='A',showMeaning=true,rec=null,stream=null,chunks=[];
+const $=id=>document.getElementById(id);
+function userTurn(){return dialogue[index].speaker===userRole}
+function render(){
+ const line=dialogue[index],mine=userTurn();
+ $('rolePill').textContent='Vai '+userRole;
+ $('progress').style.width=((index+1)/dialogue.length*100)+'%';
+ $('speaker').textContent='NHÂN VẬT '+line.speaker+(mine?' · VAI CỦA BẠN':' · APP ĐỌC');
+ $('jp').textContent=line.jp;$('vi').textContent=showMeaning?line.vi:'Nghĩa tiếng Việt đang được ẩn';
+ $('turn').textContent=mine?'🎙️ Đến lượt bạn đọc vai '+userRole:'🔊 Đến lượt app đọc vai '+line.speaker;
+ $('mainAction').textContent=mine?'🎙️':'▶';$('mainAction').className='main-action'+(mine?'':' ai');
+ $('status').textContent=mine?'Chạm micro để ghi âm; chạm lần nữa để dừng.':'Chạm ▶ để nghe. Khi đọc xong app tự chuyển sang lượt kế tiếp.';
+ $('roleA').classList.toggle('active',userRole==='A');$('roleB').classList.toggle('active',userRole==='B');
+ $('charA').classList.toggle('dim',line.speaker!=='A');$('charB').classList.toggle('dim',line.speaker!=='B');
+ $('history').innerHTML=dialogue.map((x,i)=>`<div class="line ${i===index?'current':i<index?'done':''}" data-i="${i}"><div class="avatar">${x.speaker}</div><div><b>${x.speaker===userRole?'VAI CỦA BẠN':'APP ĐỌC'}</b><p>${x.jp}</p><small>${x.vi}</small></div></div>`).join('');
+ document.querySelectorAll('.line').forEach(x=>x.onclick=()=>{index=Number(x.dataset.i);stopAll();render()});
+}
+function speakCurrent(autoNext=true){stopSpeech();const line=dialogue[index];const u=new SpeechSynthesisUtterance(line.jp);u.lang='ja-JP';u.rate=.82;u.onstart=()=>{$('status').textContent='App đang đọc lời nhân vật '+line.speaker+'…'};u.onend=()=>{if(autoNext&&index<dialogue.length-1){index++;render()}else $('status').textContent='App đã đọc xong.'};speechSynthesis.speak(u)}
+function stopSpeech(){if(window.speechSynthesis)speechSynthesis.cancel()}
+function stopAll(){stopSpeech();if(rec&&rec.state==='recording')rec.stop()}
+async function toggleRecord(){
+ try{
+  if(rec&&rec.state==='recording'){rec.stop();return}
+  if(!navigator.mediaDevices?.getUserMedia)throw new Error('Trình duyệt không hỗ trợ micro');
+  stream=await navigator.mediaDevices.getUserMedia({audio:true});chunks=[];rec=new MediaRecorder(stream);
+  rec.ondataavailable=e=>chunks.push(e.data);
+  rec.onstop=()=>{const blob=new Blob(chunks,{type:rec.mimeType||'audio/webm'});$('playback').src=URL.createObjectURL(blob);$('playback').hidden=false;stream.getTracks().forEach(t=>t.stop());$('mainAction').classList.remove('recording');$('mainAction').textContent='🎙️';$('status').textContent='Đã ghi xong. Bạn có thể nghe lại; app chuyển sang câu kế tiếp.';if(index<dialogue.length-1){setTimeout(()=>{index++;render()},900)}};
+  rec.start();$('mainAction').classList.add('recording');$('mainAction').textContent='■';$('status').textContent='Đang ghi âm vai '+userRole+'… chạm lại để dừng.';
+ }catch(e){$('status').textContent='Không mở được micro: '+e.message+'. Hãy mở trang trực tiếp bằng Chrome và cấp quyền.'}
+}
+$('mainAction').onclick=()=>userTurn()?toggleRecord():speakCurrent(true);
+$('prev').onclick=()=>{stopAll();index=(index-1+dialogue.length)%dialogue.length;render()};
+$('next').onclick=()=>{stopAll();index=(index+1)%dialogue.length;render()};
+$('hint').onclick=()=>{showMeaning=!showMeaning;render()};
+$('roleA').onclick=()=>setRole('A');$('roleB').onclick=()=>setRole('B');
+function setRole(role){stopAll();userRole=role;index=0;$('playback').hidden=true;render();toast('Đã đổi: bạn đóng vai '+role+'. Toàn bộ lượt nói đã hoán đổi.')}
+$('restart').onclick=()=>{stopAll();index=0;render();toast('Đã quay lại câu đầu tiên.')};
+$('auto').onclick=()=>{if(userTurn())toast('Đây là lượt của bạn. Hãy bấm micro để đọc.');else speakCurrent(true)};
+function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1900)}
+render();
+</script>
+</body>
+</html>
