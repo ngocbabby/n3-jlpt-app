@@ -2,415 +2,46 @@
   const app = document.getElementById('app');
   const toastEl = document.getElementById('toast');
   const data = window.KAIWA_DATA;
-
-  let state = JSON.parse(localStorage.getItem('kb') || '{}');
-  state = {
-    screen: 'home',
-    topic: 'work',
-    idx: 0,
-    dlg: data.dialogues[0]?.id,
-    ri: 0,
-    role: 'A',
-    saved: [],
-    learned: [],
-    bookId: data.books[0]?.id,
-    ...state,
-  };
-
-  let recorder;
-  let stream;
-  let chunks = [];
-  let voices = [];
-
-  const persist = () => localStorage.setItem('kb', JSON.stringify(state));
-  const topics = () => data.topics;
-  const sentences = (topic = state.topic) => data.sentences.filter((item) => item.topic === topic);
-  const currentSentence = () => sentences()[Math.min(state.idx, Math.max(0, sentences().length - 1))];
-  const currentDialogue = () => data.dialogues.find((item) => item.id === state.dlg) || data.dialogues[0];
-  const topicById = (id) => topics().find((item) => item.id === id);
-  const bookById = (id) => data.books.find((item) => item.id === id);
-  const sentencesByBook = (id) => data.sentences.filter((item) => item.sourceBook === id);
-  const dialoguesByBook = (id) => {
-    const topicIds = new Set(sentencesByBook(id).map((item) => item.topic));
-    return data.dialogues.filter((dialogue) => topicIds.has(dialogue.topic));
-  };
-  const topicCountForBook = (id) => new Set(sentencesByBook(id).map((item) => item.topic)).size;
-
-  function showToast(message) {
-    toastEl.textContent = message;
-    toastEl.classList.add('show');
-    clearTimeout(toastEl._timer);
-    toastEl._timer = setTimeout(() => toastEl.classList.remove('show'), 1900);
-  }
-
-  function stopAll() {
-    speechSynthesis.cancel();
-    if (recorder && recorder.state === 'recording') recorder.stop();
-  }
-
-  function go(screen) {
-    stopAll();
-    state.screen = screen;
-    persist();
-    render();
-    scrollTo(0, 0);
-  }
-
-  function nav(active) {
-    const items = [
-      ['home', '⌂', 'Trang chủ'],
-      ['topics', '▦', 'Chủ đề'],
-      ['lesson', '♬', 'Luyện nghe'],
-      ['role', '◉', 'Hội thoại'],
-      ['profile', '♙', 'Cá nhân'],
-    ];
-    return `<nav class="nav">${items.map((item) => `
-      <button data-go="${item[0]}" class="${active === item[0] ? 'active' : ''}">
-        <span>${item[1]}</span>${item[2]}
-      </button>`).join('')}</nav>`;
-  }
-
-  function header(title, subtitle, back = 'home', action = '') {
-    return `<div class="head">
-      <button class="ib" data-go="${back}" aria-label="Quay lại">‹</button>
-      <div class="head-copy"><div class="eyebrow">KAIWA BLOOM</div><h2>${title}</h2><p>${subtitle}</p></div>
-      ${action || '<div class="head-spacer"></div>'}
-    </div>`;
-  }
-
-  function render() {
-    const screens = {
-      home: homeScreen,
-      topics: topicsScreen,
-      lesson: lessonScreen,
-      role: roleScreen,
-      library: libraryScreen,
-      book: bookScreen,
-      review: reviewScreen,
-      profile: profileScreen,
-    };
-    app.innerHTML = (screens[state.screen] || homeScreen)();
-  }
-
-  function homeScreen() {
-    const currentTopic = topicById(state.topic) || topics()[0];
-    const list = sentences(currentTopic.id);
-    const done = list.filter((item) => state.learned.includes(item.id)).length;
-    const progress = list.length ? Math.round((done / list.length) * 100) : 0;
-    const featured = ['work', 'daily', 'hospital', 'transport']
-      .map(topicById)
-      .filter(Boolean);
-
-    return `<section class="screen home-screen">
-      <div class="top home-top">
-        <div class="profile">
-          <div class="avatar">N</div>
-          <div><b>Ngọc</b><div class="mut">🌸 ${Math.max(1, state.learned.length)} ngày liên tục</div></div>
-        </div>
-        <div class="spacer"></div>
-        <button class="ib" data-go="topics" aria-label="Tìm chủ đề">⌕</button>
-        <button class="ib" data-act="settings" aria-label="Cài đặt">⚙</button>
-      </div>
-
-      <div class="home-wrap">
-        <article class="home-hero-card">
-          <div class="hero-copy">
-            <div class="hero-kicker">おはよう、Ngọc 🌸</div>
-            <h1>Hôm nay mình<br><span>luyện nói 5 câu</span> nhé!</h1>
-            <p>Những tình huống thật sự cần khi sống và làm việc tại Nhật.</p>
-            <button class="hero-start" data-go="lesson">Bắt đầu luyện Kaiwa <span>→</span></button>
-          </div>
-          <div class="sensei-art" aria-hidden="true">
-            <div class="sakura s1">✿</div><div class="sakura s2">✿</div>
-            <div class="sensei-halo"></div>
-            <div class="sensei-body"><div class="sensei-hair"></div><div class="sensei-face"></div><div class="sensei-bang"></div><div class="sensei-eye left"></div><div class="sensei-eye right"></div><div class="sensei-mouth"></div><div class="sensei-shirt"></div><div class="sensei-bow"></div></div>
-          </div>
-        </article>
-
-        <article class="continue-card" data-go="lesson">
-          <div class="continue-icon">${currentTopic.icon}</div>
-          <div class="continue-copy">
-            <div class="section-kicker">TIẾP TỤC BÀI GẦN NHẤT</div>
-            <h3>${currentTopic.title}</h3>
-            <p>Câu ${Math.min(state.idx + 1, Math.max(1, list.length))}/${Math.max(1, list.length)} · ${progress}% hoàn thành</p>
-            <div class="bar"><i style="width:${progress}%"></i></div>
-          </div>
-          <div class="continue-arrow">›</div>
-        </article>
-
-        <div class="section-title-row"><div><div class="section-kicker">HỌC NHANH</div><h2>Lối tắt hôm nay</h2></div></div>
-        <div class="quick-grid">
-          <button class="quick-card q-topics" data-go="topics"><span>▦</span><b>Chọn chủ đề</b><small>${topics().length} tình huống</small></button>
-          <button class="quick-card q-role" data-go="role"><span>◉</span><b>Đóng vai A/B</b><small>${data.dialogues.length} hội thoại</small></button>
-          <button class="quick-card q-review" data-go="review"><span>★</span><b>Ôn tập hôm nay</b><small>${state.saved.length} câu đã lưu</small></button>
-          <button class="quick-card q-library" data-go="library"><span>▤</span><b>Thư viện</b><small>${data.books.length} nguồn tài liệu</small></button>
-        </div>
-
-        <div class="section-title-row featured-title"><div><div class="section-kicker">GỢI Ý CHO NGỌC</div><h2>Chủ đề nổi bật</h2></div><button data-go="topics">Xem tất cả</button></div>
-        <div class="featured-scroll">
-          ${featured.map((topic) => {
-            const total = sentences(topic.id).length;
-            const learned = sentences(topic.id).filter((item) => state.learned.includes(item.id)).length;
-            return `<button class="featured-topic" data-topic="${topic.id}">
-              <div class="featured-icon">${topic.icon}</div>
-              <div><b>${topic.title}</b><small>${learned}/${total} câu đã học</small></div>
-              <span>›</span>
-            </button>`;
-          }).join('')}
-        </div>
-      </div>
-      ${nav('home')}
-    </section>`;
-  }
-
-  function topicsScreen() {
-    return `<section class="screen">
-      ${header('Chủ đề Kaiwa', 'Chọn tình huống bạn muốn luyện hôm nay')}
-      <div class="list topic-list">${topics().map((topic) => {
-        const total = sentences(topic.id).length;
-        const learned = sentences(topic.id).filter((item) => state.learned.includes(item.id)).length;
-        const progress = total ? Math.round((learned / total) * 100) : 0;
-        return `<article class="card topic" data-topic="${topic.id}">
-          <div class="art">${topic.icon}</div>
-          <div><div class="pill">${topic.jp || ''}</div><h3>${topic.title}</h3><p>${topic.desc || ''}</p><div class="bar"><i style="width:${progress}%"></i></div><p>${total} câu · ${progress}% đã học</p></div>
-        </article>`;
-      }).join('')}</div>
-      ${nav('topics')}
-    </section>`;
-  }
-
-  function lessonScreen() {
-    const item = currentSentence();
-    const list = sentences();
-    const topic = topicById(state.topic);
-    if (!item) return `<section class="screen">${header(topic?.title || 'Bài học', 'Chưa có câu', 'topics')}<div class="empty">Chưa có dữ liệu.</div>${nav('lesson')}</section>`;
-
-    return `<section class="screen">
-      ${header(topic.title, `Câu ${state.idx + 1}/${list.length}`, 'topics')}
-      <div class="lesson">
-        <div class="scene"><div class="bubble">${item.japanese}</div><div class="people"><span>👩🏻‍💼</span><span>👩🏻‍🔧</span></div></div>
-        <div class="card">
-          <span class="pill">${item.sourceKind === 'expanded' ? 'Hội thoại mở rộng' : `Nguồn sách · trang ${item.sourcePage || '?'}`}</span>
-          <div class="jp">${item.japanese}</div><div class="fur">${item.furigana || ''}</div><p class="vi">${item.vietnamese}</p>
-          <div class="note">💡 ${item.note || 'Mẫu câu thực tế.'}</div>
-          <div class="actions"><button data-speak="normal">🔊<br>Nghe</button><button data-speak="slow">🐢<br>Chậm</button><button data-speak="segments">▤<br>Từng cụm</button><button data-act="record">🎙️<br>Đọc theo</button></div>
-          <audio id="play" controls hidden></audio>
-          <button class="next" data-act="next">Câu tiếp theo →</button>
-          <div class="twocol"><button data-act="save">${state.saved.includes(item.id) ? '★ Đã lưu' : '☆ Lưu câu'}</button><button data-act="openRole">Đóng vai A/B</button></div>
-        </div>
-      </div>${nav('lesson')}
-    </section>`;
-  }
-
-  function roleScreen() {
-    const dialogue = currentDialogue();
-    const line = dialogue.lines[state.ri];
-    const mine = line.speaker === state.role;
-    return `<section class="screen">
-      ${header('Đóng vai hội thoại', dialogue.title, 'home')}
-      <div class="lesson role">
-        <div class="scene"><div class="bubble"><b>Nhân vật ${line.speaker} · ${mine ? 'Lượt của bạn' : 'App đọc'}</b><br>${line.japanese}<br><span class="mut">${line.vietnamese}</span></div><div class="people"><span>👩🏻‍🔧</span><span>👩🏻‍💼</span></div></div>
-        <div class="card"><div class="role-status">${mine ? '🎙️ Đến lượt bạn' : '🔊 Đến lượt app'}</div><button class="main ${recorder && recorder.state === 'recording' ? 'rec' : ''}" data-act="roleMain">${recorder && recorder.state === 'recording' ? '■' : mine ? '🎙️' : '▶'}</button><div class="status">Bạn đóng vai ${state.role} · câu ${state.ri + 1}/${dialogue.lines.length}</div><audio id="roleplay" controls hidden></audio><div class="twocol"><button data-act="swap">Đổi vai A/B</button><button data-act="restart">Bắt đầu lại</button><button data-act="prev">← Câu trước</button><button data-act="rnext">Câu sau →</button></div></div>
-        <div class="card history">${dialogue.lines.map((item) => `<div class="line"><b>${item.speaker === state.role ? 'VAI CỦA BẠN' : 'APP ĐỌC'} · ${item.speaker}</b><p>${item.japanese}</p><small>${item.vietnamese}</small></div>`).join('')}</div>
-      </div>${nav('role')}
-    </section>`;
-  }
-
-  function libraryScreen() {
-    const totalSentences = data.sentences.length;
-    const totalDialogues = data.dialogues.length;
-    return `<section class="screen child-screen library-screen">
-      ${header('Thư viện tài liệu', 'Ba nguồn đã được chuẩn hóa để học', 'home')}
-      <div class="library-intro">
-        <div><div class="section-kicker">KHO NỘI DUNG CỦA NGỌC</div><h3>${totalSentences} câu · ${totalDialogues} hội thoại</h3><p>Mỗi nội dung đều ghi rõ nguồn sách hoặc đánh dấu là hội thoại luyện tập mở rộng.</p></div>
-        <div class="library-flower">✿</div>
-      </div>
-      <div class="library-list">${data.books.map((book, index) => {
-        const bookSentences = sentencesByBook(book.id);
-        const bookDialogues = dialoguesByBook(book.id);
-        const learned = bookSentences.filter((item) => state.learned.includes(item.id)).length;
-        const progress = bookSentences.length ? Math.round((learned / bookSentences.length) * 100) : 0;
-        return `<article class="library-card book-tone-${index + 1}">
-          <div class="book-cover"><div class="book-cover-glow"></div><span>${book.icon || '📖'}</span><small>Nguồn ${index + 1}</small></div>
-          <div class="book-info">
-            <div class="book-label">TÀI LIỆU ĐÃ THÊM</div><h3>${book.title}</h3><p>${book.description || ''}</p>
-            <div class="book-meta"><span>${bookSentences.length} câu</span><span>${topicCountForBook(book.id)} chủ đề</span><span>${bookDialogues.length} hội thoại</span></div>
-            <div class="bar book-progress"><i style="width:${progress}%"></i></div><small class="progress-label">${progress}% nội dung đã học</small>
-            <div class="book-actions"><button data-book-view="${book.id}">Xem nội dung</button><button class="book-study" data-book-study="${book.id}">Học ngay →</button></div>
-          </div>
-        </article>`;
-      }).join('')}</div>
-      <div class="library-note"><b>Vì sao chỉ thấy số câu đã nhập?</b><p>v0.1 đang chứa phần nội dung đã chuẩn hóa. Dữ liệu từ ba sách sẽ tiếp tục được bổ sung theo từng phiên bản.</p></div>
-    </section>`;
-  }
-
-  function bookScreen() {
-    const book = bookById(state.bookId) || data.books[0];
-    const bookSentences = sentencesByBook(book.id);
-    const grouped = [...new Set(bookSentences.map((item) => item.topic))]
-      .map((topicId) => ({ topic: topicById(topicId), items: bookSentences.filter((item) => item.topic === topicId) }))
-      .filter((group) => group.topic);
-
-    return `<section class="screen child-screen">
-      ${header(book.title, `${bookSentences.length} câu đã chuẩn hóa`, 'library')}
-      <div class="book-detail-hero"><div class="book-detail-icon">${book.icon || '📖'}</div><div><div class="section-kicker">NỘI DUNG TRONG SÁCH</div><h3>${topicCountForBook(book.id)} chủ đề học</h3><p>${book.description || ''}</p></div></div>
-      <div class="list book-topic-list">${grouped.map((group) => `<article class="card book-topic-card" data-book-topic="${group.topic.id}" data-book-id="${book.id}"><div class="art small-art">${group.topic.icon}</div><div><div class="pill">${group.topic.jp || ''}</div><h3>${group.topic.title}</h3><p>${group.items.length} câu từ tài liệu này</p><span class="inline-link">Mở bài học →</span></div></article>`).join('')}</div>
-    </section>`;
-  }
-
-  function reviewScreen() {
-    const list = data.sentences.filter((item) => state.saved.includes(item.id));
-    return `<section class="screen">${header('Ôn tập', 'Những câu bạn đã lưu')}<div class="list">${list.length ? list.map((item) => `<div class="card"><div class="jp" style="font-size:17px">${item.japanese}</div><p class="vi">${item.vietnamese}</p><button class="small" data-sentence="${item.id}">Mở bài học</button></div>`).join('') : '<div class="empty">Chưa lưu câu nào.</div>'}</div>${nav('home')}</section>`;
-  }
-
-  function profileScreen() {
-    return `<section class="screen">${header('Hồ sơ của Ngọc', 'Tiến độ học Kaiwa')}<div style="text-align:center;padding:18px"><div class="avatar" style="width:88px;height:88px;margin:auto;font-size:32px">N</div><h2>${Math.max(1, state.learned.length)} ngày liên tục 🌸</h2></div><div class="stats"><div class="card stat"><b>${state.learned.length}</b><span>Đã học</span></div><div class="card stat"><b>${state.saved.length}</b><span>Đã lưu</span></div><div class="card stat"><b>${data.dialogues.length}</b><span>Hội thoại</span></div></div>${nav('profile')}</section>`;
-  }
-
-  function speak(text, rate = 0.86, done) {
-    speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ja-JP';
-    utterance.rate = rate;
-    utterance.volume = 1;
-    if (voices[0]) utterance.voice = voices[0];
-    utterance.onend = () => done && done();
-    speechSynthesis.speak(utterance);
-  }
-
-  function speakSegments(parts) {
-    let index = 0;
-    const next = () => {
-      if (index >= parts.length) return;
-      speak(parts[index++], 0.66, () => setTimeout(next, 300));
-    };
-    next();
-  }
-
-  async function record(audioId, advance = false) {
-    try {
-      if (recorder && recorder.state === 'recording') {
-        recorder.stop();
-        return;
-      }
-      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      chunks = [];
-      recorder = new MediaRecorder(stream);
-      recorder.ondataavailable = (event) => chunks.push(event.data);
-      recorder.onstop = () => {
-        const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
-        stream.getTracks().forEach((track) => track.stop());
-        render();
-        setTimeout(() => {
-          const audio = document.getElementById(audioId);
-          if (audio) {
-            audio.src = URL.createObjectURL(blob);
-            audio.hidden = false;
-          }
-        }, 0);
-        if (advance) setTimeout(() => { state.ri = Math.min(state.ri + 1, currentDialogue().lines.length - 1); render(); }, 800);
-      };
-      recorder.start();
-      render();
-    } catch (error) {
-      showToast(`Không mở được micro: ${error.message}`);
-    }
-  }
-
-  document.addEventListener('click', (event) => {
-    const goButton = event.target.closest('[data-go]');
-    if (goButton) return go(goButton.dataset.go);
-
-    const topicButton = event.target.closest('[data-topic]');
-    if (topicButton) {
-      state.topic = topicButton.dataset.topic;
-      state.idx = 0;
-      const relatedDialogue = data.dialogues.find((item) => item.topic === state.topic);
-      if (relatedDialogue) state.dlg = relatedDialogue.id;
-      persist();
-      return go('lesson');
-    }
-
-    const viewBook = event.target.closest('[data-book-view]');
-    if (viewBook) {
-      state.bookId = viewBook.dataset.bookView;
-      persist();
-      return go('book');
-    }
-
-    const studyBook = event.target.closest('[data-book-study]');
-    if (studyBook) {
-      const first = sentencesByBook(studyBook.dataset.bookStudy)[0];
-      if (!first) return showToast('Tài liệu này chưa có câu học.');
-      state.topic = first.topic;
-      state.idx = sentences(first.topic).findIndex((item) => item.id === first.id);
-      const relatedDialogue = data.dialogues.find((item) => item.topic === first.topic);
-      if (relatedDialogue) state.dlg = relatedDialogue.id;
-      persist();
-      return go('lesson');
-    }
-
-    const bookTopic = event.target.closest('[data-book-topic]');
-    if (bookTopic) {
-      const bookId = bookTopic.dataset.bookId;
-      const topicId = bookTopic.dataset.bookTopic;
-      const first = sentencesByBook(bookId).find((item) => item.topic === topicId);
-      state.topic = topicId;
-      state.idx = Math.max(0, sentences(topicId).findIndex((item) => item.id === first?.id));
-      const relatedDialogue = data.dialogues.find((item) => item.topic === topicId);
-      if (relatedDialogue) state.dlg = relatedDialogue.id;
-      persist();
-      return go('lesson');
-    }
-
-    const sentenceButton = event.target.closest('[data-sentence]');
-    if (sentenceButton) {
-      const item = data.sentences.find((value) => value.id === sentenceButton.dataset.sentence);
-      state.topic = item.topic;
-      state.idx = sentences().findIndex((value) => value.id === item.id);
-      return go('lesson');
-    }
-
-    const speakButton = event.target.closest('[data-speak]');
-    if (speakButton) {
-      const item = currentSentence();
-      return speakButton.dataset.speak === 'segments'
-        ? speakSegments(item.segments || [item.japanese])
-        : speak(item.japanese, speakButton.dataset.speak === 'slow' ? 0.66 : 0.86);
-    }
-
-    const action = event.target.closest('[data-act]')?.dataset.act;
-    if (!action) return;
-    if (action === 'settings') showToast('Phần cài đặt chi tiết sẽ có trong bản tiếp theo.');
-    if (action === 'next') {
-      const item = currentSentence();
-      if (!state.learned.includes(item.id)) state.learned.push(item.id);
-      state.idx = (state.idx + 1) % sentences().length;
-      persist();
-      render();
-    }
-    if (action === 'save') {
-      const item = currentSentence();
-      const index = state.saved.indexOf(item.id);
-      index < 0 ? state.saved.push(item.id) : state.saved.splice(index, 1);
-      persist();
-      render();
-    }
-    if (action === 'record') record('play');
-    if (action === 'openRole') go('role');
-    if (action === 'roleMain') {
-      const line = currentDialogue().lines[state.ri];
-      line.speaker === state.role
-        ? record('roleplay', true)
-        : speak(line.japanese, 0.8, () => { state.ri = Math.min(state.ri + 1, currentDialogue().lines.length - 1); render(); });
-    }
-    if (action === 'swap') { state.role = state.role === 'A' ? 'B' : 'A'; state.ri = 0; persist(); render(); }
-    if (action === 'restart') { state.ri = 0; render(); }
-    if (action === 'prev') { state.ri = Math.max(0, state.ri - 1); render(); }
-    if (action === 'rnext') { state.ri = Math.min(currentDialogue().lines.length - 1, state.ri + 1); render(); }
-  });
-
-  speechSynthesis.onvoiceschanged = () => { voices = speechSynthesis.getVoices().filter((voice) => voice.lang?.startsWith('ja')); };
-  voices = speechSynthesis.getVoices().filter((voice) => voice.lang?.startsWith('ja'));
-  render();
+  const defaults = {screen:'home',topic:'work',idx:0,dlg:data.dialogues[0]?.id,ri:0,role:'A',saved:[],learned:[],hard:[],bookId:data.books[0]?.id,showFurigana:true,showVietnamese:true,roleShowText:true,roleShowHint:true,autoAdvance:true,voiceIndex:0};
+  let state = {...defaults,...JSON.parse(localStorage.getItem('kb')||'{}')};
+  let recorder=null,stream=null,chunks=[],voices=[],recordingTarget='',recordedUrls={lesson:'',role:''},touchStartX=0;
+  const persist=()=>localStorage.setItem('kb',JSON.stringify(state));
+  const topics=()=>data.topics;
+  const sentences=(topic=state.topic)=>data.sentences.filter(x=>x.topic===topic);
+  const currentSentence=()=>sentences()[Math.min(state.idx,Math.max(0,sentences().length-1))];
+  const currentDialogue=()=>data.dialogues.find(x=>x.id===state.dlg)||data.dialogues[0];
+  const topicById=id=>topics().find(x=>x.id===id);
+  const bookById=id=>data.books.find(x=>x.id===id);
+  const sentencesByBook=id=>data.sentences.filter(x=>x.sourceBook===id);
+  const topicCountForBook=id=>new Set(sentencesByBook(id).map(x=>x.topic)).size;
+  const dialoguesByBook=id=>{const ids=new Set(sentencesByBook(id).map(x=>x.topic));return data.dialogues.filter(x=>ids.has(x.topic));};
+  function toast(m){toastEl.textContent=m;toastEl.classList.add('show');clearTimeout(toastEl._timer);toastEl._timer=setTimeout(()=>toastEl.classList.remove('show'),1900);}
+  function stopAll(){speechSynthesis.cancel();if(recorder&&recorder.state==='recording')recorder.stop();}
+  function go(screen){stopAll();state.screen=screen;persist();render();scrollTo(0,0);}
+  function nav(active){return `<nav class="nav">${[['home','⌂','Trang chủ'],['topics','▦','Chủ đề'],['lesson','♬','Luyện nghe'],['role','◉','Hội thoại'],['profile','♙','Cá nhân']].map(i=>`<button data-go="${i[0]}" class="${active===i[0]?'active':''}"><span>${i[1]}</span>${i[2]}</button>`).join('')}</nav>`;}
+  function header(title,subtitle,back='home',action=''){return `<div class="head"><button class="ib" data-go="${back}">‹</button><div class="head-copy"><div class="eyebrow">KAIWA BLOOM</div><h2>${title}</h2><p>${subtitle}</p></div>${action||'<div class="head-spacer"></div>'}</div>`;}
+  function voiceOptions(){return voices.length?voices.map((v,i)=>`<option value="${i}" ${i===state.voiceIndex?'selected':''}>${v.name}</option>`).join(''):'<option value="0">Giọng Nhật mặc định</option>';}
+  function render(){const map={home:homeScreen,topics:topicsScreen,lesson:lessonScreen,role:roleScreen,library:libraryScreen,book:bookScreen,review:reviewScreen,profile:profileScreen};app.innerHTML=(map[state.screen]||homeScreen)();restoreAudio();}
+  function restoreAudio(){if(recordedUrls.lesson){const a=document.getElementById('lessonPlayback');if(a){a.src=recordedUrls.lesson;a.hidden=false;}}if(recordedUrls.role){const a=document.getElementById('rolePlayback');if(a){a.src=recordedUrls.role;a.hidden=false;}}}
+  function homeScreen(){const t=topicById(state.topic)||topics()[0],list=sentences(t.id),done=list.filter(x=>state.learned.includes(x.id)).length,p=list.length?Math.round(done/list.length*100):0,featured=['work','daily','hospital','transport'].map(topicById).filter(Boolean);return `<section class="screen"><div class="top"><div class="profile"><div class="avatar">N</div><div><b>Ngọc</b><div class="mut">🌸 ${Math.max(1,state.learned.length)} ngày liên tục</div></div></div><div class="spacer"></div><button class="ib" data-go="topics">⌕</button><button class="ib" data-act="settings">⚙</button></div><div class="home-wrap"><article class="home-hero-card"><div class="hero-copy"><div class="hero-kicker">おはよう、Ngọc 🌸</div><h1>Hôm nay mình<br><span>luyện nói 5 câu</span> nhé!</h1><p>Những tình huống thật sự cần khi sống và làm việc tại Nhật.</p><button class="hero-start" data-go="lesson">Bắt đầu luyện Kaiwa <span>→</span></button></div><div class="sensei-art"><div class="sakura s1">✿</div><div class="sakura s2">✿</div><div class="sensei-halo"></div><div class="sensei-body"><div class="sensei-hair"></div><div class="sensei-face"></div><div class="sensei-bang"></div><div class="sensei-eye left"></div><div class="sensei-eye right"></div><div class="sensei-mouth"></div><div class="sensei-shirt"></div><div class="sensei-bow"></div></div></div></article><article class="continue-card" data-go="lesson"><div class="continue-icon">${t.icon}</div><div class="continue-copy"><div class="section-kicker">TIẾP TỤC BÀI GẦN NHẤT</div><h3>${t.title}</h3><p>Câu ${Math.min(state.idx+1,Math.max(1,list.length))}/${Math.max(1,list.length)} · ${p}% hoàn thành</p><div class="bar"><i style="width:${p}%"></i></div></div><div class="continue-arrow">›</div></article><div class="section-title-row"><div><div class="section-kicker">HỌC NHANH</div><h2>Lối tắt hôm nay</h2></div></div><div class="quick-grid"><button class="quick-card q-topics" data-go="topics"><span>▦</span><b>Chọn chủ đề</b><small>${topics().length} tình huống</small></button><button class="quick-card q-role" data-go="role"><span>◉</span><b>Đóng vai A/B</b><small>${data.dialogues.length} hội thoại</small></button><button class="quick-card q-review" data-go="review"><span>★</span><b>Ôn tập hôm nay</b><small>${state.saved.length} câu đã lưu</small></button><button class="quick-card q-library" data-go="library"><span>▤</span><b>Thư viện</b><small>${data.books.length} nguồn tài liệu</small></button></div><div class="section-title-row"><div><div class="section-kicker">GỢI Ý CHO NGỌC</div><h2>Chủ đề nổi bật</h2></div><button data-go="topics">Xem tất cả</button></div><div class="featured-scroll">${featured.map(x=>`<button class="featured-topic" data-topic="${x.id}"><div class="featured-icon">${x.icon}</div><div><b>${x.title}</b><small>${sentences(x.id).filter(s=>state.learned.includes(s.id)).length}/${sentences(x.id).length} câu đã học</small></div><span>›</span></button>`).join('')}</div></div>${nav('home')}</section>`;}
+  function topicsScreen(){return `<section class="screen">${header('Chủ đề Kaiwa','Chọn tình huống bạn muốn luyện hôm nay')}<div class="list">${topics().map(t=>{const total=sentences(t.id).length,done=sentences(t.id).filter(x=>state.learned.includes(x.id)).length,p=total?Math.round(done/total*100):0;return `<article class="card topic" data-topic="${t.id}"><div class="art">${t.icon}</div><div><div class="pill">${t.jp||''}</div><h3>${t.title}</h3><p>${t.desc||''}</p><div class="bar"><i style="width:${p}%"></i></div><p>${total} câu · ${p}% đã học</p></div></article>`;}).join('')}</div>${nav('topics')}</section>`;}
+  function lessonScreen(){const item=currentSentence(),list=sentences(),topic=topicById(state.topic);if(!item)return `<section>${header(topic?.title||'Bài học','Chưa có câu','topics')}<div class="empty">Chưa có dữ liệu.</div>${nav('lesson')}</section>`;const p=Math.round((state.idx+1)/list.length*100),book=bookById(item.sourceBook),isRec=recorder&&recorder.state==='recording'&&recordingTarget==='lesson';return `<section class="screen">${header(topic.title,`Câu ${state.idx+1}/${list.length}`,'topics')}<div class="lesson-progress-wrap"><div class="lesson-progress-row"><span>Tiến độ chủ đề</span><b>${p}%</b></div><div class="bar"><i style="width:${p}%"></i></div></div><div class="lesson-v2" id="lessonSwipe"><div class="learn-scene"><div class="scene-label">${topic.icon} ${topic.title}</div><div class="scene-bubble">${item.japanese}</div><div class="scene-characters"><span>👩🏻‍💼</span><span>👩🏻‍🔧</span></div></div><article class="card learn-card"><div class="source-row"><span class="source-chip ${item.sourceKind==='expanded'?'expanded':''}">${item.sourceKind==='expanded'?'Hội thoại luyện tập mở rộng':'Nguồn tài liệu'}</span><span class="source-book">${book?.title||'Tài liệu'}${item.sourcePage?` · trang ${item.sourcePage}`:''}</span></div><div class="sentence-view"><div class="jp">${item.japanese}</div>${state.showFurigana?`<div class="fur">${item.furigana||''}</div>`:'<div class="hidden-copy">Furigana đang được ẩn</div>'}${state.showVietnamese?`<p class="vi">${item.vietnamese}</p>`:'<div class="hidden-copy">Nghĩa tiếng Việt đang được ẩn</div>'}</div><div class="display-toggles"><button class="${state.showFurigana?'active':''}" data-act="toggleFuri">あ Bật/tắt Furigana</button><button class="${state.showVietnamese?'active':''}" data-act="toggleVi">VI Bật/tắt nghĩa</button></div><div class="voice-panel"><div><label>GIỌNG ĐỌC TIẾNG NHẬT</label><select id="voiceSelect">${voiceOptions()}</select></div><button data-act="testVoice">Thử giọng</button></div><div class="listen-grid"><button class="listen-main" data-speak="normal"><span>🔊</span>Nghe thường</button><button data-speak="slow"><span>🐢</span>Nghe chậm</button><button data-speak="repeat"><span>🔁</span>Lặp 3 lần</button><button data-speak="segments"><span>▤</span>Từng cụm</button></div><div class="record-box"><button class="record-button ${isRec?'recording':''}" data-act="record">${isRec?'■':'🎙️'}</button><div class="record-copy"><b>${isRec?'Đang ghi âm…':'Đọc theo giọng mẫu'}</b><p>${isRec?'Chạm lần nữa để dừng.':'Ghi âm rồi nghe lại để tự so sánh.'}</p><audio id="lessonPlayback" controls hidden></audio></div></div><div class="note">💡 ${item.note||'Mẫu câu thực tế.'}</div><div class="memory-row"><button class="hard ${state.hard.includes(item.id)?'active':''}" data-act="hard">△ Chưa thuộc</button><button class="known ${state.learned.includes(item.id)?'active':''}" data-act="known">✓ Đã nhớ</button><button class="saved ${state.saved.includes(item.id)?'active':''}" data-act="save">★ Lưu ôn tập</button></div><div class="sentence-nav"><button data-act="previousSentence">‹</button><button class="next-sentence" data-act="next">Câu tiếp theo →</button><button data-act="openRole">◉</button></div><div class="swipe-hint">Có thể vuốt sang trái/phải để chuyển câu</div></article></div>${nav('lesson')}</section>`;}
+  function roleScreen(){const d=currentDialogue(),l=d.lines[state.ri],mine=l.speaker===state.role,p=Math.round((state.ri+1)/d.lines.length*100),isRec=recorder&&recorder.state==='recording'&&recordingTarget==='role';return `<section class="screen">${header('Đóng vai hội thoại',d.title,'home')}<div class="role-v2"><div class="dialogue-select"><label>CHỌN ĐOẠN HỘI THOẠI</label><select id="dialogueSelect">${data.dialogues.map(x=>`<option value="${x.id}" ${x.id===d.id?'selected':''}>${x.title}</option>`).join('')}</select></div><div class="role-options"><button class="role-tab ${state.role==='A'?'active':''}" data-role="A">Bạn đóng vai A</button><button class="role-tab ${state.role==='B'?'active':''}" data-role="B">Bạn đóng vai B</button></div><div class="role-toolbar"><button class="${state.roleShowText?'active':''}" data-act="toggleRoleText">Hiện chữ</button><button class="${state.roleShowHint?'active':''}" data-act="toggleRoleHint">Hiện nghĩa</button><button class="${state.autoAdvance?'active':''}" data-act="toggleAuto">Tự chuyển câu</button></div><div class="role-scene"><div class="role-progress"><i style="width:${p}%"></i></div><div class="role-bubble"><div class="speaker">NHÂN VẬT ${l.speaker} · ${mine?'VAI CỦA BẠN':'APP ĐỌC'}</div><div class="role-jp">${state.roleShowText?l.japanese:'••••••••••••'}</div><div class="role-vi">${state.roleShowHint?l.vietnamese:'Nghĩa đang được ẩn'}</div></div><div class="role-character a ${l.speaker!=='A'?'inactive':''}">👩🏻‍🔧</div><div class="role-character b ${l.speaker!=='B'?'inactive':''}">👩🏻‍💼</div></div><article class="card turn-card"><div class="turn-label">${mine?'🎙️ Đến lượt Ngọc':'🔊 Đến lượt app'}</div><div class="turn-sub">Câu ${state.ri+1}/${d.lines.length} · Bạn đang đóng vai ${state.role}</div><button class="role-main-button ${mine?'':'app-turn'} ${isRec?'recording':''}" data-act="roleMain">${isRec?'■':mine?'🎙️':'▶'}</button><audio id="rolePlayback" class="role-audio" controls hidden></audio><div class="role-primary-actions"><button class="play-all" data-act="playAll">▶ Nghe toàn đoạn</button><button data-act="hintCurrent">🔊 Nghe câu hiện tại</button></div><div class="role-secondary-actions"><button data-act="prevRole">← Câu trước</button><button data-act="restart">Bắt đầu lại</button><button data-act="nextRole">Câu sau →</button></div>${state.ri===d.lines.length-1?'<div class="role-complete">🌸 Bạn đã đến câu cuối của đoạn hội thoại.</div>':''}</article><article class="card role-history"><div class="role-history-title"><b>Toàn bộ đoạn hội thoại</b><small>Chạm vào câu để chuyển tới đó</small></div>${d.lines.map((x,i)=>`<button class="role-line ${i===state.ri?'current':i<state.ri?'done':''}" data-role-line="${i}"><div class="line-avatar">${x.speaker}</div><div><b>${x.speaker===state.role?'VAI CỦA BẠN':'APP ĐỌC'}</b><p>${state.roleShowText?x.japanese:'••••••••'}</p><small>${state.roleShowHint?x.vietnamese:''}</small></div></button>`).join('')}</article></div>${nav('role')}</section>`;}
+  function libraryScreen(){return `<section class="screen child-screen library-screen">${header('Thư viện tài liệu','Ba nguồn đã được chuẩn hóa để học','home')}<div class="library-intro"><div><div class="section-kicker">KHO NỘI DUNG CỦA NGỌC</div><h3>${data.sentences.length} câu · ${data.dialogues.length} hội thoại</h3><p>Mỗi nội dung đều ghi rõ nguồn sách hoặc đánh dấu là hội thoại luyện tập mở rộng.</p></div><div class="library-flower">✿</div></div><div class="library-list">${data.books.map((b,i)=>{const bs=sentencesByBook(b.id),bd=dialoguesByBook(b.id),done=bs.filter(x=>state.learned.includes(x.id)).length,p=bs.length?Math.round(done/bs.length*100):0;return `<article class="library-card book-tone-${i+1}"><div class="book-cover"><div class="book-cover-glow"></div><span>${b.icon||'📖'}</span><small>Nguồn ${i+1}</small></div><div class="book-info"><div class="book-label">TÀI LIỆU ĐÃ THÊM</div><h3>${b.title}</h3><p>${b.description||''}</p><div class="book-meta"><span>${bs.length} câu</span><span>${topicCountForBook(b.id)} chủ đề</span><span>${bd.length} hội thoại</span></div><div class="bar book-progress"><i style="width:${p}%"></i></div><small class="progress-label">${p}% nội dung đã học</small><div class="book-actions"><button data-book-view="${b.id}">Xem nội dung</button><button class="book-study" data-book-study="${b.id}">Học ngay →</button></div></div></article>`;}).join('')}</div><div class="library-note"><b>v0.1 đang tiếp tục được bổ sung nội dung</b><p>Các câu hiện có là phần đã được chuẩn hóa để học.</p></div></section>`;}
+  function bookScreen(){const b=bookById(state.bookId)||data.books[0],bs=sentencesByBook(b.id),groups=[...new Set(bs.map(x=>x.topic))].map(id=>({topic:topicById(id),items:bs.filter(x=>x.topic===id)})).filter(x=>x.topic);return `<section>${header(b.title,`${bs.length} câu đã chuẩn hóa`,'library')}<div class="book-detail-hero"><div class="book-detail-icon">${b.icon||'📖'}</div><div><div class="section-kicker">NỘI DUNG TRONG SÁCH</div><h3>${topicCountForBook(b.id)} chủ đề học</h3><p>${b.description||''}</p></div></div><div class="list">${groups.map(g=>`<article class="card topic book-topic-card" data-book-topic="${g.topic.id}" data-book-id="${b.id}"><div class="art small-art">${g.topic.icon}</div><div><div class="pill">${g.topic.jp||''}</div><h3>${g.topic.title}</h3><p>${g.items.length} câu từ tài liệu này</p><span class="inline-link">Mở bài học →</span></div></article>`).join('')}</div></section>`;}
+  function reviewScreen(){const list=data.sentences.filter(x=>state.saved.includes(x.id)||state.hard.includes(x.id));return `<section>${header('Ôn tập','Câu đã lưu hoặc chưa thuộc')}<div class="list">${list.length?list.map(x=>`<div class="card"><span class="pill">${state.hard.includes(x.id)?'Chưa thuộc':'Đã lưu'}</span><div class="jp" style="font-size:17px">${x.japanese}</div><p class="vi">${x.vietnamese}</p><button class="small" data-sentence="${x.id}">Mở bài học</button></div>`).join(''):'<div class="empty">Chưa có câu cần ôn.</div>'}</div>${nav('home')}</section>`;}
+  function profileScreen(){return `<section>${header('Hồ sơ của Ngọc','Tiến độ học Kaiwa')}<div style="text-align:center;padding:18px"><div class="avatar" style="width:88px;height:88px;margin:auto;font-size:32px">N</div><h2>${Math.max(1,state.learned.length)} ngày liên tục 🌸</h2></div><div class="stats"><div class="card stat"><b>${state.learned.length}</b><span>Đã học</span></div><div class="card stat"><b>${state.saved.length}</b><span>Đã lưu</span></div><div class="card stat"><b>${state.hard.length}</b><span>Chưa thuộc</span></div></div>${nav('profile')}</section>`;}
+  function selectedVoice(){return voices[state.voiceIndex]||voices[0]||null;}
+  function speak(text,rate=.86,done){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';u.rate=rate;u.volume=1;const v=selectedVoice();if(v)u.voice=v;u.onend=()=>done&&done();speechSynthesis.speak(u);}
+  function speakSegments(parts){let i=0;const n=()=>{if(i>=parts.length)return;speak(parts[i++],.66,()=>setTimeout(n,280));};n();}
+  function repeatThree(text){let i=0;const n=()=>{if(i>=3)return;speak(text,.78,()=>{i++;setTimeout(n,420);});};n();}
+  function playAllDialogue(){const d=currentDialogue();let i=0;const n=()=>{if(i>=d.lines.length){toast('Đã nghe xong toàn đoạn.');return;}state.ri=i;render();speak(d.lines[i].japanese,.8,()=>{i++;setTimeout(n,300);});};n();}
+  async function toggleRecord(target,advance=false){try{if(recorder&&recorder.state==='recording'){recorder.stop();return;}stream=await navigator.mediaDevices.getUserMedia({audio:true});chunks=[];recordingTarget=target;recorder=new MediaRecorder(stream);recorder.ondataavailable=e=>chunks.push(e.data);recorder.onstop=()=>{const blob=new Blob(chunks,{type:recorder.mimeType||'audio/webm'});stream.getTracks().forEach(t=>t.stop());recordedUrls[target]=URL.createObjectURL(blob);recordingTarget='';render();if(advance&&state.autoAdvance)setTimeout(()=>{state.ri=Math.min(state.ri+1,currentDialogue().lines.length-1);render();},700);};recorder.start();render();}catch(e){toast('Không mở được micro: '+e.message);}}
+  document.addEventListener('change',e=>{if(e.target.id==='voiceSelect'){state.voiceIndex=Number(e.target.value)||0;persist();}if(e.target.id==='dialogueSelect'){state.dlg=e.target.value;state.ri=0;recordedUrls.role='';persist();render();}});
+  document.addEventListener('touchstart',e=>{if(e.target.closest('#lessonSwipe'))touchStartX=e.changedTouches[0].clientX;},{passive:true});
+  document.addEventListener('touchend',e=>{if(!touchStartX)return;const dx=e.changedTouches[0].clientX-touchStartX;touchStartX=0;if(Math.abs(dx)<60)return;if(dx<0)nextSentence(true);else previousSentence();},{passive:true});
+  function nextSentence(mark=true){const x=currentSentence();if(mark&&!state.learned.includes(x.id))state.learned.push(x.id);state.idx=(state.idx+1)%sentences().length;recordedUrls.lesson='';persist();render();}
+  function previousSentence(){state.idx=(state.idx-1+sentences().length)%sentences().length;recordedUrls.lesson='';persist();render();}
+  document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)return go(g.dataset.go);const tp=e.target.closest('[data-topic]');if(tp){state.topic=tp.dataset.topic;state.idx=0;const d=data.dialogues.find(x=>x.topic===state.topic);if(d)state.dlg=d.id;persist();return go('lesson');}const bv=e.target.closest('[data-book-view]');if(bv){state.bookId=bv.dataset.bookView;persist();return go('book');}const bs=e.target.closest('[data-book-study]');if(bs){const first=sentencesByBook(bs.dataset.bookStudy)[0];if(!first)return toast('Tài liệu này chưa có câu học.');state.topic=first.topic;state.idx=sentences(first.topic).findIndex(x=>x.id===first.id);persist();return go('lesson');}const bt=e.target.closest('[data-book-topic]');if(bt){const first=sentencesByBook(bt.dataset.bookId).find(x=>x.topic===bt.dataset.bookTopic);state.topic=bt.dataset.bookTopic;state.idx=Math.max(0,sentences(state.topic).findIndex(x=>x.id===first?.id));persist();return go('lesson');}const sb=e.target.closest('[data-sentence]');if(sb){const x=data.sentences.find(y=>y.id===sb.dataset.sentence);state.topic=x.topic;state.idx=sentences(x.topic).findIndex(y=>y.id===x.id);return go('lesson');}const sp=e.target.closest('[data-speak]');if(sp){const x=currentSentence();if(sp.dataset.speak==='segments')return speakSegments(x.segments||[x.japanese]);if(sp.dataset.speak==='repeat')return repeatThree(x.japanese);return speak(x.japanese,sp.dataset.speak==='slow'?.64:.86);}const rb=e.target.closest('[data-role]');if(rb){state.role=rb.dataset.role;state.ri=0;recordedUrls.role='';persist();return render();}const rl=e.target.closest('[data-role-line]');if(rl){state.ri=Number(rl.dataset.roleLine);return render();}const a=e.target.closest('[data-act]')?.dataset.act;if(!a)return;if(a==='settings')toast('Cài đặt giọng và hiển thị nằm ngay trong màn học.');if(a==='toggleFuri'){state.showFurigana=!state.showFurigana;persist();render();}if(a==='toggleVi'){state.showVietnamese=!state.showVietnamese;persist();render();}if(a==='testVoice')speak('こんにちは。今日も一緒に練習しましょう。',.8);if(a==='record')toggleRecord('lesson');if(a==='hard'){const x=currentSentence(),i=state.hard.indexOf(x.id);i<0?state.hard.push(x.id):state.hard.splice(i,1);persist();render();}if(a==='known'){const x=currentSentence(),i=state.learned.indexOf(x.id);i<0?state.learned.push(x.id):state.learned.splice(i,1);persist();render();}if(a==='save'){const x=currentSentence(),i=state.saved.indexOf(x.id);i<0?state.saved.push(x.id):state.saved.splice(i,1);persist();render();}if(a==='next')nextSentence(true);if(a==='previousSentence')previousSentence();if(a==='openRole')go('role');if(a==='toggleRoleText'){state.roleShowText=!state.roleShowText;persist();render();}if(a==='toggleRoleHint'){state.roleShowHint=!state.roleShowHint;persist();render();}if(a==='toggleAuto'){state.autoAdvance=!state.autoAdvance;persist();render();}if(a==='roleMain'){const l=currentDialogue().lines[state.ri];if(l.speaker===state.role)toggleRecord('role',true);else speak(l.japanese,.8,()=>{if(state.autoAdvance){state.ri=Math.min(state.ri+1,currentDialogue().lines.length-1);render();}});}if(a==='playAll')playAllDialogue();if(a==='hintCurrent')speak(currentDialogue().lines[state.ri].japanese,.7);if(a==='prevRole'){state.ri=Math.max(0,state.ri-1);render();}if(a==='nextRole'){state.ri=Math.min(currentDialogue().lines.length-1,state.ri+1);render();}if(a==='restart'){state.ri=0;recordedUrls.role='';render();}});
+  speechSynthesis.onvoiceschanged=()=>{voices=speechSynthesis.getVoices().filter(v=>v.lang?.toLowerCase().startsWith('ja'));render();};voices=speechSynthesis.getVoices().filter(v=>v.lang?.toLowerCase().startsWith('ja'));render();
 })();
